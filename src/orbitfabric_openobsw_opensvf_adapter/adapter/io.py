@@ -14,7 +14,9 @@ class UniqueKeyLoader(yaml.SafeLoader):
     pass
 
 
-def _construct_mapping(loader: UniqueKeyLoader, node: yaml.Node, deep: bool = False) -> dict[Any, Any]:
+def _construct_mapping(
+    loader: UniqueKeyLoader, node: yaml.Node, deep: bool = False
+) -> dict[Any, Any]:
     mapping: dict[Any, Any] = {}
     for key_node, value_node in node.value:
         key = loader.construct_object(key_node, deep=deep)
@@ -88,16 +90,22 @@ def sha256_file(path: Path) -> str:
 
 def resolve_contained_file(root: Path, relative: str, *, code: str) -> Path:
     if not isinstance(relative, str) or not relative:
-        raise AdapterFailure(code, "input_compatibility", "Portable path must be a non-empty string")
+        raise AdapterFailure(
+            code, "input_compatibility", "Portable path must be a non-empty string"
+        )
     candidate = Path(relative)
     if candidate.is_absolute():
-        raise AdapterFailure(code, "input_compatibility", f"Absolute portable path is forbidden: {relative}")
+        raise AdapterFailure(
+            code, "input_compatibility", f"Absolute portable path is forbidden: {relative}"
+        )
     root_resolved = root.resolve()
     resolved = (root_resolved / candidate).resolve()
     try:
         resolved.relative_to(root_resolved)
     except ValueError as exc:
-        raise AdapterFailure(code, "input_compatibility", f"Portable path escapes its bundle root: {relative}") from exc
+        raise AdapterFailure(
+            code, "input_compatibility", f"Portable path escapes its bundle root: {relative}"
+        ) from exc
     return resolved
 
 

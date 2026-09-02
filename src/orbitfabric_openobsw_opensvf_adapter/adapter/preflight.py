@@ -28,14 +28,11 @@ from .projection import resolve_core_bindings, resolve_projection
 from .verification_plan import write_verification_projection_plan
 from .verification_projector import project_verification_scenario
 
-
 PACKAGE_ROOT = Path(__file__).resolve().parents[1]
 VERIFICATION_ROOT = Path("verification_projection")
 VERIFICATION_PLAN_PATH = VERIFICATION_ROOT / "verification_projection_plan.json"
 VERIFICATION_MATERIALIZATION_ROOT = VERIFICATION_ROOT / "opensvf"
-DEFAULT_SPACECRAFT_TEMPLATE = (
-    PACKAGE_ROOT / "resources" / "opensvf" / "stage7_10_spacecraft.yaml"
-)
+DEFAULT_SPACECRAFT_TEMPLATE = PACKAGE_ROOT / "resources" / "opensvf" / "stage7_10_spacecraft.yaml"
 
 
 def _success_result(

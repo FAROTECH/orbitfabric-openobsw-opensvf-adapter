@@ -9,11 +9,8 @@ from jsonschema import Draft202012Validator
 from .io import load_json, sha256_file
 from .model import AdapterFailure
 
-
 PACKAGE_ROOT = Path(__file__).resolve().parents[1]
-DEFAULT_SCHEMA_PATH = (
-    PACKAGE_ROOT / "schemas" / "verification-projection-plan-0.1.schema.json"
-)
+DEFAULT_SCHEMA_PATH = PACKAGE_ROOT / "schemas" / "verification-projection-plan-0.1.schema.json"
 
 
 def _failure(message: str, *, code: str = "OFI-VPROJ-PLAN-001") -> AdapterFailure:
@@ -28,9 +25,7 @@ def _assert_local_refs(value: Any) -> None:
     if isinstance(value, dict):
         for key, child in value.items():
             if key == "$ref" and isinstance(child, str) and not child.startswith("#/"):
-                raise _failure(
-                    f"Remote or non-local JSON Schema $ref is forbidden: {child}"
-                )
+                raise _failure(f"Remote or non-local JSON Schema $ref is forbidden: {child}")
             _assert_local_refs(child)
     elif isinstance(value, list):
         for child in value:
@@ -63,8 +58,7 @@ def validate_verification_projection_plan(
         first = errors[0]
         path = ".".join(str(part) for part in first.absolute_path) or "<root>"
         raise _failure(
-            f"Verification Projection Plan schema validation failed at "
-            f"{path}: {first.message}"
+            f"Verification Projection Plan schema validation failed at {path}: {first.message}"
         )
 
     _validate_semantics(payload)
@@ -93,9 +87,7 @@ def _validate_semantics(payload: dict[str, Any]) -> None:
 
     dispositions = {
         "projected": sum(1 for atom in atoms if atom["disposition"] == "projected"),
-        "not_projected": sum(
-            1 for atom in atoms if atom["disposition"] == "not_projected"
-        ),
+        "not_projected": sum(1 for atom in atoms if atom["disposition"] == "not_projected"),
         "blocked": sum(1 for atom in atoms if atom["disposition"] == "blocked"),
     }
     roles = {
@@ -104,15 +96,12 @@ def _validate_semantics(payload: dict[str, Any]) -> None:
     }
     projected_roles = {
         "action": sum(
-            1
-            for atom in atoms
-            if atom["role"] == "action" and atom["disposition"] == "projected"
+            1 for atom in atoms if atom["role"] == "action" and atom["disposition"] == "projected"
         ),
         "expectation": sum(
             1
             for atom in atoms
-            if atom["role"] == "expectation"
-            and atom["disposition"] == "projected"
+            if atom["role"] == "expectation" and atom["disposition"] == "projected"
         ),
     }
     obligation_count = sum(
@@ -143,17 +132,13 @@ def _validate_semantics(payload: dict[str, Any]) -> None:
         + accounting["not_projected_atoms"]
         + accounting["blocked_atoms"]
     ):
-        raise _failure(
-            "Verification Projection Plan source atom accounting does not reconcile"
-        )
+        raise _failure("Verification Projection Plan source atom accounting does not reconcile")
 
     if accounting["blocked_atoms"] > 0 and payload["status"] != "blocked":
         raise _failure("A plan with blocked atoms must have status=blocked")
 
     if accounting["blocked_atoms"] == 0 and payload["status"] != "executable_subset":
-        raise _failure(
-            "A v0 plan with no blocked atoms must have status=executable_subset"
-        )
+        raise _failure("A v0 plan with no blocked atoms must have status=executable_subset")
 
     atom_by_id = {item["id"]: item for item in atoms}
     operation_by_id = {item["id"]: item for item in operations}
@@ -164,16 +149,12 @@ def _validate_semantics(payload: dict[str, Any]) -> None:
             raise _failure(f"Atom {atom['id']} contains duplicate operation references")
 
         if atom["disposition"] != "projected" and refs:
-            raise _failure(
-                f"Non-projected atom {atom['id']} must not own executable operations"
-            )
+            raise _failure(f"Non-projected atom {atom['id']} must not own executable operations")
 
         for operation_id in refs:
             operation = operation_by_id.get(operation_id)
             if operation is None:
-                raise _failure(
-                    f"Atom {atom['id']} references unknown operation {operation_id}"
-                )
+                raise _failure(f"Atom {atom['id']} references unknown operation {operation_id}")
             if operation["source_atom_id"] != atom["id"]:
                 raise _failure(
                     f"Operation {operation_id} source_atom_id does not match "
@@ -184,19 +165,15 @@ def _validate_semantics(payload: dict[str, Any]) -> None:
             source = atom["source"]
             if not isinstance(source, dict) or source.get("domain") != "commands":
                 raise _failure(
-                    f"Projected command atom {atom['id']} must resolve a Core "
-                    "commands entity"
+                    f"Projected command atom {atom['id']} must resolve a Core commands entity"
                 )
             if atom["binding_id"] is None:
-                raise _failure(
-                    f"Projected command atom {atom['id']} must record a Profile binding"
-                )
+                raise _failure(f"Projected command atom {atom['id']} must record a Profile binding")
             owned = [operation_by_id[item] for item in refs]
             tc_ops = [item for item in owned if item["operation"] == "pus_tc"]
             if len(tc_ops) != 1:
                 raise _failure(
-                    f"Projected command atom {atom['id']} must own exactly one "
-                    "pus_tc operation"
+                    f"Projected command atom {atom['id']} must own exactly one pus_tc operation"
                 )
             if tc_ops[0]["origin"] != "profile_mapping":
                 raise _failure(
@@ -205,9 +182,7 @@ def _validate_semantics(payload: dict[str, Any]) -> None:
                 )
 
         if atom["disposition"] == "projected" and atom["role"] == "expectation":
-            raise _failure(
-                "Stage 7.10 v0 does not admit projected OrbitFabric expectation atoms"
-            )
+            raise _failure("Stage 7.10 v0 does not admit projected OrbitFabric expectation atoms")
 
         if atom["disposition"] == "projected" and atom["kind"] == "scenario_metadata":
             if refs:
@@ -225,13 +200,11 @@ def _validate_semantics(payload: dict[str, Any]) -> None:
             )
         if atom["disposition"] != "projected":
             raise _failure(
-                f"Operation {operation['id']} references non-projected atom "
-                f"{atom['id']}"
+                f"Operation {operation['id']} references non-projected atom {atom['id']}"
             )
         if operation["id"] not in atom["operation_ids"]:
             raise _failure(
-                f"Operation {operation['id']} is not declared by source atom "
-                f"{atom['id']}"
+                f"Operation {operation['id']} is not declared by source atom {atom['id']}"
             )
         if atom["binding_id"] != operation["binding_id"]:
             raise _failure(
@@ -311,9 +284,7 @@ def validate_verification_projection_provenance(
 
 def _validate_profile_operations(payload: dict[str, Any], profile: Any) -> None:
     project_bindings = {
-        binding["id"]: binding
-        for binding in profile.bindings
-        if binding.get("intent") == "project"
+        binding["id"]: binding for binding in profile.bindings if binding.get("intent") == "project"
     }
     default_apid = profile.document["settings"]["pus"]["tc_apid"]
     operations = {item["id"]: item for item in payload["operations"]}
@@ -361,13 +332,10 @@ def _validate_profile_operations(payload: dict[str, Any], profile: Any) -> None:
 
         declared_responses = config.get("expected_responses", [])
         actual_responses = [
-            item["resolved"]
-            for item in owned
-            if item["operation"] == "expect_pus_tm"
+            item["resolved"] for item in owned if item["operation"] == "expect_pus_tm"
         ]
         expected_responses = [
-            {"service": item["service"], "subtype": item["subtype"]}
-            for item in declared_responses
+            {"service": item["service"], "subtype": item["subtype"]} for item in declared_responses
         ]
         if actual_responses != expected_responses:
             raise _failure(
@@ -377,10 +345,7 @@ def _validate_profile_operations(payload: dict[str, Any], profile: Any) -> None:
             )
         total_expected_responses += len(expected_responses)
 
-    if (
-        payload["accounting"]["profile_verification_obligations"]
-        != total_expected_responses
-    ):
+    if payload["accounting"]["profile_verification_obligations"] != total_expected_responses:
         raise _failure(
             "Plan Profile verification obligation accounting does not match "
             "consumed Profile expected_responses",

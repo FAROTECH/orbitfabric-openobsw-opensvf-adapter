@@ -45,7 +45,9 @@ def build_coverage(
             reason = None
         else:
             state = "not_projected"
-            reason = "No Projection Profile binding projects this Core entity in the current operation."
+            reason = (
+                "No Projection Profile binding projects this Core entity in the current operation."
+            )
         records.append(
             {
                 "source": _source_ref(source_key),

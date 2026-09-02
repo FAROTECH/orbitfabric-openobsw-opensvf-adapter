@@ -7,7 +7,7 @@ from typing import Any
 from jsonschema import Draft202012Validator
 
 from .io import load_json, load_yaml, sha256_file
-from .model import AdapterFailure, INTEGRATION_ID, PROFILE_SCHEMA_VERSION, PROFILE_VERSION
+from .model import INTEGRATION_ID, PROFILE_SCHEMA_VERSION, PROFILE_VERSION, AdapterFailure
 
 PACKAGE_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_SCHEMA_PATH = PACKAGE_ROOT / "schemas" / "profile-0.1.schema.json"
@@ -78,7 +78,11 @@ def _semantic_errors(profile: dict[str, Any]) -> list[str]:
     projected_tm: set[tuple[str, str]] = set()
 
     settings = profile.get("settings", {})
-    severity_map = settings.get("obsw_srdb", {}).get("event_severity_map", {}) if isinstance(settings, dict) else {}
+    severity_map = (
+        settings.get("obsw_srdb", {}).get("event_severity_map", {})
+        if isinstance(settings, dict)
+        else {}
+    )
     order = {"INFO": 0, "LOW": 1, "MEDIUM": 2, "HIGH": 3}
     values = [severity_map.get(key) for key in ("info", "warning", "error", "critical")]
     if all(value in order for value in values):
@@ -108,7 +112,9 @@ def _semantic_errors(profile: dict[str, Any]) -> list[str]:
             continue
         domain = source[0]
         config = binding.get("config") if isinstance(binding.get("config"), dict) else {}
-        flight = config.get("flight_contract") if isinstance(config.get("flight_contract"), dict) else {}
+        flight = (
+            config.get("flight_contract") if isinstance(config.get("flight_contract"), dict) else {}
+        )
         srdb = config.get("obsw_srdb") if isinstance(config.get("obsw_srdb"), dict) else {}
         pus = config.get("pus") if isinstance(config.get("pus"), dict) else {}
 
@@ -151,7 +157,13 @@ def _semantic_errors(profile: dict[str, Any]) -> list[str]:
                 if event_id in event_ids:
                     errors.append(f"duplicate obsw-srdb event ID {event_id}")
                 event_ids.add(event_id)
-            if pus or "parameter_id" in srdb or "hk_set" in srdb or "command_id" in flight or "expected_responses" in config:
+            if (
+                pus
+                or "parameter_id" in srdb
+                or "hk_set" in srdb
+                or "command_id" in flight
+                or "expected_responses" in config
+            ):
                 errors.append(f"illegal event target configuration in {binding.get('id')}")
 
         elif domain == "packets":
@@ -174,13 +186,21 @@ def _semantic_errors(profile: dict[str, Any]) -> list[str]:
                         seen_fields.add(key)
                         if key not in projected_tm:
                             errors.append(f"HK field {key} has no projected telemetry binding")
-            if pus or "parameter_id" in srdb or "event_id" in srdb or "command_id" in flight or "expected_responses" in config:
+            if (
+                pus
+                or "parameter_id" in srdb
+                or "event_id" in srdb
+                or "command_id" in flight
+                or "expected_responses" in config
+            ):
                 errors.append(f"illegal packet target configuration in {binding.get('id')}")
 
     return errors
 
 
-def load_projection_profile(profile_path: Path, *, schema_path: Path = DEFAULT_SCHEMA_PATH) -> ProjectionProfile:
+def load_projection_profile(
+    profile_path: Path, *, schema_path: Path = DEFAULT_SCHEMA_PATH
+) -> ProjectionProfile:
     profile_path = profile_path.resolve()
     schema_path = schema_path.resolve()
     profile = load_yaml(profile_path)
@@ -194,7 +214,9 @@ def load_projection_profile(profile_path: Path, *, schema_path: Path = DEFAULT_S
             f"Package Projection Profile schema is invalid: {exc}",
         ) from exc
     _assert_local_refs(schema)
-    errors = sorted(Draft202012Validator(schema).iter_errors(profile), key=lambda item: list(item.absolute_path))
+    errors = sorted(
+        Draft202012Validator(schema).iter_errors(profile), key=lambda item: list(item.absolute_path)
+    )
     if errors:
         first = errors[0]
         path = ".".join(str(part) for part in first.absolute_path) or "<root>"
@@ -204,11 +226,24 @@ def load_projection_profile(profile_path: Path, *, schema_path: Path = DEFAULT_S
             f"Projection Profile schema validation failed at {path}: {first.message}",
         )
 
-    if profile.get("kind") != "orbitfabric.projection_profile" or profile.get("profile_version") != PROFILE_VERSION:
-        raise AdapterFailure("OFI-PROFILE-SCHEMA-001", "profile_schema", "Unsupported Projection Profile envelope")
+    if (
+        profile.get("kind") != "orbitfabric.projection_profile"
+        or profile.get("profile_version") != PROFILE_VERSION
+    ):
+        raise AdapterFailure(
+            "OFI-PROFILE-SCHEMA-001", "profile_schema", "Unsupported Projection Profile envelope"
+        )
     integration = profile.get("integration")
-    if not isinstance(integration, dict) or integration.get("id") != INTEGRATION_ID or integration.get("schema_version") != PROFILE_SCHEMA_VERSION:
-        raise AdapterFailure("OFI-PROFILE-SCHEMA-001", "profile_schema", "Projection Profile integration/schema identity mismatch")
+    if (
+        not isinstance(integration, dict)
+        or integration.get("id") != INTEGRATION_ID
+        or integration.get("schema_version") != PROFILE_SCHEMA_VERSION
+    ):
+        raise AdapterFailure(
+            "OFI-PROFILE-SCHEMA-001",
+            "profile_schema",
+            "Projection Profile integration/schema identity mismatch",
+        )
 
     semantic_errors = _semantic_errors(profile)
     if semantic_errors:

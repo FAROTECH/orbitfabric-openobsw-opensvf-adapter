@@ -13,7 +13,6 @@ from .preflight import (
 )
 from .result import failed_result, unavailable_operation_input, write_result
 
-
 PROJECT_OPERATION = "project"
 VERIFICATION_OPERATION = "verification_projection"
 SCENARIO_ROLE = "scenario"
@@ -32,10 +31,7 @@ def _parser() -> argparse.ArgumentParser:
         nargs=2,
         metavar=("ROLE", "PATH"),
         default=[],
-        help=(
-            "Operation-input v1 binding. Repeat as "
-            "--operation-input ROLE PATH."
-        ),
+        help=("Operation-input v1 binding. Repeat as --operation-input ROLE PATH."),
     )
     run.add_argument("--output-dir", required=True)
     return parser

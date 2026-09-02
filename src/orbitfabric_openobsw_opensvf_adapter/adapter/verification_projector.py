@@ -17,7 +17,6 @@ from .profile import ProjectionProfile, load_projection_profile
 from .projection import resolve_core_bindings, resolve_projection
 from .verification_plan import validate_verification_projection_provenance
 
-
 PLAN_VERSION = "0.1-candidate"
 
 KNOWN_EXPECT_KEYS = {
@@ -37,27 +36,19 @@ NOT_PROJECTED_REASONS = {
         "target runtime initialization."
     ),
     "telemetry_injection": (
-        "Stage 7.10 v0 has no explicit Core telemetry injection to target "
-        "injection mapping."
+        "Stage 7.10 v0 has no explicit Core telemetry injection to target injection mapping."
     ),
-    "expect_mode": (
-        "Stage 7.10 v0 has no explicit Core mode to target observation mapping."
-    ),
-    "expect_event": (
-        "Stage 7.10 v0 does not identify Core events from target PUS subtype "
-        "alone."
-    ),
+    "expect_mode": ("Stage 7.10 v0 has no explicit Core mode to target observation mapping."),
+    "expect_event": ("Stage 7.10 v0 does not identify Core events from target PUS subtype alone."),
     "expect_command": (
         "Stage 7.10 v0 does not map Core host-side command dispatch history "
         "to target runtime evidence."
     ),
     "expect_command_status": (
-        "Core host-side command_status semantics are not equivalent to PUS "
-        "acceptance telemetry."
+        "Core host-side command_status semantics are not equivalent to PUS acceptance telemetry."
     ),
     "expect_telemetry": (
-        "Stage 7.10 v0 has no explicit Core telemetry to target observation "
-        "mapping."
+        "Stage 7.10 v0 has no explicit Core telemetry to target observation mapping."
     ),
     "expect_payload_lifecycle": (
         "Stage 7.10 v0 has no target payload lifecycle observation contract."
@@ -295,9 +286,7 @@ def _load_orbitfabric_scenario(scenario_path: Path) -> tuple[Any, str]:
     try:
         loaded = ScenarioLoader().load(scenario_path.resolve())
     except MissionModelError as exc:
-        details = "; ".join(
-            f"{item.code}: {item.message}" for item in exc.diagnostics[:3]
-        )
+        details = "; ".join(f"{item.code}: {item.message}" for item in exc.diagnostics[:3])
         raise AdapterFailure(
             "OFI-VPROJ-SCENARIO-001",
             "verification_projection",
@@ -591,16 +580,11 @@ def _project_nested_expectations(
         raise AdapterFailure(
             "OFI-VPROJ-SCENARIO-002",
             "verification_projection",
-            "Scenario contains an empty expect mapping with no documented "
-            "expectation semantics.",
+            "Scenario contains an empty expect mapping with no documented expectation semantics.",
         )
 
     if "command_status" in expectation:
-        source = (
-            _core_source(core, "commands", step.command)
-            if step.command is not None
-            else None
-        )
+        source = _core_source(core, "commands", step.command) if step.command is not None else None
         builder.add_atom(
             kind="expect_command_status",
             role="expectation",
@@ -614,11 +598,7 @@ def _project_nested_expectations(
     if "payload_lifecycle" in expectation:
         payload = expectation["payload_lifecycle"]
         payload_id = payload.get("payload") if isinstance(payload, dict) else None
-        source = (
-            _core_source(core, "payloads", payload_id)
-            if isinstance(payload_id, str)
-            else None
-        )
+        source = _core_source(core, "payloads", payload_id) if isinstance(payload_id, str) else None
         builder.add_atom(
             kind="expect_payload_lifecycle",
             role="expectation",
@@ -631,13 +611,9 @@ def _project_nested_expectations(
 
     if "data_flow" in expectation:
         data_flow = expectation["data_flow"]
-        product_id = (
-            data_flow.get("data_product") if isinstance(data_flow, dict) else None
-        )
+        product_id = data_flow.get("data_product") if isinstance(data_flow, dict) else None
         source = (
-            _core_source(core, "data_products", product_id)
-            if isinstance(product_id, str)
-            else None
+            _core_source(core, "data_products", product_id) if isinstance(product_id, str) else None
         )
         builder.add_atom(
             kind="expect_data_flow",
@@ -685,29 +661,18 @@ def _build_accounting(
 ) -> dict[str, int]:
     return {
         "source_atoms": len(atoms),
-        "projected_atoms": sum(
-            1 for atom in atoms if atom["disposition"] == "projected"
-        ),
-        "not_projected_atoms": sum(
-            1 for atom in atoms if atom["disposition"] == "not_projected"
-        ),
-        "blocked_atoms": sum(
-            1 for atom in atoms if atom["disposition"] == "blocked"
-        ),
+        "projected_atoms": sum(1 for atom in atoms if atom["disposition"] == "projected"),
+        "not_projected_atoms": sum(1 for atom in atoms if atom["disposition"] == "not_projected"),
+        "blocked_atoms": sum(1 for atom in atoms if atom["disposition"] == "blocked"),
         "source_actions": sum(1 for atom in atoms if atom["role"] == "action"),
-        "source_expectations": sum(
-            1 for atom in atoms if atom["role"] == "expectation"
-        ),
+        "source_expectations": sum(1 for atom in atoms if atom["role"] == "expectation"),
         "projected_source_actions": sum(
-            1
-            for atom in atoms
-            if atom["role"] == "action" and atom["disposition"] == "projected"
+            1 for atom in atoms if atom["role"] == "action" and atom["disposition"] == "projected"
         ),
         "projected_source_expectations": sum(
             1
             for atom in atoms
-            if atom["role"] == "expectation"
-            and atom["disposition"] == "projected"
+            if atom["role"] == "expectation" and atom["disposition"] == "projected"
         ),
         "profile_verification_obligations": sum(
             1 for operation in operations if operation["operation"] == "expect_pus_tm"

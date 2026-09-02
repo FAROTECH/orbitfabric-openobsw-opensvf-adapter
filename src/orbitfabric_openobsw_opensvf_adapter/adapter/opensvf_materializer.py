@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import json
-import shutil
 from pathlib import Path
 from typing import Any
 
@@ -10,7 +9,6 @@ import yaml
 from .io import sha256_file
 from .model import AdapterFailure
 from .verification_plan import load_verification_projection_plan
-
 
 MATERIALIZATION_KIND = "orbitfabric.opensvf_materialization"
 MATERIALIZATION_VERSION = "0.1-candidate"
@@ -107,9 +105,7 @@ def materialize_opensvf_plan(
                 "plan_operation": operation["operation"],
                 "procedure_step_index": step_index,
                 "native_primitive": (
-                    "ctx.tc"
-                    if operation["operation"] == "pus_tc"
-                    else "ctx.expect_tm"
+                    "ctx.tc" if operation["operation"] == "pus_tc" else "ctx.expect_tm"
                 ),
             }
         )
@@ -213,10 +209,7 @@ def _operation_lines(
 
     if operation["operation"] == "pus_tc":
         data_hex = resolved["data_hex"]
-        step = (
-            f"{operation_id}: Send PUS TC("
-            f"{resolved['service']},{resolved['subtype']})"
-        )
+        step = f"{operation_id}: Send PUS TC({resolved['service']},{resolved['subtype']})"
         return [
             f"        self.step({_py_string(step)})",
             (
@@ -230,10 +223,7 @@ def _operation_lines(
         ]
 
     if operation["operation"] == "expect_pus_tm":
-        step = (
-            f"{operation_id}: Expect PUS TM("
-            f"{resolved['service']},{resolved['subtype']})"
-        )
+        step = f"{operation_id}: Expect PUS TM({resolved['service']},{resolved['subtype']})"
         return [
             f"        self.step({_py_string(step)})",
             (
@@ -248,8 +238,7 @@ def _operation_lines(
     raise AdapterFailure(
         "OFI-VPROJ-MAT-002",
         "verification_materialization",
-        f"Unsupported Verification Projection Plan operation: "
-        f"{operation['operation']!r}",
+        f"Unsupported Verification Projection Plan operation: {operation['operation']!r}",
     )
 
 

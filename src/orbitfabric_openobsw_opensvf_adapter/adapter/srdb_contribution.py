@@ -111,9 +111,7 @@ def build_srdb_contribution(
                 )
             elif action == "contribute_new":
                 pus = binding["config"]["pus"]
-                type_map = baseline.document["adapter_projection_rules"][
-                    "core_scalar_to_obsw_srdb"
-                ]
+                type_map = baseline.document["adapter_projection_rules"]["core_scalar_to_obsw_srdb"]
                 parameters: list[dict[str, Any]] = []
                 for argument in semantic.get("arguments", []):
                     target_type = type_map.get(argument.get("type"))

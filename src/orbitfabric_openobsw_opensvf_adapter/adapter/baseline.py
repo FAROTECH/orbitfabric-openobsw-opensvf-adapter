@@ -117,10 +117,7 @@ def load_target_baseline(identifier: str) -> TargetBaseline:
     _assert_unique(allocations.get("hk_sets", []), "name", "HK name")
 
     telecommands = allocations.get("telecommands", [])
-    tuples = [
-        (item.get("apid"), item.get("service"), item.get("subtype"))
-        for item in telecommands
-    ]
+    tuples = [(item.get("apid"), item.get("service"), item.get("subtype")) for item in telecommands]
     if len(tuples) != len(set(tuples)):
         raise AdapterFailure(
             "OFI-COMP-BASELINE-002",

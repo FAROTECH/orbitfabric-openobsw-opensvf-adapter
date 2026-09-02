@@ -4,7 +4,6 @@ import json
 from pathlib import Path
 
 from orbitfabric_openobsw_opensvf_adapter.adapter.preflight import run_project
-
 from tests.helpers import build_input_set
 
 ROOT = Path(__file__).resolve().parents[1]

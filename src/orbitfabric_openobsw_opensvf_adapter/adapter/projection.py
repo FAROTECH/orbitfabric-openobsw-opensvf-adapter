@@ -57,7 +57,9 @@ def resolution_record(
     }
 
 
-def resolve_core_bindings(core: CoreInputSet, profile: ProjectionProfile) -> dict[str, dict[str, Any]]:
+def resolve_core_bindings(
+    core: CoreInputSet, profile: ProjectionProfile
+) -> dict[str, dict[str, Any]]:
     resolved: dict[str, dict[str, Any]] = {}
     for binding in profile.bindings:
         if binding.get("intent") != "project":
@@ -189,7 +191,11 @@ def _project_telemetry(
             mapping_record(
                 binding,
                 [
-                    target_ref("openobsw", "contract_symbol", binding["config"]["flight_contract"]["c_symbol"]),
+                    target_ref(
+                        "openobsw",
+                        "contract_symbol",
+                        binding["config"]["flight_contract"]["c_symbol"],
+                    ),
                     target_ref("obsw-srdb", "parameter", name),
                 ],
             )
@@ -197,9 +203,33 @@ def _project_telemetry(
         projected[source] = name
         resolutions.extend(
             [
-                resolution_record(identifier=f"resolution.{binding['id']}.tm_apid", mapping=mapping_id, binding=binding["id"], source=source, property_name="tm_apid", value=settings_pus["tm_apid"], origin="profile"),
-                resolution_record(identifier=f"resolution.{binding['id']}.parameter_id", mapping=mapping_id, binding=binding["id"], source=source, property_name="obsw_srdb.parameter_id", value=parameter_id, origin="profile"),
-                resolution_record(identifier=f"resolution.{binding['id']}.target_type", mapping=mapping_id, binding=binding["id"], source=source, property_name="obsw_srdb.type", value=target_type, origin="core"),
+                resolution_record(
+                    identifier=f"resolution.{binding['id']}.tm_apid",
+                    mapping=mapping_id,
+                    binding=binding["id"],
+                    source=source,
+                    property_name="tm_apid",
+                    value=settings_pus["tm_apid"],
+                    origin="profile",
+                ),
+                resolution_record(
+                    identifier=f"resolution.{binding['id']}.parameter_id",
+                    mapping=mapping_id,
+                    binding=binding["id"],
+                    source=source,
+                    property_name="obsw_srdb.parameter_id",
+                    value=parameter_id,
+                    origin="profile",
+                ),
+                resolution_record(
+                    identifier=f"resolution.{binding['id']}.target_type",
+                    mapping=mapping_id,
+                    binding=binding["id"],
+                    source=source,
+                    property_name="obsw_srdb.type",
+                    value=target_type,
+                    origin="core",
+                ),
             ]
         )
     return projected
@@ -272,17 +302,53 @@ def _project_packets(
             mapping_record(
                 binding,
                 [
-                    target_ref("openobsw", "contract_symbol", binding["config"]["flight_contract"]["c_symbol"]),
+                    target_ref(
+                        "openobsw",
+                        "contract_symbol",
+                        binding["config"]["flight_contract"]["c_symbol"],
+                    ),
                     target_ref("obsw-srdb", "hk_set", name),
                 ],
             )
         )
         resolutions.extend(
             [
-                resolution_record(identifier=f"resolution.{binding['id']}.sid", mapping=mapping_id, binding=binding["id"], source=source, property_name="obsw_srdb.hk_set.sid", value=sid, origin="profile"),
-                resolution_record(identifier=f"resolution.{binding['id']}.fields", mapping=mapping_id, binding=binding["id"], source=source, property_name="obsw_srdb.hk_set.fields", value=fields, origin="profile"),
-                resolution_record(identifier=f"resolution.{binding['id']}.default_interval_ticks", mapping=mapping_id, binding=binding["id"], source=source, property_name="obsw_srdb.default_interval_ticks", value=rules["new_hk_default_interval_ticks"], origin="adapter_default"),
-                resolution_record(identifier=f"resolution.{binding['id']}.tm_layout", mapping=mapping_id, binding=binding["id"], source=source, property_name="obsw_srdb.application_data_start_bit", value=pus_baseline["tm_layout"]["obsw_srdb_application_data_start_bit"], origin="adapter_default"),
+                resolution_record(
+                    identifier=f"resolution.{binding['id']}.sid",
+                    mapping=mapping_id,
+                    binding=binding["id"],
+                    source=source,
+                    property_name="obsw_srdb.hk_set.sid",
+                    value=sid,
+                    origin="profile",
+                ),
+                resolution_record(
+                    identifier=f"resolution.{binding['id']}.fields",
+                    mapping=mapping_id,
+                    binding=binding["id"],
+                    source=source,
+                    property_name="obsw_srdb.hk_set.fields",
+                    value=fields,
+                    origin="profile",
+                ),
+                resolution_record(
+                    identifier=f"resolution.{binding['id']}.default_interval_ticks",
+                    mapping=mapping_id,
+                    binding=binding["id"],
+                    source=source,
+                    property_name="obsw_srdb.default_interval_ticks",
+                    value=rules["new_hk_default_interval_ticks"],
+                    origin="adapter_default",
+                ),
+                resolution_record(
+                    identifier=f"resolution.{binding['id']}.tm_layout",
+                    mapping=mapping_id,
+                    binding=binding["id"],
+                    source=source,
+                    property_name="obsw_srdb.application_data_start_bit",
+                    value=pus_baseline["tm_layout"]["obsw_srdb_application_data_start_bit"],
+                    origin="adapter_default",
+                ),
             ]
         )
 
@@ -318,7 +384,9 @@ def _project_commands(
                 profile_bindings=[binding["id"]],
             )
         for response in binding["config"].get("expected_responses", []):
-            require_message(messages, "TM", response["service"], response["subtype"], binding=binding["id"])
+            require_message(
+                messages, "TM", response["service"], response["subtype"], binding=binding["id"]
+            )
 
         existing = [
             item
@@ -364,17 +432,53 @@ def _project_commands(
             mapping_record(
                 binding,
                 [
-                    target_ref("openobsw", "contract_symbol", binding["config"]["flight_contract"]["c_symbol"]),
+                    target_ref(
+                        "openobsw",
+                        "contract_symbol",
+                        binding["config"]["flight_contract"]["c_symbol"],
+                    ),
                     target_ref("obsw-srdb", "telecommand", name),
                 ],
             )
         )
         resolutions.extend(
             [
-                resolution_record(identifier=f"resolution.{binding['id']}.command_id", mapping=mapping_id, binding=binding["id"], source=source, property_name="flight_contract.command_id", value=binding["config"]["flight_contract"]["command_id"], origin="profile"),
-                resolution_record(identifier=f"resolution.{binding['id']}.tc_apid", mapping=mapping_id, binding=binding["id"], source=source, property_name="pus.tc_apid", value=apid, origin="profile"),
-                resolution_record(identifier=f"resolution.{binding['id']}.target_action", mapping=mapping_id, binding=binding["id"], source=source, property_name="obsw_srdb.telecommand_action", value=action, origin="adapter_default"),
-                resolution_record(identifier=f"resolution.{binding['id']}.target_name", mapping=mapping_id, binding=binding["id"], source=source, property_name="obsw_srdb.telecommand_name", value=name, origin="adapter_default"),
+                resolution_record(
+                    identifier=f"resolution.{binding['id']}.command_id",
+                    mapping=mapping_id,
+                    binding=binding["id"],
+                    source=source,
+                    property_name="flight_contract.command_id",
+                    value=binding["config"]["flight_contract"]["command_id"],
+                    origin="profile",
+                ),
+                resolution_record(
+                    identifier=f"resolution.{binding['id']}.tc_apid",
+                    mapping=mapping_id,
+                    binding=binding["id"],
+                    source=source,
+                    property_name="pus.tc_apid",
+                    value=apid,
+                    origin="profile",
+                ),
+                resolution_record(
+                    identifier=f"resolution.{binding['id']}.target_action",
+                    mapping=mapping_id,
+                    binding=binding["id"],
+                    source=source,
+                    property_name="obsw_srdb.telecommand_action",
+                    value=action,
+                    origin="adapter_default",
+                ),
+                resolution_record(
+                    identifier=f"resolution.{binding['id']}.target_name",
+                    mapping=mapping_id,
+                    binding=binding["id"],
+                    source=source,
+                    property_name="obsw_srdb.telecommand_name",
+                    value=name,
+                    origin="adapter_default",
+                ),
             ]
         )
 
@@ -424,16 +528,52 @@ def _project_events(
             mapping_record(
                 binding,
                 [
-                    target_ref("openobsw", "contract_symbol", binding["config"]["flight_contract"]["c_symbol"]),
+                    target_ref(
+                        "openobsw",
+                        "contract_symbol",
+                        binding["config"]["flight_contract"]["c_symbol"],
+                    ),
                     target_ref("obsw-srdb", "event", name),
                 ],
             )
         )
         resolutions.extend(
             [
-                resolution_record(identifier=f"resolution.{binding['id']}.event_id", mapping=mapping_id, binding=binding["id"], source=source, property_name="obsw_srdb.event_id", value=event_id, origin="profile"),
-                resolution_record(identifier=f"resolution.{binding['id']}.severity", mapping=mapping_id, binding=binding["id"], source=source, property_name="obsw_srdb.severity", value=target_severity, origin="profile"),
-                resolution_record(identifier=f"resolution.{binding['id']}.pus_subtype", mapping=mapping_id, binding=binding["id"], source=source, property_name="pus.tm_event_subtype", value=subtype, origin="adapter_default"),
-                resolution_record(identifier=f"resolution.{binding['id']}.safe_trigger", mapping=mapping_id, binding=binding["id"], source=source, property_name="obsw_srdb.safe_trigger", value=rules["new_event_safe_trigger"], origin="adapter_default"),
+                resolution_record(
+                    identifier=f"resolution.{binding['id']}.event_id",
+                    mapping=mapping_id,
+                    binding=binding["id"],
+                    source=source,
+                    property_name="obsw_srdb.event_id",
+                    value=event_id,
+                    origin="profile",
+                ),
+                resolution_record(
+                    identifier=f"resolution.{binding['id']}.severity",
+                    mapping=mapping_id,
+                    binding=binding["id"],
+                    source=source,
+                    property_name="obsw_srdb.severity",
+                    value=target_severity,
+                    origin="profile",
+                ),
+                resolution_record(
+                    identifier=f"resolution.{binding['id']}.pus_subtype",
+                    mapping=mapping_id,
+                    binding=binding["id"],
+                    source=source,
+                    property_name="pus.tm_event_subtype",
+                    value=subtype,
+                    origin="adapter_default",
+                ),
+                resolution_record(
+                    identifier=f"resolution.{binding['id']}.safe_trigger",
+                    mapping=mapping_id,
+                    binding=binding["id"],
+                    source=source,
+                    property_name="obsw_srdb.safe_trigger",
+                    value=rules["new_event_safe_trigger"],
+                    origin="adapter_default",
+                ),
             ]
         )

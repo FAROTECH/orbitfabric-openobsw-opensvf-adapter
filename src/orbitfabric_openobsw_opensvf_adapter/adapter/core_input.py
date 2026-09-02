@@ -5,8 +5,7 @@ from pathlib import Path
 from typing import Any
 
 from .io import canonical_input_set_sha256, load_json, resolve_contained_file, sha256_file
-from .model import AdapterFailure, INPUT_SET_VERSION
-
+from .model import INPUT_SET_VERSION, AdapterFailure
 
 SURFACE_SPECS = {
     "entity_index": ("required", "orbitfabric.entity_index", "0.1", "kind", "index_version"),
@@ -78,7 +77,9 @@ class CoreInputSet:
                 f"Mission Snapshot domain is not available as an entity collection: {domain}",
                 sources=[{"domain": domain, "id": identifier}],
             )
-        matches = [item for item in collection if isinstance(item, dict) and item.get("id") == identifier]
+        matches = [
+            item for item in collection if isinstance(item, dict) and item.get("id") == identifier
+        ]
         if len(matches) != 1:
             raise AdapterFailure(
                 "OFI-SOURCE-002",
@@ -143,16 +144,26 @@ def load_core_input_set(manifest_path: Path) -> CoreInputSet:
 
     records = manifest.get("surfaces")
     if not isinstance(records, list):
-        raise AdapterFailure("OFI-INPUT-MANIFEST-001", "input_compatibility", "surfaces must be an array")
+        raise AdapterFailure(
+            "OFI-INPUT-MANIFEST-001", "input_compatibility", "surfaces must be an array"
+        )
     by_role: dict[str, list[dict[str, Any]]] = {}
     for record in records:
         if not isinstance(record, dict) or not isinstance(record.get("role"), str):
-            raise AdapterFailure("OFI-INPUT-MANIFEST-001", "input_compatibility", "Invalid surface record")
+            raise AdapterFailure(
+                "OFI-INPUT-MANIFEST-001", "input_compatibility", "Invalid surface record"
+            )
         by_role.setdefault(record["role"], []).append(record)
 
     payloads: dict[str, dict[str, Any]] = {}
     root = manifest_path.parent
-    for role, (requirement, kind, format_version, identity_field, native_version_field) in SURFACE_SPECS.items():
+    for role, (
+        requirement,
+        kind,
+        format_version,
+        identity_field,
+        native_version_field,
+    ) in SURFACE_SPECS.items():
         role_records = by_role.get(role, [])
         if len(role_records) != 1:
             raise AdapterFailure(
@@ -161,7 +172,11 @@ def load_core_input_set(manifest_path: Path) -> CoreInputSet:
                 f"Expected exactly one Core surface record for role {role}, found {len(role_records)}",
             )
         record = role_records[0]
-        if record.get("requirement") != requirement or record.get("kind") != kind or record.get("format_version") != format_version:
+        if (
+            record.get("requirement") != requirement
+            or record.get("kind") != kind
+            or record.get("format_version") != format_version
+        ):
             raise AdapterFailure(
                 "OFI-INPUT-SURFACE-001",
                 "input_compatibility",
@@ -179,7 +194,11 @@ def load_core_input_set(manifest_path: Path) -> CoreInputSet:
         path = record.get("path")
         declared_sha = record.get("sha256")
         if not isinstance(path, str) or not isinstance(declared_sha, str):
-            raise AdapterFailure("OFI-INPUT-SURFACE-001", "input_compatibility", f"Invalid available surface record for {role}")
+            raise AdapterFailure(
+                "OFI-INPUT-SURFACE-001",
+                "input_compatibility",
+                f"Invalid available surface record for {role}",
+            )
         surface_path = resolve_contained_file(root, path, code="OFI-INPUT-SURFACE-001")
         actual_sha = sha256_file(surface_path)
         if actual_sha != declared_sha:
@@ -219,18 +238,32 @@ def load_core_input_set(manifest_path: Path) -> CoreInputSet:
             "Mission identity mismatch between manifest and model_summary",
         )
     if payloads["mission_snapshot"].get("result") != "loaded":
-        raise AdapterFailure("OFI-INPUT-STATE-001", "input_compatibility", "Mission Snapshot result is not loaded")
+        raise AdapterFailure(
+            "OFI-INPUT-STATE-001", "input_compatibility", "Mission Snapshot result is not loaded"
+        )
 
     entities_payload = payloads["entity_index"].get("entities")
     if not isinstance(entities_payload, list):
-        raise AdapterFailure("OFI-INPUT-SURFACE-001", "input_compatibility", "Entity Index entities array missing")
+        raise AdapterFailure(
+            "OFI-INPUT-SURFACE-001", "input_compatibility", "Entity Index entities array missing"
+        )
     entities: dict[tuple[str, str], dict[str, Any]] = {}
     for item in entities_payload:
-        if not isinstance(item, dict) or not isinstance(item.get("domain"), str) or not isinstance(item.get("id"), str):
-            raise AdapterFailure("OFI-INPUT-SURFACE-001", "input_compatibility", "Invalid Entity Index entity record")
+        if (
+            not isinstance(item, dict)
+            or not isinstance(item.get("domain"), str)
+            or not isinstance(item.get("id"), str)
+        ):
+            raise AdapterFailure(
+                "OFI-INPUT-SURFACE-001", "input_compatibility", "Invalid Entity Index entity record"
+            )
         key = (item["domain"], item["id"])
         if key in entities:
-            raise AdapterFailure("OFI-INPUT-SURFACE-001", "input_compatibility", f"Duplicate Entity Index identity: {key}")
+            raise AdapterFailure(
+                "OFI-INPUT-SURFACE-001",
+                "input_compatibility",
+                f"Duplicate Entity Index identity: {key}",
+            )
         entities[key] = item
 
     return CoreInputSet(
