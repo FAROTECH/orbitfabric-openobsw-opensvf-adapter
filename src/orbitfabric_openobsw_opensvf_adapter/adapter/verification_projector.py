@@ -28,30 +28,34 @@ KNOWN_EXPECT_KEYS = {
 
 NOT_PROJECTED_REASONS = {
     "initial_mode": (
-        "the current verification_projection operation does not project Core scenario initial mode into "
-        "target runtime initialization."
+        "verification_projection does not project Core initial mode into target runtime "
+        "initialization."
     ),
     "initial_telemetry": (
-        "the current verification_projection operation does not project Core scenario initial telemetry into "
-        "target runtime initialization."
+        "verification_projection does not project Core initial telemetry into target runtime "
+        "initialization."
     ),
     "telemetry_injection": (
-        "the current verification_projection operation has no explicit Core telemetry injection to target injection mapping."
+        "verification_projection has no explicit Core telemetry injection mapping."
     ),
-    "expect_mode": ("the current verification_projection operation has no explicit Core mode to target observation mapping."),
-    "expect_event": ("the current verification_projection operation does not identify Core events from target PUS subtype alone."),
+    "expect_mode": (
+        "verification_projection has no explicit Core mode observation mapping."
+    ),
+    "expect_event": (
+        "verification_projection cannot identify Core events from target PUS subtype alone."
+    ),
     "expect_command": (
-        "the current verification_projection operation does not map Core host-side command dispatch history "
-        "to target runtime evidence."
+        "verification_projection does not map Core host command history to target evidence."
+        
     ),
     "expect_command_status": (
         "Core host-side command_status semantics are not equivalent to PUS acceptance telemetry."
     ),
     "expect_telemetry": (
-        "the current verification_projection operation has no explicit Core telemetry to target observation mapping."
+        "verification_projection has no explicit Core telemetry observation mapping."
     ),
     "expect_payload_lifecycle": (
-        "the current verification_projection operation has no target payload lifecycle observation contract."
+        "verification_projection has no target payload lifecycle observation contract."
     ),
     "expect_data_flow": (
         "OrbitFabric data-flow expectation semantics remain host-side Mission "
@@ -431,7 +435,7 @@ def _project_command(
 
     if step.args:
         reason = (
-            "the current verification_projection operation cannot project command arguments without an explicit "
+            "verification_projection cannot project command arguments without an explicit "
             "target argument encoder."
         )
         atom = builder.add_atom(
