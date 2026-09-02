@@ -6,13 +6,13 @@ from pathlib import Path
 
 from orbitfabric.conformance.integration_contracts import validate_manifest
 
-from orbitfabric_dummy_adapter.profile import load_profile
+from orbitfabric_openobsw_opensvf_adapter.profile import load_profile
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
 def test_manifest_conforms_to_core_contract() -> None:
-    manifest_path = files("orbitfabric_dummy_adapter").joinpath("integration_package.json")
+    manifest_path = files("orbitfabric_openobsw_opensvf_adapter").joinpath("integration_package.json")
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
 
     validate_manifest(manifest)
@@ -26,4 +26,4 @@ def test_manifest_conforms_to_core_contract() -> None:
 def test_example_profile_conforms_to_adapter_schema() -> None:
     payload = load_profile(ROOT / "examples" / "profile.yaml")
 
-    assert payload["integration"]["id"] == "orbitfabric-dummy"
+    assert payload["integration"]["id"] == "orbitfabric-openobsw-opensvf"

@@ -13,7 +13,7 @@ from .io import AdapterError, load_yaml
 
 def load_profile(path: Path) -> dict[str, Any]:
     payload = load_yaml(path)
-    schema_path = files("orbitfabric_dummy_adapter").joinpath(
+    schema_path = files("orbitfabric_openobsw_opensvf_adapter").joinpath(
         "schemas/profile-0.1.schema.json"
     )
     schema = json.loads(schema_path.read_text(encoding="utf-8"))

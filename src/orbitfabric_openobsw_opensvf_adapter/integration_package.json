@@ -1,6 +1,6 @@
 {
   "adapter": {
-    "id": "orbitfabric-dummy",
+    "id": "orbitfabric-openobsw-opensvf",
     "version": "0.1.0.dev0"
   },
   "capabilities": [
@@ -23,12 +23,12 @@
   },
   "execution": {
     "argv_prefix": [
-      "orbitfabric-dummy-adapter"
+      "orbitfabric-openobsw-opensvf"
     ],
     "protocol": "orbitfabric.adapter_cli.v1"
   },
   "integration": {
-    "id": "orbitfabric-dummy"
+    "id": "orbitfabric-openobsw-opensvf"
   },
   "kind": "orbitfabric.integration_package",
   "manifest_version": "0.2-candidate",
@@ -62,7 +62,7 @@
       "format": "json-schema-2020-12",
       "path": "schemas/profile-0.1.schema.json",
       "schema_version": "0.1-candidate",
-      "sha256": "993b5ac3cda61f247e210ed76b16ee0d305f50a3b93b3c4864c1da7805b1936a"
+      "sha256": "25a158c4f5aba2159423b20bafe524f0020aef87369aa940a0c8abb9cd1468fb"
     }
   ],
   "result_compatibility": {

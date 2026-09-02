@@ -1,56 +1,127 @@
-# Dummy Adapter Integration Coverage
+# Adapter Integration Coverage Matrix
 
-Status: template example.
+Status: maintainer declaration.
 
-The Dummy Target is intentionally small. This matrix demonstrates that declared scope and total applicable surface are different dimensions.
+This file is a recommended starting point for documenting what an OrbitFabric adapter intends to integrate and how completely it does so.
 
-The Dummy Target exists only to teach the adapter pattern. Its target representations are synthetic and are not OrbitFabric contracts.
+It is not a Core conformance contract.
+
+## Adapter intent
+
+Describe the adapter in one or two sentences.
+
+```text
+Target:
+Adapter purpose:
+Declared scope:
+```
+
+A narrow declared scope is valid. Do not claim coverage that the adapter does not intend to provide.
+
+## Coverage model
+
+```text
+OrbitFabric Semantic Surface
+    -> Target Applicable Surface
+    -> Adapter Declared Scope
+```
+
+The denominator is not the complete feature set of the downstream product.
+
+The question is:
+
+> Of the OrbitFabric semantics that are applicable and meaningfully projectable toward this target, what does this adapter declare and implement?
+
+## Matrix
 
 | OrbitFabric capability area | Target applicable | Target representation or constraint | Adapter declared scope | Disposition | Evidence or rationale | Roadmap |
 | --- | --- | --- | --- | --- | --- | --- |
-| Telemetry entity identity | yes | `dummy.telemetry` item with source and target identity | in scope | FULL | `project` positive test and T4 installed lifecycle | complete |
-| Telemetry scalar type | yes | Dummy telemetry item could carry a scalar type | out of scope | OUT_OF_SCOPE | deliberate narrow Dummy purpose | none |
-| Telemetry engineering unit | yes | Dummy telemetry item could carry an engineering unit | out of scope | OUT_OF_SCOPE | deliberate narrow Dummy purpose | none |
-| Scenario identity and provenance | yes | `dummy.verification_plan` with Scenario identity plus Integration Result input provenance | in scope | FULL | `verification_projection` tests and T4 real Core Scenario proof | complete |
-| Commands | no | Dummy Target has no command model | out of scope | NOT_APPLICABLE | target role definition | none |
-| Events | no | Dummy Target has no event model | out of scope | NOT_APPLICABLE | target role definition | none |
-| Faults | no | Dummy Target has no fault model | out of scope | NOT_APPLICABLE | target role definition | none |
-| Modes | no | Dummy Target has no mode model | out of scope | NOT_APPLICABLE | target role definition | none |
-| Packets | no | Dummy Target has no packet model | out of scope | NOT_APPLICABLE | target role definition | none |
+| Example capability | yes | Target construct or API | in scope | FULL | Test or generated evidence | complete |
+| Example capability | yes | Target construct or API | in scope | PARTIAL | Known semantic gap | close gap |
+| Example capability | yes | Target construct or API | in scope | NOT_IMPLEMENTED | Mapping is possible but absent | planned |
+| Example capability | yes | No adequate target representation | in scope | TARGET_UNSUPPORTED | Compatibility analysis | none unless target evolves |
+| Example capability | yes | Target construct or API | out of scope | OUT_OF_SCOPE | Deliberate adapter purpose | none |
+| Example capability | no | Outside target role | out of scope | NOT_APPLICABLE | Applicability analysis | none |
+| Example capability | unknown | Not assessed yet | undecided | NOT_ANALYZED | Analysis pending | investigate |
+
+Remove the example rows when adapting this file to a real target.
+
+## Disposition meanings
+
+### FULL
+
+The adapter implements the intended mapping for this capability area without a known semantic gap inside its declared scope, and the mapping has supporting evidence.
+
+### PARTIAL
+
+The adapter implements part of the intended mapping, but a known semantic gap, unsupported variant or incomplete projection remains.
+
+### NOT_IMPLEMENTED
+
+The capability is applicable, is inside the adapter declared scope, and has a meaningful target representation, but the adapter does not implement it yet.
+
+### TARGET_UNSUPPORTED
+
+The OrbitFabric concept is relevant to the target role, but the current target does not provide an adequate representation for the required semantics.
+
+This disposition should be supported by compatibility analysis. It is not a substitute for work that has simply not been implemented.
+
+### OUT_OF_SCOPE
+
+The capability is applicable and could be mapped, but this adapter deliberately does not claim it as part of its purpose.
+
+This is a legitimate disposition for focused adapters.
+
+### NOT_APPLICABLE
+
+The OrbitFabric concept does not belong to the role represented by this downstream target.
+
+For example, a flight software adapter does not automatically need to own every ground scheduling concept merely because OrbitFabric can model it.
+
+### NOT_ANALYZED
+
+Applicability or target representation has not yet been assessed.
+
+This is an analysis gap and should not silently be treated as unsupported or out of scope.
 
 ## Summary
 
+Prefer counts and explicit dispositions over a single maturity percentage.
+
 ```text
-Total rows:                 9
-Analyzed rows:              9
-NOT_ANALYZED:               0
+Total rows:
+Analyzed rows:
+NOT_ANALYZED:
 
-Target applicable rows:     4
-Target unsupported rows:    0
+Target applicable rows:
+Target unsupported rows:
 
-Declared in-scope rows:     2
-FULL:                       2
-PARTIAL:                    0
-NOT_IMPLEMENTED:            0
+Declared in-scope rows:
+FULL:
+PARTIAL:
+NOT_IMPLEMENTED:
 
-Applicable but OUT_OF_SCOPE: 2
-NOT_APPLICABLE:               5
+Applicable but OUT_OF_SCOPE:
+NOT_APPLICABLE:
 ```
 
-Interpretation:
+Useful interpretations:
 
 ```text
 Analysis Coverage
-    all candidate rows are classified
+    how much of the candidate OrbitFabric surface has been classified
 
 Scope Completeness
-    2 FULL / 2 declared in scope
+    how completely the adapter implements what it explicitly promises
 
 Applicable Surface Coverage
-    2 FULL capability areas out of 4 applicable areas
-    with 2 additional applicable areas deliberately OUT_OF_SCOPE
+    how broadly the adapter covers the OrbitFabric surface applicable to this target
 ```
 
-The example does not collapse these results into one maturity percentage.
+These are different questions. Do not collapse them into one number when that would hide meaningful gaps.
 
-The Dummy Adapter is complete within its intentionally narrow declared scope. It does not claim complete coverage of every capability that could be represented by the Dummy Target.
+## Policy note
+
+For community adapters, publishing this matrix is recommended, not required by generic Core conformance.
+
+For OrbitFabric-maintained adapters, project policy requires an explicit matrix before maturity and version decisions are made.

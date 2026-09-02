@@ -134,7 +134,7 @@ Read [Adapter Identity](docs/adapter-identity.md) before changing identifiers, a
 ## Repository map
 
 ```text
-src/orbitfabric_dummy_adapter/
+src/orbitfabric_openobsw_opensvf_adapter/
     adapter implementation
     integration_package.json
     schemas/profile-0.1.schema.json

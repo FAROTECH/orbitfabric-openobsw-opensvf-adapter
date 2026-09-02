@@ -1,6 +1,6 @@
-ADAPTER_ID = "orbitfabric-dummy"
+ADAPTER_ID = "orbitfabric-openobsw-opensvf"
 ADAPTER_VERSION = "0.1.0.dev0"
-INTEGRATION_ID = "orbitfabric-dummy"
+INTEGRATION_ID = "orbitfabric-openobsw-opensvf"
 INTEGRATION_SCHEMA_VERSION = "0.1-candidate"
 PROFILE_VERSION = "0.1-candidate"
 RESULT_VERSION = "0.2-candidate"

@@ -43,36 +43,36 @@ It exists to keep the first developer path small and reviewable.
 Project operation:
 
 ```bash
-orbitfabric-dummy-adapter run \
+orbitfabric-openobsw-opensvf run \
   --operation project \
   --input-set-manifest examples/input-set/integration_input_manifest.json \
   --profile examples/profile.yaml \
-  --output-dir /tmp/orbitfabric-dummy-project
+  --output-dir /tmp/orbitfabric-openobsw-opensvf-project
 ```
 
 Inspect:
 
 ```text
-/tmp/orbitfabric-dummy-project/dummy_projection.json
-/tmp/orbitfabric-dummy-project/integration_result.json
+/tmp/orbitfabric-openobsw-opensvf-project/dummy_projection.json
+/tmp/orbitfabric-openobsw-opensvf-project/integration_result.json
 ```
 
 Scenario operation:
 
 ```bash
-orbitfabric-dummy-adapter run \
+orbitfabric-openobsw-opensvf run \
   --operation verification_projection \
   --input-set-manifest examples/input-set/integration_input_manifest.json \
   --profile examples/profile.yaml \
   --operation-input scenario examples/scenario.yaml \
-  --output-dir /tmp/orbitfabric-dummy-verification
+  --output-dir /tmp/orbitfabric-openobsw-opensvf-verification
 ```
 
 Inspect:
 
 ```text
-/tmp/orbitfabric-dummy-verification/dummy_verification_plan.json
-/tmp/orbitfabric-dummy-verification/integration_result.json
+/tmp/orbitfabric-openobsw-opensvf-verification/dummy_verification_plan.json
+/tmp/orbitfabric-openobsw-opensvf-verification/integration_result.json
 ```
 
 Each operation writes a Core-conformant Integration Result plus one synthetic target artifact.
@@ -140,7 +140,7 @@ Then construct a local Release Descriptor and Project Lock:
 
 ```bash
 python tools/build_release_bundle.py \
-  --wheel dist/orbitfabric_dummy_adapter-0.1.0.dev0-py3-none-any.whl \
+  --wheel dist/orbitfabric_openobsw_opensvf_adapter-0.1.0.dev0-py3-none-any.whl \
   --authority template.local \
   --publisher orbitfabric \
   --name dummy-adapter

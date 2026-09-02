@@ -24,7 +24,7 @@ If a Core-owned field, version or semantic rule changes, update the Template and
 The packaged manifest is:
 
 ```text
-src/orbitfabric_dummy_adapter/integration_package.json
+src/orbitfabric_openobsw_opensvf_adapter/integration_package.json
 ```
 
 It declares:
@@ -70,10 +70,10 @@ orbitfabric.adapter_cli.v1
 The Dummy console entry point is:
 
 ```text
-orbitfabric-dummy-adapter
+orbitfabric-openobsw-opensvf-adapter
 ```
 
-The implementation in `src/orbitfabric_dummy_adapter/cli.py` supports:
+The implementation in `src/orbitfabric_openobsw_opensvf_adapter/cli.py` supports:
 
 ```text
 run
@@ -117,8 +117,8 @@ See [Evidence and Traceability](evidence-and-traceability.md).
 The Dummy example uses:
 
 ```text
-integration.id = orbitfabric-dummy
-adapter.id     = orbitfabric-dummy
+integration.id = orbitfabric-openobsw-opensvf
+adapter.id     = orbitfabric-openobsw-opensvf
 ```
 
 Those values are examples only. They do not define the logical Source Coordinate or publisher identity for real adapters.
@@ -132,7 +132,7 @@ The generic Profile envelope is governed by OrbitFabric.
 The integration-specific schema in:
 
 ```text
-src/orbitfabric_dummy_adapter/schemas/profile-0.1.schema.json
+src/orbitfabric_openobsw_opensvf_adapter/schemas/profile-0.1.schema.json
 ```
 
 owns only Dummy target choices.

@@ -1,5 +1,5 @@
 {
-  "$id": "https://orbitfabric.dev/templates/dummy/profile-0.1.schema.json",
+  "$id": "https://example.invalid/orbitfabric-openobsw-opensvf-adapter/profile-0.1.schema.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
   "properties": {
@@ -82,7 +82,7 @@
       "additionalProperties": false,
       "properties": {
         "id": {
-          "const": "orbitfabric-dummy"
+          "const": "orbitfabric-openobsw-opensvf"
         },
         "schema_version": {
           "const": "0.1-candidate"
@@ -140,6 +140,6 @@
     "settings",
     "bindings"
   ],
-  "title": "OrbitFabric Dummy Adapter Projection Profile",
+  "title": "orbitfabric-openobsw-opensvf Projection Profile",
   "type": "object"
 }

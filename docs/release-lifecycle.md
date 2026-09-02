@@ -54,10 +54,10 @@ For the Dummy Adapter:
 
 ```bash
 python tools/build_release_bundle.py \
-  --wheel dist/orbitfabric_dummy_adapter-0.1.0.dev0-py3-none-any.whl \
+  --wheel dist/orbitfabric_openobsw_opensvf_adapter-0.1.0.dev0-py3-none-any.whl \
   --authority template.local \
   --publisher orbitfabric \
-  --name dummy-adapter
+  --name openobsw-opensvf
 ```
 
 For a real adapter, replace all three identity fields deliberately.

@@ -13,7 +13,7 @@ from .result import failed_result, successful_result, write_result
 
 
 def _parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(prog="orbitfabric-dummy-adapter")
+    parser = argparse.ArgumentParser(prog="orbitfabric-openobsw-opensvf")
     subparsers = parser.add_subparsers(dest="command", required=True)
     run = subparsers.add_parser("run")
     run.add_argument("--operation", required=True)

@@ -6,13 +6,13 @@ from pathlib import Path
 
 from orbitfabric.conformance.integration_contracts import validate_result
 
-from orbitfabric_dummy_adapter.cli import main
+from orbitfabric_openobsw_opensvf_adapter.cli import main
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
 def _manifest() -> dict:
-    path = files("orbitfabric_dummy_adapter").joinpath("integration_package.json")
+    path = files("orbitfabric_openobsw_opensvf_adapter").joinpath("integration_package.json")
     return json.loads(path.read_text(encoding="utf-8"))
 
 

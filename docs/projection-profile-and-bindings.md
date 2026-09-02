@@ -7,10 +7,10 @@ OrbitFabric owns the generic Profile envelope. The adapter owns the schema and s
 ## Template files
 
 ```text
-src/orbitfabric_dummy_adapter/schemas/profile-0.1.schema.json
+src/orbitfabric_openobsw_opensvf_adapter/schemas/profile-0.1.schema.json
 examples/profile.yaml
-src/orbitfabric_dummy_adapter/profile.py
-src/orbitfabric_dummy_adapter/projection.py
+src/orbitfabric_openobsw_opensvf_adapter/profile.py
+src/orbitfabric_openobsw_opensvf_adapter/projection.py
 ```
 
 A real adapter should replace the Dummy schema and projection semantics while preserving the generic OrbitFabric envelope expected by Core.

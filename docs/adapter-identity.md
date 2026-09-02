@@ -22,13 +22,13 @@ It does not choose official publisher identity, Source Coordinate, release matur
 The Template package is:
 
 ```text
-orbitfabric-dummy-adapter
+orbitfabric-openobsw-opensvf-adapter
 ```
 
 and the Python import namespace is:
 
 ```text
-orbitfabric_dummy_adapter
+orbitfabric_openobsw_opensvf_adapter
 ```
 
 These are packaging identities.
@@ -40,7 +40,7 @@ For a real adapter, choose a package name that is unique and clear. The initiali
 The Template installs:
 
 ```text
-orbitfabric-dummy-adapter
+orbitfabric-openobsw-opensvf-adapter
 ```
 
 as its console entry point.
@@ -54,7 +54,7 @@ The console script does not have to equal the Python distribution name or `adapt
 The Integration Package Manifest contains:
 
 ```text
-adapter.id = orbitfabric-dummy
+adapter.id = orbitfabric-openobsw-opensvf
 ```
 
 This is the identity used by the Core-defined integration execution contract.
@@ -68,7 +68,7 @@ A real adapter should choose a stable execution identity and preserve it across 
 The Dummy Profile and Manifest use:
 
 ```text
-integration.id = orbitfabric-dummy
+integration.id = orbitfabric-openobsw-opensvf
 ```
 
 This identifies the integration whose Profile schema and target-specific projection semantics are being used.

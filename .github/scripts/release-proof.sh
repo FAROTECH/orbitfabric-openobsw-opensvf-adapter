@@ -28,7 +28,7 @@ python tools/build_release_bundle.py \
   --wheel "$wheel" \
   --authority template.local \
   --publisher orbitfabric \
-  --name dummy-adapter \
+  --name openobsw-opensvf \
   --output-dir "$release_dir"
 
 descriptor="$release_dir/adapter-release.json"
@@ -66,7 +66,7 @@ assert report["adapters"][0]["status"] == "MISSING"
 PY
 
 orbitfabric adapter lock install "$lock" \
-  --source-coordinate "template.local:orbitfabric/dummy-adapter" \
+  --source-coordinate "template.local:orbitfabric/openobsw-opensvf" \
   --release-descriptor "$descriptor" \
   --artifact "$wheel" \
   --json | tee "$evidence/install-from-lock.json"
@@ -97,7 +97,7 @@ assert report["adapters"][0]["status"] == "MATCH"
 PY
 
 orbitfabric adapter lock install "$lock" \
-  --source-coordinate "template.local:orbitfabric/dummy-adapter" \
+  --source-coordinate "template.local:orbitfabric/openobsw-opensvf" \
   --release-descriptor "$descriptor" \
   --artifact "$wheel" \
   --json | tee "$evidence/second-install-from-lock.json"

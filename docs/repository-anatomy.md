@@ -18,7 +18,7 @@ Template locations:
 
 ```text
 pyproject.toml
-src/orbitfabric_dummy_adapter/integration_package.json
+src/orbitfabric_openobsw_opensvf_adapter/integration_package.json
 docs/adapter-identity.md
 tools/build_release_bundle.py
 tools/check_template_consistency.py
@@ -40,7 +40,7 @@ Template locations:
 
 ```text
 pyproject.toml
-src/orbitfabric_dummy_adapter/integration_package.json
+src/orbitfabric_openobsw_opensvf_adapter/integration_package.json
 tools/build_release_bundle.py
 .github/workflows/ci.yml
 ```
@@ -61,9 +61,9 @@ emit Core-conformant Integration Results
 Template locations:
 
 ```text
-src/orbitfabric_dummy_adapter/integration_package.json
-src/orbitfabric_dummy_adapter/cli.py
-src/orbitfabric_dummy_adapter/result.py
+src/orbitfabric_openobsw_opensvf_adapter/integration_package.json
+src/orbitfabric_openobsw_opensvf_adapter/cli.py
+src/orbitfabric_openobsw_opensvf_adapter/result.py
 tests/test_contracts.py
 tests/test_project.py
 tests/test_verification.py
@@ -84,10 +84,10 @@ project those bindings into target artifacts
 Template locations:
 
 ```text
-src/orbitfabric_dummy_adapter/schemas/profile-0.1.schema.json
+src/orbitfabric_openobsw_opensvf_adapter/schemas/profile-0.1.schema.json
 examples/profile.yaml
-src/orbitfabric_dummy_adapter/profile.py
-src/orbitfabric_dummy_adapter/projection.py
+src/orbitfabric_openobsw_opensvf_adapter/profile.py
+src/orbitfabric_openobsw_opensvf_adapter/projection.py
 ```
 
 See [Projection Profile and Bindings](projection-profile-and-bindings.md).
@@ -108,12 +108,12 @@ fail closed when required semantics are unavailable
 Template locations:
 
 ```text
-src/orbitfabric_dummy_adapter/cli.py
-src/orbitfabric_dummy_adapter/input_set.py
-src/orbitfabric_dummy_adapter/profile.py
-src/orbitfabric_dummy_adapter/projection.py
-src/orbitfabric_dummy_adapter/result.py
-src/orbitfabric_dummy_adapter/io.py
+src/orbitfabric_openobsw_opensvf_adapter/cli.py
+src/orbitfabric_openobsw_opensvf_adapter/input_set.py
+src/orbitfabric_openobsw_opensvf_adapter/profile.py
+src/orbitfabric_openobsw_opensvf_adapter/projection.py
+src/orbitfabric_openobsw_opensvf_adapter/result.py
+src/orbitfabric_openobsw_opensvf_adapter/io.py
 ```
 
 When adapting this repository, keep Core contract interpretation separate from target-specific mapping logic.

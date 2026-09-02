@@ -3,8 +3,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from orbitfabric_dummy_adapter.input_set import load_input_set
-from orbitfabric_dummy_adapter.io import AdapterError
+from orbitfabric_openobsw_opensvf_adapter.input_set import load_input_set
+from orbitfabric_openobsw_opensvf_adapter.io import AdapterError
 
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST = ROOT / "examples" / "input-set" / "integration_input_manifest.json"

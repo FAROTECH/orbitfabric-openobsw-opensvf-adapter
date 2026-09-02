@@ -38,7 +38,7 @@ python tools/build_release_bundle.py \
   --wheel "$wheel" \
   --authority explicit-template-control \
   --publisher orbitfabric-template \
-  --name dummy-adapter \
+  --name openobsw-opensvf \
   --output-dir "$release_dir"
 
 descriptor="$release_dir/adapter-release.json"

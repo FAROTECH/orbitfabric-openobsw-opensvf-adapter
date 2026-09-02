@@ -76,7 +76,7 @@ The Python wheel backend identifies the exact installed adapter distribution and
 The Template therefore places the manifest inside the namespaced adapter package:
 
 ```text
-src/orbitfabric_dummy_adapter/
+src/orbitfabric_openobsw_opensvf_adapter/
     integration_package.json
 ```
 

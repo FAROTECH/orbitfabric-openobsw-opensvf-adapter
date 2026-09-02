@@ -54,8 +54,8 @@ jobs:
           with zipfile.ZipFile(wheel) as archive:
               names = set(archive.namelist())
           required = {
-              "orbitfabric_dummy_adapter/integration_package.json",
-              "orbitfabric_dummy_adapter/schemas/profile-0.1.schema.json",
+              "orbitfabric_openobsw_opensvf_adapter/integration_package.json",
+              "orbitfabric_openobsw_opensvf_adapter/schemas/profile-0.1.schema.json",
           }
           missing = sorted(required - names)
           if missing:
