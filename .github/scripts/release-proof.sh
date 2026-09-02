@@ -47,6 +47,7 @@ cp "$lock" "$evidence/adapter-project-lock.json"
 cp "$release_dir/SHA256SUMS" "$evidence/SHA256SUMS"
 
 python -m pip download --dest "$wheelhouse" "$wheel"
+python -m pip download --dest "$wheelhouse" "hatchling>=1.24"
 export PIP_NO_INDEX=1
 export PIP_FIND_LINKS="$wheelhouse"
 
