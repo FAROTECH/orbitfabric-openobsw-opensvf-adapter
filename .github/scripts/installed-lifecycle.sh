@@ -32,6 +32,7 @@ orbitfabric export integration-input-set \
 test -f "$core_input/integration_input_manifest.json"
 
 python -m pip download --dest "$wheelhouse" "$wheel"
+python -m pip download --dest "$wheelhouse" "hatchling>=1.24"
 test -n "$(find "$wheelhouse" -maxdepth 1 -type f -print -quit)"
 
 python tools/build_release_bundle.py \
