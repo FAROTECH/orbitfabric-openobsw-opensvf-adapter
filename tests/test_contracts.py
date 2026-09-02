@@ -12,7 +12,9 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def test_manifest_conforms_to_core_contract() -> None:
-    manifest_path = files("orbitfabric_openobsw_opensvf_adapter").joinpath("integration_package.json")
+    manifest_path = files("orbitfabric_openobsw_opensvf_adapter").joinpath(
+        "integration_package.json"
+    )
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
 
     validate_manifest(manifest)
