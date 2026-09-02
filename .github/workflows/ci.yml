@@ -102,6 +102,43 @@ jobs:
           path: /tmp/orbitfabric-openobsw-target-compatibility/evidence
           if-no-files-found: warn
 
+  target-compatibility-opensvf:
+    needs: checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout adapter
+        uses: actions/checkout@v4
+
+      - name: Checkout validated OpenSVF target baseline
+        uses: actions/checkout@v4
+        with:
+          repository: lipofefeyt/opensvf
+          ref: 667d3eadcb0bbd7814ac324b99946c4ed2f11f23
+          path: _opensvf
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install adapter and OpenSVF
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
+          python -m pip install -e ./_opensvf
+
+      - name: Run OpenSVF target-native compatibility control
+        run: bash .github/scripts/opensvf-target-compatibility.sh
+
+      - name: Upload OpenSVF compatibility evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: opensvf-target-compatibility
+          path: /tmp/orbitfabric-opensvf-target-compatibility/evidence
+          if-no-files-found: warn
+
   installed-lifecycle:
     needs: checks
     runs-on: ubuntu-latest
