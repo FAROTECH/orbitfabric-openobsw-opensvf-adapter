@@ -83,8 +83,12 @@ def main() -> int:
                 errors.append(f"manifest Profile schema does not exist: {schema_rel}")
             else:
                 schema_sha = hashlib.sha256(schema_path.read_bytes()).hexdigest()
-                if schema_entry.get("sha256") != schema_sha:
-                    errors.append("manifest Profile schema SHA-256 is stale")
+                declared_sha = schema_entry.get("sha256")
+                if declared_sha != schema_sha:
+                    errors.append(
+                        "manifest Profile schema SHA-256 is stale: "
+                        f"declared={declared_sha!r}, computed={schema_sha}"
+                    )
                 try:
                     schema = _load_json(schema_path)
                 except (OSError, ValueError, json.JSONDecodeError) as exc:
