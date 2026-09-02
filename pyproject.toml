@@ -30,6 +30,9 @@ dev = [
 [project.scripts]
 orbitfabric-openobsw-opensvf = "orbitfabric_openobsw_opensvf_adapter.cli:main"
 
+[tool.hatch.metadata]
+allow-direct-references = true
+
 [tool.hatch.build.targets.wheel]
 packages = ["src/orbitfabric_openobsw_opensvf_adapter"]
 
