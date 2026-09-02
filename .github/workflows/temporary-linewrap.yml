@@ -40,52 +40,21 @@ jobs:
 
           projector = Path("src/orbitfabric_openobsw_opensvf_adapter/adapter/verification_projector.py")
           text = projector.read_text(encoding="utf-8")
-          start = text.index("NOT_PROJECTED_REASONS = {")
-          end = text.index("\n\n\n@dataclass", start)
-          replacement = '''NOT_PROJECTED_REASONS = {
-    "initial_mode": (
-        "verification_projection does not project Core initial mode into target runtime "
-        "initialization."
-    ),
-    "initial_telemetry": (
-        "verification_projection does not project Core initial telemetry into target runtime "
-        "initialization."
-    ),
-    "telemetry_injection": (
-        "verification_projection has no explicit Core telemetry injection mapping."
-    ),
-    "expect_mode": (
-        "verification_projection has no explicit Core mode observation mapping."
-    ),
-    "expect_event": (
-        "verification_projection cannot identify Core events from target PUS subtype alone."
-    ),
-    "expect_command": (
-        "verification_projection does not map Core host command history to target evidence."
-    ),
-    "expect_command_status": (
-        "Core host-side command_status semantics are not equivalent to PUS acceptance telemetry."
-    ),
-    "expect_telemetry": (
-        "verification_projection has no explicit Core telemetry observation mapping."
-    ),
-    "expect_payload_lifecycle": (
-        "verification_projection has no target payload lifecycle observation contract."
-    ),
-    "expect_data_flow": (
-        "OrbitFabric data-flow expectation semantics remain host-side Mission "
-        "Data Contract evidence."
-    ),
-    "expect_scenario_status": (
-        "OrbitFabric scenario_status is an aggregate Core host-side result, "
-        "not target runtime evidence."
-    ),
-}'''
-          text = text[:start] + replacement + text[end:]
-          text = text.replace(
-              '"the current verification_projection operation cannot project command arguments without an explicit "\n            "target argument encoder."',
-              '"verification_projection cannot project command arguments without an explicit "\n            "target argument encoder."',
-          )
+          replacements = {
+              '"the current verification_projection operation does not project Core scenario initial mode into "': '"verification_projection does not project Core initial mode into target runtime "',
+              '"target runtime initialization."': '"initialization."',
+              '"the current verification_projection operation does not project Core scenario initial telemetry into "': '"verification_projection does not project Core initial telemetry into target runtime "',
+              '"the current verification_projection operation has no explicit Core telemetry injection to target injection mapping."': '"verification_projection has no explicit Core telemetry injection mapping."',
+              '"expect_mode": ("the current verification_projection operation has no explicit Core mode to target observation mapping."),': '"expect_mode": (\n        "verification_projection has no explicit Core mode observation mapping."\n    ),',
+              '"expect_event": ("the current verification_projection operation does not identify Core events from target PUS subtype alone."),': '"expect_event": (\n        "verification_projection cannot identify Core events from target PUS subtype alone."\n    ),',
+              '"the current verification_projection operation does not map Core host-side command dispatch history "': '"verification_projection does not map Core host command history to target evidence."',
+              '"to target runtime evidence."': '',
+              '"the current verification_projection operation has no explicit Core telemetry to target observation mapping."': '"verification_projection has no explicit Core telemetry observation mapping."',
+              '"the current verification_projection operation has no target payload lifecycle observation contract."': '"verification_projection has no target payload lifecycle observation contract."',
+              '"the current verification_projection operation cannot project command arguments without an explicit "': '"verification_projection cannot project command arguments without an explicit "',
+          }
+          for old, new in replacements.items():
+              text = text.replace(old, new)
           projector.write_text(text, encoding="utf-8")
           PY
 
