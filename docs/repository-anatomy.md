@@ -1,211 +1,128 @@
 # Repository Anatomy
 
-This page maps the responsibilities expected in a well-structured OrbitFabric adapter repository to the concrete files in this Template.
-
-The goal is not to force every community adapter to implement the same breadth. The goal is to make repository responsibilities explicit and reviewable.
+This repository is a concrete OrbitFabric adapter product for the OpenOBSW/OpenSVF integration boundary. Its structure separates generic OrbitFabric contract consumption from downstream-specific projection, compatibility and evidence.
 
 ## Identity
-
-Purpose:
-
-```text
-say which adapter this is
-separate execution identity from release-source identity
-make version ownership deliberate
-```
-
-Template locations:
 
 ```text
 pyproject.toml
 src/orbitfabric_openobsw_opensvf_adapter/integration_package.json
 docs/adapter-identity.md
 tools/build_release_bundle.py
-tools/check_template_consistency.py
+tools/check_adapter_consistency.py
 ```
 
-A real adapter must deliberately choose its distribution name, package namespace, console script, `adapter.id`, `integration.id`, release version and Source Coordinate.
+Identity covers distribution, execution, integration, version and release-source concerns without forcing them into one string.
 
 ## Packaging
-
-Purpose:
-
-```text
-build an installable artifact
-retain the Integration Package Manifest inside the distribution
-construct exact release identity
-```
-
-Template locations:
 
 ```text
 pyproject.toml
 src/orbitfabric_openobsw_opensvf_adapter/integration_package.json
-tools/build_release_bundle.py
 .github/workflows/ci.yml
 ```
 
-The Python backend requires exactly one `integration_package.json` owned by the installed distribution. That discovery behavior is backend-specific. The manifest contents remain Core-owned.
+The wheel owns its Integration Package Manifest and adapter-owned Profile schema/resources. Core owns the manifest contract, while this repository owns its declared compatibility and behavior.
 
-## Integration contract
-
-Purpose:
-
-```text
-declare supported Core input surfaces
-expose promoted adapter execution protocol
-declare operations and operation inputs
-emit Core-conformant Integration Results
-```
-
-Template locations:
+## Core integration contract
 
 ```text
 src/orbitfabric_openobsw_opensvf_adapter/integration_package.json
 src/orbitfabric_openobsw_opensvf_adapter/cli.py
-src/orbitfabric_openobsw_opensvf_adapter/result.py
-tests/test_contracts.py
-tests/test_project.py
-tests/test_verification.py
-```
-
-Core owns the generic contract. A concrete adapter owns only its declared compatibility and target-specific behavior.
-
-## Projection
-
-Purpose:
-
-```text
-describe target-specific choices
-bind OrbitFabric source entities to target intent
-project those bindings into target artifacts
-```
-
-Template locations:
-
-```text
-src/orbitfabric_openobsw_opensvf_adapter/schemas/profile-0.1.schema.json
-examples/profile.yaml
-src/orbitfabric_openobsw_opensvf_adapter/profile.py
-src/orbitfabric_openobsw_opensvf_adapter/projection.py
-```
-
-See [Projection Profile and Bindings](projection-profile-and-bindings.md).
-
-## Implementation
-
-Purpose:
-
-```text
-load declared inputs
-validate adapter-owned constraints
-perform target projection
-write artifacts
-emit Integration Result
-fail closed when required semantics are unavailable
-```
-
-Template locations:
-
-```text
-src/orbitfabric_openobsw_opensvf_adapter/cli.py
 src/orbitfabric_openobsw_opensvf_adapter/input_set.py
-src/orbitfabric_openobsw_opensvf_adapter/profile.py
-src/orbitfabric_openobsw_opensvf_adapter/projection.py
 src/orbitfabric_openobsw_opensvf_adapter/result.py
-src/orbitfabric_openobsw_opensvf_adapter/io.py
 ```
 
-When adapting this repository, keep Core contract interpretation separate from target-specific mapping logic.
+These components consume Core Integration Input Set surfaces, expose supported operations and emit Core-conformant Integration Results.
 
-## Conformance
-
-Purpose:
+## OpenOBSW/OpenSVF projection
 
 ```text
-prove valid paths
-prove invalid paths fail closed
-validate Core-owned contracts
-validate packaged behavior
-validate installed behavior
-validate target compatibility when a real target exists
+src/orbitfabric_openobsw_opensvf_adapter/schemas/
+src/orbitfabric_openobsw_opensvf_adapter/profile.py
+src/orbitfabric_openobsw_opensvf_adapter/projection.py
+src/orbitfabric_openobsw_opensvf_adapter/resources/
+examples/profile.yaml
 ```
 
-Template locations:
+This area owns target-specific bindings and generated contributions. It must not duplicate Core semantics that are already available from the Integration Input Set.
+
+## Downstream compatibility
+
+```text
+tests/compatibility/
+coverage/integration-coverage.md
+docs/getting-started.md
+```
+
+Compatibility controls prove the downstream assumptions that affect generated artifacts. OpenOBSW and OpenSVF remain the authority for their native formats, APIs, runtime and verification behavior.
+
+The productization work extracts only durable compatibility knowledge from the historical PoC. Stage-specific runtime scaffolding is not treated as product architecture.
+
+## Operations
+
+The repository is being converged around two operation shapes:
+
+```text
+project
+verification_projection
+```
+
+`project` consumes the Core Integration Input Set and Projection Profile. `verification_projection` additionally binds one explicit Scenario resource. A capability is advertised only when the corresponding implementation and Result semantics are lifecycle-tested.
+
+## Conformance and tests
 
 ```text
 tests/
-tests/compatibility/README.md
 .github/scripts/installed-lifecycle.sh
 .github/scripts/release-proof.sh
 .github/workflows/ci.yml
 ```
 
-The Dummy target has no external native validator, so real target-native compatibility is intentionally not simulated. The reserved compatibility area explains what a concrete adapter should add. Concrete adapters must use the strongest meaningful downstream validation available.
+The test strategy separates:
+
+```text
+Core contract conformance
+adapter-owned positive and negative behavior
+downstream-native compatibility
+installed Adapter Manager behavior
+exact release and Project Lock behavior
+```
+
+Core conformance does not substitute for OpenOBSW/OpenSVF acceptance.
 
 ## Evidence
 
-Purpose:
+Each adapter execution produces an Integration Result. CI also retains lifecycle and release evidence.
+
+The evidence model preserves:
 
 ```text
-retain what was consumed
-retain what was projected
-retain artifact byte identity
-retain mapping and operation-input provenance
-retain release and lifecycle proof
+consumed Core input identity
+Projection Profile identity
+operation inputs
+mapping/projection provenance
+generated artifact byte identity
+downstream compatibility facts
+release identity
+installed lifecycle proof
 ```
 
-Template locations:
-
-```text
-integration_result.json produced by each execution
-.github/scripts/installed-lifecycle.sh
-.github/scripts/release-proof.sh
-GitHub Actions evidence artifacts
-```
-
-See [Evidence and Traceability](evidence-and-traceability.md).
+Native OpenSVF campaign or YAMCS evidence remains owned by those systems and is referenced rather than redefined when used by adapter validation.
 
 ## Developer experience
-
-Purpose:
-
-```text
-make the adapter understandable without historical project context
-show what to change
-show how to run locally
-show how to debug contract, package and lifecycle failures
-keep identity and package metadata consistent while renaming
-```
-
-Template locations:
 
 ```text
 README.md
 docs/
 examples/
 CONTRIBUTING.md
-tools/check_template_consistency.py
+tools/check_adapter_consistency.py
 ```
+
+Documentation is intentionally balanced between OrbitFabric users and OpenOBSW/OpenSVF users. A complete integration guide explains both sides of setup and the handoff between them.
 
 ## Automation
-
-Purpose:
-
-```text
-lint
-unit and negative tests
-Core conformance
-wheel build
-package asset verification
-documentation build
-isolated installed lifecycle
-release construction
-Project Lock proof
-evidence retention
-```
-
-Template locations:
 
 ```text
 .github/workflows/ci.yml
@@ -214,22 +131,26 @@ Template locations:
 tools/build_release_bundle.py
 ```
 
-Publication is intentionally separate. GitHub Releases, PyPI or a future OrbitFabric registry can transport an already identified release without redefining Core release identity.
+Automation covers lint, tests, Core conformance, wheel ownership, documentation, installed lifecycle, release construction, Project Lock checks and evidence retention.
 
-## Readiness rule for a concrete adapter
+## Historical PoC boundary
 
-A repository is not complete merely because one projection path works.
+The historical PoC remains a separate engineering evidence repository. This product repository does not import its Stage numbering, experiments or temporary runtime topology. It extracts only reusable adapter implementation, target resources, compatibility requirements and regression evidence.
 
-For a general-purpose OrbitFabric-maintained adapter, review all nine areas above and also publish an Integration Coverage Matrix that answers:
+## Readiness
+
+Before a stable release, the repository must make explicit:
 
 ```text
-what OrbitFabric semantics are applicable to this target?
-what target representation exists for each applicable area?
-what does this adapter declare in scope?
-what is FULL, PARTIAL, NOT_IMPLEMENTED or otherwise dispositioned?
-what evidence supports each conclusion?
+Target Applicable Surface
+Declared Adapter Scope
+dispositions for applicable OrbitFabric semantics
+OpenOBSW/OpenSVF compatibility baselines
+downstream setup requirements
+Core conformance evidence
+downstream-native evidence
+installed lifecycle evidence
+release / Project Lock evidence
 ```
 
-A focused community adapter may declare a much smaller scope. Its documentation should still make that scope explicit.
-
-Use the [Adapter Readiness Checklist](adapter-readiness-checklist.md) before deciding that a concrete adapter is ready for reuse or release.
+See [Integration Coverage](integration-coverage.md) and [Adapter Readiness Checklist](adapter-readiness-checklist.md).

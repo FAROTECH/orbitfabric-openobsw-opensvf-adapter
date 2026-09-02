@@ -1,85 +1,55 @@
 # Adapter Identity
 
-A real adapter has several identities. Keep them separate instead of forcing one string to mean everything.
+The OpenOBSW/OpenSVF adapter uses several related identities. They are intentionally kept distinct because package identity, execution identity and release-source identity serve different contracts.
 
-## Start from the initializer
-
-On a fresh repository created from this Template, initialize developer-owned identity with:
-
-```bash
-python tools/initialize_adapter.py \
-  --adapter-name my-target \
-  --python-package orbitfabric_my_target_adapter \
-  --console-script orbitfabric-my-target
-```
-
-The initializer keeps distribution, Python package namespace, console script and execution identity as distinct concepts. Optional `--distribution-name` and `--adapter-id` overrides let a maintainer choose them independently.
-
-It does not choose official publisher identity, Source Coordinate, release maturity, compatibility or coverage claims.
-
-## Python distribution identity
-
-The Template package is:
+## Repository and package identity
 
 ```text
-orbitfabric-openobsw-opensvf-adapter
+repository       orbitfabric-openobsw-opensvf-adapter
+distribution     orbitfabric-openobsw-opensvf-adapter
+python package   orbitfabric_openobsw_opensvf_adapter
+console command  orbitfabric-openobsw-opensvf
 ```
 
-and the Python import namespace is:
-
-```text
-orbitfabric_openobsw_opensvf_adapter
-```
-
-These are packaging identities.
-
-For a real adapter, choose a package name that is unique and clear. The initializer updates `pyproject.toml`, the source package directory and imports consistently.
-
-## Console script identity
-
-The Template installs:
-
-```text
-orbitfabric-openobsw-opensvf-adapter
-```
-
-as its console entry point.
-
-This is the executable name used by the Python packaging backend and recorded in the Manifest `execution.argv_prefix`.
-
-The console script does not have to equal the Python distribution name or `adapter.id`.
+The Python distribution and import namespace are packaging identities. The console command is the executable entry point used by the adapter execution contract.
 
 ## Execution identity
 
-The Integration Package Manifest contains:
+The Integration Package Manifest uses:
 
 ```text
 adapter.id = orbitfabric-openobsw-opensvf
 ```
 
-This is the identity used by the Core-defined integration execution contract.
-
-Do not reinterpret `adapter.id` as a registry key, GitHub repository name or publisher identity.
-
-A real adapter should choose a stable execution identity and preserve it across releases unless an intentional compatibility break requires otherwise.
+This identifies the adapter implementation to OrbitFabric Core. It is not a GitHub repository key or registry coordinate.
 
 ## Integration identity
 
-The Dummy Profile and Manifest use:
+The Profile and Manifest use:
 
 ```text
 integration.id = orbitfabric-openobsw-opensvf
 ```
 
-This identifies the integration whose Profile schema and target-specific projection semantics are being used.
+This identifies the target-specific integration semantics implemented by this repository.
 
-For this small Template the execution and integration identifiers are equal. That equality is convenient, not a universal rule.
+The execution and integration identifiers are intentionally equal for this adapter. That is a local product decision, not a universal OrbitFabric rule.
 
-The initializer currently keeps them aligned as a safe starting point. A concrete integration may separate them later only with deliberate contract and compatibility review.
+## Version
+
+The productization branch starts at:
+
+```text
+0.1.0.dev0
+```
+
+The development version is kept aligned between `pyproject.toml` and the Integration Package Manifest. The first stable `0.1.0` is reserved for the point at which target compatibility, Integration Coverage, installed lifecycle and release proof are all accepted.
+
+The earlier PoC baseline and its still-open closure PR remain historical evidence. Their version labels do not automatically become the release state of this clean product repository.
 
 ## Source Coordinate
 
-Release identity uses a separate logical coordinate:
+Release identity uses the Core-defined logical coordinate:
 
 ```text
 authority
@@ -87,75 +57,51 @@ publisher
 name
 ```
 
-Together these form the Adapter Source Coordinate.
-
-Example used only by the local release proof:
+The CI currently uses local test values:
 
 ```text
-template.local
-orbitfabric
-dummy-adapter
+local.adapter.test
+farotech
+openobsw-opensvf
 ```
 
-A real adapter must choose these values deliberately. A GitHub repository URL, package filename or executable path is not the Source Coordinate.
+These values prove provider-neutral release construction and Project Lock behavior. They are not the final publication Source Coordinate.
 
-The publication provider can change without changing what the release logically represents.
+A publication provider such as GitHub Releases may transport the adapter release without becoming the adapter's logical identity.
 
-The initializer intentionally does not assign these values.
+## Identity consistency
 
-## Version ownership
-
-The Template currently carries version `0.1.0.dev0` in `pyproject.toml` and in the Dummy Integration Package Manifest.
-
-`tools/build_release_bundle.py` uses `project.version` as the default `release_version` unless the developer supplies `--release-version` explicitly.
-
-These version values serve different contracts. Keep them intentionally aligned when that is the adapter release policy, but do not invent a universal equality rule unless Core defines one.
-
-Before a release, review at least:
-
-```text
-pyproject.toml project.version
-Integration Package Manifest adapter.version
-Adapter Release Descriptor release_version
-Projection Profile compatibility versions
-supported Core input versions
-Integration Result versions
-```
-
-## What to review after initialization
-
-The initializer removes the mechanical identity drift, but it does not complete the adapter. Review these locations together:
+The following locations must agree where their contracts require alignment:
 
 ```text
 pyproject.toml
     project.name
     project.version
     project.scripts
-    wheel package namespace
 
-src/<your_package>/integration_package.json
+src/orbitfabric_openobsw_opensvf_adapter/integration_package.json
     adapter.id
     adapter.version
     integration.id
-    execution argv_prefix
-    compatibility declarations
+    execution.argv_prefix
 
-src/<your_package>/schemas/profile-*.schema.json
+src/orbitfabric_openobsw_opensvf_adapter/schemas/profile-*.schema.json
     integration.id constraint
-    target-specific settings and bindings
 
 examples/profile.yaml
     integration.id
-    target-specific example choices
 
 release construction
     authority
     publisher
     name
     release_version
-
-coverage/integration-coverage.md
-    actual target applicability and declared scope
 ```
 
-Run `python tools/check_template_consistency.py` after identity changes so mechanical drift fails during normal development instead of appearing during publication.
+Run:
+
+```bash
+python tools/check_adapter_consistency.py
+```
+
+The check catches mechanical drift. It does not decide compatibility, maturity, coverage or publication policy.
