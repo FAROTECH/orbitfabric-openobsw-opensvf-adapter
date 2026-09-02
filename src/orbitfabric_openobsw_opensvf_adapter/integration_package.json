@@ -9,20 +9,50 @@
     "version": "0.1.0.dev0"
   },
   "core_input_compatibility": {
-    "input_set_versions": ["0.1-candidate"],
+    "input_set_versions": [
+      "0.1-candidate"
+    ],
     "relationship_families": [],
     "surfaces": [
-      {"role": "entity_index", "kind": "orbitfabric.entity_index", "format_versions": ["0.1"]},
-      {"role": "lint_report", "kind": "orbitfabric-lint", "format_versions": ["v1"]},
-      {"role": "mission_snapshot", "kind": "orbitfabric.mission_snapshot", "format_versions": ["0.1-candidate"]},
-      {"role": "relationship_manifest", "kind": "orbitfabric.relationship_manifest", "format_versions": ["0.1-candidate"]}
+      {
+        "role": "entity_index",
+        "kind": "orbitfabric.entity_index",
+        "format_versions": [
+          "0.1"
+        ]
+      },
+      {
+        "role": "lint_report",
+        "kind": "orbitfabric-lint",
+        "format_versions": [
+          "v1"
+        ]
+      },
+      {
+        "role": "mission_snapshot",
+        "kind": "orbitfabric.mission_snapshot",
+        "format_versions": [
+          "0.1-candidate"
+        ]
+      },
+      {
+        "role": "relationship_manifest",
+        "kind": "orbitfabric.relationship_manifest",
+        "format_versions": [
+          "0.1-candidate"
+        ]
+      }
     ]
   },
   "profile_compatibility": {
-    "profile_versions": ["0.1-candidate"]
+    "profile_versions": [
+      "0.1-candidate"
+    ]
   },
   "result_compatibility": {
-    "result_versions": ["0.2-candidate"],
+    "result_versions": [
+      "0.2-candidate"
+    ],
     "default_result_version": "0.2-candidate"
   },
   "capabilities": [
@@ -51,7 +81,9 @@
         "traceability"
       ],
       "input_requirements": [
-        {"role": "scenario"}
+        {
+          "role": "scenario"
+        }
       ]
     }
   ],
@@ -60,11 +92,13 @@
       "schema_version": "0.1-candidate",
       "format": "json-schema-2020-12",
       "path": "schemas/profile-0.1.schema.json",
-      "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+      "sha256": "5fb1cc0fbf22b691ed114cba6e2640dcd00703eb955c1659af78346e4647ca2c"
     }
   ],
   "execution": {
     "protocol": "orbitfabric.adapter_cli.v1",
-    "argv_prefix": ["orbitfabric-openobsw-opensvf"]
+    "argv_prefix": [
+      "orbitfabric-openobsw-opensvf"
+    ]
   }
 }

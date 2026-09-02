@@ -71,14 +71,20 @@ def check_numeric_and_name(
         raise AdapterFailure(
             numeric_code,
             "input_compatibility",
-            f"{label} allocation {numeric_value} collides with baseline target {by_id[numeric_value]}",
+            (
+                f"{label} allocation {numeric_value} collides with baseline target "
+                f"{by_id[numeric_value]}"
+            ),
             profile_bindings=[binding],
         )
     if target_name_value in by_name:
         raise AdapterFailure(
             "OFI-COMP-NAME-001",
             "input_compatibility",
-            f"Deterministic target name {target_name_value!r} collides with baseline {label} allocation {by_name[target_name_value]}",
+            (
+                f"Deterministic target name {target_name_value!r} collides with baseline "
+                f"{label} allocation {by_name[target_name_value]}"
+            ),
             profile_bindings=[binding],
         )
 
@@ -92,7 +98,7 @@ def argument_contract_compatible(
         return False
     if len(core_arguments) != len(target_parameters):
         return False
-    for core_arg, target_arg in zip(core_arguments, target_parameters):
+    for core_arg, target_arg in zip(core_arguments, target_parameters, strict=False):
         if not isinstance(core_arg, dict) or not isinstance(target_arg, dict):
             return False
         projected = type_map.get(core_arg.get("type"))

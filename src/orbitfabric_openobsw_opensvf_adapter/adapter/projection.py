@@ -91,7 +91,10 @@ def resolve_projection(
         raise AdapterFailure(
             "OFI-COMP-PUS-001",
             "input_compatibility",
-            f"Profile TM APID {settings_pus['tm_apid']} is incompatible with selected baseline TM APID {pus_baseline['tm_apid']}",
+            (
+                f"Profile TM APID {settings_pus['tm_apid']} is incompatible with "
+                f"selected baseline TM APID {pus_baseline['tm_apid']}"
+            ),
         )
 
     mappings: list[dict[str, Any]] = []
@@ -170,7 +173,10 @@ def _project_telemetry(
             raise AdapterFailure(
                 "OFI-PROJ-TYPE-001",
                 "projection_validation",
-                f"Core telemetry type {semantic.get('type')!r} has no supported obsw-srdb representation",
+                (
+                    f"Core telemetry type {semantic.get('type')!r} has no supported "
+                    "obsw-srdb representation"
+                ),
                 sources=[source_ref(source)],
                 profile_bindings=[binding["id"]],
             )
@@ -505,7 +511,10 @@ def _project_events(
             raise AdapterFailure(
                 "OFI-PROJ-SEVERITY-001",
                 "projection_validation",
-                f"Core event severity {semantic.get('severity')!r} cannot be projected through configured target map",
+                (
+                    f"Core event severity {semantic.get('severity')!r} cannot be projected "
+                    "through configured target map"
+                ),
                 sources=[source_ref(source)],
                 profile_bindings=[binding["id"]],
             )

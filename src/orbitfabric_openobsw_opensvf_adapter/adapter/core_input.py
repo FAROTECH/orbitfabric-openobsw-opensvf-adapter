@@ -84,7 +84,10 @@ class CoreInputSet:
             raise AdapterFailure(
                 "OFI-SOURCE-002",
                 "source_resolution",
-                f"Expected exactly one Mission Snapshot object for {domain}/{identifier}, found {len(matches)}",
+                (
+                    f"Expected exactly one Mission Snapshot object for "
+                    f"{domain}/{identifier}, found {len(matches)}"
+                ),
                 sources=[{"domain": domain, "id": identifier}],
             )
         return matches[0]
@@ -110,7 +113,10 @@ def load_core_input_set(manifest_path: Path) -> CoreInputSet:
         raise AdapterFailure(
             "OFI-INPUT-MANIFEST-001",
             "input_compatibility",
-            f"Unsupported Core Integration Input Set version: {manifest.get('input_set_version')!r}",
+            (
+                "Unsupported Core Integration Input Set version: "
+                f"{manifest.get('input_set_version')!r}"
+            ),
         )
 
     expected_digest = manifest.get("input_set_sha256")
@@ -119,7 +125,10 @@ def load_core_input_set(manifest_path: Path) -> CoreInputSet:
         raise AdapterFailure(
             "OFI-INPUT-DIGEST-001",
             "input_compatibility",
-            f"Core input_set_sha256 mismatch: declared {expected_digest!r}, computed {actual_digest}",
+            (
+                f"Core input_set_sha256 mismatch: declared {expected_digest!r}, "
+                f"computed {actual_digest}"
+            ),
         )
 
     if manifest.get("load_result") != "loaded":
@@ -169,7 +178,10 @@ def load_core_input_set(manifest_path: Path) -> CoreInputSet:
             raise AdapterFailure(
                 "OFI-INPUT-SURFACE-001",
                 "input_compatibility",
-                f"Expected exactly one Core surface record for role {role}, found {len(role_records)}",
+                (
+                    f"Expected exactly one Core surface record for role {role}, "
+                    f"found {len(role_records)}"
+                ),
             )
         record = role_records[0]
         if (
@@ -205,7 +217,10 @@ def load_core_input_set(manifest_path: Path) -> CoreInputSet:
             raise AdapterFailure(
                 "OFI-INPUT-SURFACE-002",
                 "input_compatibility",
-                f"Core surface digest mismatch for {role}: declared {declared_sha}, computed {actual_sha}",
+                (
+                    f"Core surface digest mismatch for {role}: declared {declared_sha}, "
+                    f"computed {actual_sha}"
+                ),
             )
         payload = load_json(surface_path)
         if payload.get(identity_field) != kind:

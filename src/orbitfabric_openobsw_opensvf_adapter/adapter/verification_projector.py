@@ -448,7 +448,7 @@ def _project_command(
             f"Command {step.command!r} at scenario step {step_index} has arguments "
             "but Stage 7.10 v0 defines no target argument encoder.",
         )
-        for argument_name in sorted(step.args):
+        for _argument_name in sorted(step.args):
             builder.add_atom(
                 kind="command_argument",
                 role="action",
