@@ -65,6 +65,43 @@ jobs:
       - name: Build documentation
         run: mkdocs build --strict
 
+  target-compatibility-openobsw:
+    needs: checks
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout adapter
+        uses: actions/checkout@v4
+
+      - name: Checkout validated OpenOBSW target baseline
+        uses: actions/checkout@v4
+        with:
+          repository: lipofefeyt/openobsw
+          ref: 44ceb71a016f0541ff7a0aa74191e13bafdb59c1
+          path: _openobsw
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install adapter and target SRDB tooling
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
+          python -m pip install -e ./_openobsw/srdb
+
+      - name: Run OpenOBSW target-native compatibility control
+        run: bash .github/scripts/openobsw-target-compatibility.sh
+
+      - name: Upload OpenOBSW compatibility evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: openobsw-target-compatibility
+          path: /tmp/orbitfabric-openobsw-target-compatibility/evidence
+          if-no-files-found: warn
+
   installed-lifecycle:
     needs: checks
     runs-on: ubuntu-latest
