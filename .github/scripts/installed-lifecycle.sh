@@ -8,7 +8,7 @@ fi
 
 root="${GITHUB_WORKSPACE:?GITHUB_WORKSPACE is required}"
 core="$root/_orbitfabric_core"
-work="/tmp/orbitfabric-template-installed-lifecycle"
+work="/tmp/orbitfabric-openobsw-opensvf-installed-lifecycle"
 state="$work/state"
 evidence="$work/evidence"
 wheelhouse="$work/wheelhouse"
@@ -36,8 +36,8 @@ test -n "$(find "$wheelhouse" -maxdepth 1 -type f -print -quit)"
 
 python tools/build_release_bundle.py \
   --wheel "$wheel" \
-  --authority explicit-template-control \
-  --publisher orbitfabric-template \
+  --authority local.adapter.test \
+  --publisher farotech \
   --name openobsw-opensvf \
   --output-dir "$release_dir"
 

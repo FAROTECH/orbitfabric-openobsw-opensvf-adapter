@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "orbitfabric-openobsw-opensvf-adapter"
 version = "0.1.0.dev0"
-description = "OrbitFabric adapter for openobsw-opensvf, initialized from the Adapter Developer Template."
+description = "OrbitFabric adapter for OpenOBSW/OpenSVF integration and verification projection."
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "Apache-2.0" }

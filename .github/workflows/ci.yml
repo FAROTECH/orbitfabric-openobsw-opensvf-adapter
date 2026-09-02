@@ -23,7 +23,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Install template and tools
+      - name: Install adapter and tools
         run: |
           python -m pip install --upgrade pip
           python -m pip install -e ".[dev]"
@@ -35,8 +35,8 @@ jobs:
       - name: Ruff
         run: ruff check .
 
-      - name: Template consistency
-        run: python tools/check_template_consistency.py
+      - name: Adapter consistency
+        run: python tools/check_adapter_consistency.py
 
       - name: Tests
         run: pytest -q
@@ -70,7 +70,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Template
+      - name: Checkout adapter
         uses: actions/checkout@v4
 
       - name: Checkout exact OrbitFabric Core baseline
@@ -98,8 +98,8 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: adapter-template-installed-lifecycle
-          path: /tmp/orbitfabric-template-installed-lifecycle/evidence
+          name: openobsw-opensvf-adapter-installed-lifecycle
+          path: /tmp/orbitfabric-openobsw-opensvf-installed-lifecycle/evidence
           if-no-files-found: warn
 
   release-proof:
@@ -107,7 +107,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Template
+      - name: Checkout adapter
         uses: actions/checkout@v4
 
       - name: Checkout exact OrbitFabric Core baseline
@@ -135,6 +135,6 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: adapter-template-release-proof
-          path: /tmp/orbitfabric-template-release-proof/evidence
+          name: openobsw-opensvf-adapter-release-proof
+          path: /tmp/orbitfabric-openobsw-opensvf-release-proof/evidence
           if-no-files-found: warn

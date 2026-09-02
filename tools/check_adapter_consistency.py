@@ -67,7 +67,7 @@ def main() -> int:
 
     schema_entries = manifest.get("profile_schemas")
     if not isinstance(schema_entries, list) or len(schema_entries) != 1:
-        errors.append("template expects exactly one profile schema entry")
+        errors.append("adapter expects exactly one Profile schema entry")
         schema_entry = None
     else:
         schema_entry = schema_entries[0]
@@ -76,15 +76,15 @@ def main() -> int:
     if isinstance(schema_entry, dict):
         schema_rel = schema_entry.get("path")
         if not isinstance(schema_rel, str) or not schema_rel:
-            errors.append("manifest profile schema path is missing")
+            errors.append("manifest Profile schema path is missing")
         else:
             schema_path = package / schema_rel
             if not schema_path.is_file():
-                errors.append(f"manifest profile schema does not exist: {schema_rel}")
+                errors.append(f"manifest Profile schema does not exist: {schema_rel}")
             else:
                 schema_sha = hashlib.sha256(schema_path.read_bytes()).hexdigest()
                 if schema_entry.get("sha256") != schema_sha:
-                    errors.append("manifest profile schema SHA-256 is stale")
+                    errors.append("manifest Profile schema SHA-256 is stale")
                 try:
                     schema = _load_json(schema_path)
                 except (OSError, ValueError, json.JSONDecodeError) as exc:
@@ -94,7 +94,7 @@ def main() -> int:
     if schema is not None:
         schema_integration_id = _integration_id_const(schema)
         if schema_integration_id != manifest_integration_id:
-            errors.append("profile schema integration.id differs from manifest integration.id")
+            errors.append("Profile schema integration.id differs from manifest integration.id")
 
     profile_path = ROOT / "examples" / "profile.yaml"
     try:
