@@ -1,0 +1,101 @@
+name: Temporary product wording linewrap
+
+on:
+  pull_request:
+
+permissions:
+  contents: write
+
+jobs:
+  linewrap:
+    if: github.head_ref == 'feat/openobsw-opensvf-bootstrap'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Normalize product wording line lengths
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          preflight = Path("src/orbitfabric_openobsw_opensvf_adapter/adapter/preflight.py")
+          text = preflight.read_text(encoding="utf-8")
+          text = text.replace(
+              'DEFAULT_SPACECRAFT_TEMPLATE = PACKAGE_ROOT / "resources" / "opensvf" / "verification_spacecraft.yaml"',
+              'DEFAULT_SPACECRAFT_TEMPLATE = (\n    PACKAGE_ROOT / "resources" / "opensvf" / "verification_spacecraft.yaml"\n)',
+          )
+          preflight.write_text(text, encoding="utf-8")
+
+          plan = Path("src/orbitfabric_openobsw_opensvf_adapter/adapter/verification_plan.py")
+          text = plan.read_text(encoding="utf-8")
+          text = text.replace(
+              'raise _failure("the current verification_projection operation does not admit projected OrbitFabric expectation atoms")',
+              'raise _failure(\n                "verification_projection does not admit projected OrbitFabric expectation atoms"\n            )',
+          )
+          plan.write_text(text, encoding="utf-8")
+
+          projector = Path("src/orbitfabric_openobsw_opensvf_adapter/adapter/verification_projector.py")
+          text = projector.read_text(encoding="utf-8")
+          start = text.index("NOT_PROJECTED_REASONS = {")
+          end = text.index("\n\n\n@dataclass", start)
+          replacement = '''NOT_PROJECTED_REASONS = {
+    "initial_mode": (
+        "verification_projection does not project Core initial mode into target runtime "
+        "initialization."
+    ),
+    "initial_telemetry": (
+        "verification_projection does not project Core initial telemetry into target runtime "
+        "initialization."
+    ),
+    "telemetry_injection": (
+        "verification_projection has no explicit Core telemetry injection mapping."
+    ),
+    "expect_mode": (
+        "verification_projection has no explicit Core mode observation mapping."
+    ),
+    "expect_event": (
+        "verification_projection cannot identify Core events from target PUS subtype alone."
+    ),
+    "expect_command": (
+        "verification_projection does not map Core host command history to target evidence."
+    ),
+    "expect_command_status": (
+        "Core host-side command_status semantics are not equivalent to PUS acceptance telemetry."
+    ),
+    "expect_telemetry": (
+        "verification_projection has no explicit Core telemetry observation mapping."
+    ),
+    "expect_payload_lifecycle": (
+        "verification_projection has no target payload lifecycle observation contract."
+    ),
+    "expect_data_flow": (
+        "OrbitFabric data-flow expectation semantics remain host-side Mission "
+        "Data Contract evidence."
+    ),
+    "expect_scenario_status": (
+        "OrbitFabric scenario_status is an aggregate Core host-side result, "
+        "not target runtime evidence."
+    ),
+}'''
+          text = text[:start] + replacement + text[end:]
+          text = text.replace(
+              '"the current verification_projection operation cannot project command arguments without an explicit "\n            "target argument encoder."',
+              '"verification_projection cannot project command arguments without an explicit "\n            "target argument encoder."',
+          )
+          projector.write_text(text, encoding="utf-8")
+          PY
+
+      - name: Commit linewrap if needed
+        run: |
+          if git diff --quiet; then
+            echo "No linewrap changes required."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Normalize product wording line lengths"
+          git push origin HEAD:${{ github.head_ref }}
