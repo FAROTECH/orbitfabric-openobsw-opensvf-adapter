@@ -9,6 +9,7 @@ from .model import AdapterFailure
 
 PACKAGE_ROOT = Path(__file__).resolve().parents[1]
 BASELINE_ROOT = PACKAGE_ROOT / "resources" / "target_baselines"
+OPENOBSW_BASELINE_COMMIT = "44ceb71a016f0541ff7a0aa74191e13bafdb59c1"
 SUPPORTED_BASELINES = {
     "openobsw-0.7.0-obsw-srdb-0.1.0-reference": BASELINE_ROOT
     / "openobsw-0.7.0-obsw-srdb-0.1.0-reference.json"
@@ -61,7 +62,7 @@ def load_target_baseline(identifier: str) -> TargetBaseline:
     srdb = target.get("obsw_srdb", {}) if isinstance(target, dict) else {}
     if (
         openobsw.get("version") != "0.7.0"
-        or openobsw.get("commit") != "b3b7c3fa9c6edd2a52eef356d113c1eae1b03fec"
+        or openobsw.get("commit") != OPENOBSW_BASELINE_COMMIT
     ):
         raise AdapterFailure(
             "OFI-COMP-BASELINE-002",
