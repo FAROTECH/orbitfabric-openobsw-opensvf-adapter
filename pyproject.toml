@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "orbitfabric-openobsw-opensvf-adapter"
 version = "0.1.0.dev0"
-description = "OrbitFabric adapter for OpenOBSW/OpenSVF integration and verification projection."
+description = "OrbitFabric adapter for projecting mission contracts and verification intent into OpenOBSW/OpenSVF integration artifacts."
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "Apache-2.0" }
@@ -15,7 +15,8 @@ authors = [
 dependencies = [
   "PyYAML>=6.0",
   "jsonschema>=4.23",
-  "rfc8785>=0.1.4"
+  "rfc8785>=0.1.4",
+  "orbitfabric @ git+https://github.com/FAROTECH/orbitfabric.git@4377d6656c62aa1dc19a7ed81d2de872b6b22ccd"
 ]
 
 [project.optional-dependencies]
