@@ -24,7 +24,10 @@ Declared first-release scope:
   event projection
   housekeeping packet projection
   traceability/provenance
-  explicit subset of Scenario -> OpenSVF verification projection
+  Scenario validation/provenance
+  no-argument Scenario command -> OpenSVF TC projection
+  Profile-configured expected PUS responses -> OpenSVF TM expectation
+  explicit refusal of non-equivalent host command_status semantics
 ```
 
 A complete OpenOBSW/OpenSVF feature mapping is not the denominator. The denominator is the OrbitFabric semantic surface that is applicable to the role represented by this adapter.
@@ -39,7 +42,7 @@ Target Applicable Surface
 Adapter Declared Scope
 ```
 
-The current matrix deliberately separates project-time mission-contract projection from Scenario verification projection. A capability may be well supported by `project` and still have a narrower `verification_projection` representation.
+The current matrix deliberately separates project-time mission-contract projection from Scenario verification projection. A capability may be well supported by `project` and still be deliberately outside the first-release `verification_projection` subset.
 
 ## Matrix
 
@@ -55,15 +58,15 @@ The current matrix deliberately separates project-time mission-contract projecti
 | Modes and runtime mode initialization | yes | OpenOBSW mode/runtime behavior and OpenSVF observable state | out of scope | OUT_OF_SCOPE | `verification_projection` preserves mode intent as `not_projected`; adapter does not own target FSM initialization | reassess as a later explicit capability |
 | Fault / FDIR runtime behavior | yes | OpenOBSW fault/runtime implementation and observable event behavior | out of scope | OUT_OF_SCOPE | Event contract projection is supported, but generating target FDIR behavior would exceed the current adapter ownership boundary | require explicit downstream FDIR contract before considering |
 | Mission policies | yes | potentially target runtime/operations-specific policy mechanisms | out of scope | OUT_OF_SCOPE | No generic policy projection is claimed by this adapter | reassess only with a concrete target-owned representation |
-| Core relationship families | unknown | depends on individual relationship family and target-native representation | undecided | NOT_ANALYZED | Integration Input Set is validated, but the current package declares no consumed relationship families | perform family-by-family applicability analysis |
+| Relationship Manifest as a direct projection surface | no | no independent OpenOBSW/OpenSVF relationship-graph artifact is owned by this adapter | out of scope | NOT_APPLICABLE | The Core manifest remains a required coherence surface. Relationship semantics relevant to current projection, such as packet membership, are consumed through the corresponding Core entity semantics rather than projected as a second graph artifact. | reassess only if a downstream-native relationship representation becomes part of adapter scope |
 | Scenario validation and provenance | yes | Core `ScenarioLoader` validation + Verification Projection Plan provenance | in scope | FULL | Scenario is validated by the exact Core runtime and mission identity is checked against the consumed Integration Input Set | complete for current operation contract |
 | Scenario command action without arguments | yes | OpenSVF Procedure `ctx.tc()` with Profile-resolved PUS mapping | in scope | FULL | Generated Procedure is imported through native OpenSVF `CampaignRunner`; installed lifecycle exercises materialization | complete for current subset |
-| Scenario command arguments | yes | target-specific encoding into PUS TC data | in scope | NOT_IMPLEMENTED | Operation blocks rather than inventing an argument encoder | define explicit target argument encoding contract |
+| Scenario command arguments | yes | target-specific encoding into PUS TC application data | out of scope | OUT_OF_SCOPE | The first release deliberately blocks rather than inventing an argument encoder | define an explicit target argument encoding contract before adding to declared scope |
 | Profile-configured expected PUS responses | yes | OpenSVF Procedure `ctx.expect_tm()` | in scope | FULL | Expected responses are resolved from target Profile mapping and materialized into native Procedure operations | complete for current subset |
-| Scenario event expectation | yes | target event identification / OpenSVF observation | in scope | NOT_IMPLEMENTED | Current PUS subtype alone is insufficient to identify the originating Core event without an explicit observation mapping | design event observation mapping |
-| Scenario mode expectation | yes | target mode observation | in scope | NOT_IMPLEMENTED | Current operation records the expectation as `not_projected` | define explicit mode observation mapping |
-| Scenario telemetry expectation | yes | OpenSVF parameter or TM observation | in scope | NOT_IMPLEMENTED | Current operation records parameter-level telemetry expectation as `not_projected` | evaluate native parameter assertion mapping |
-| Scenario telemetry injection | unknown | possible OpenSVF/runtime injection primitive depends on target semantics | undecided | NOT_ANALYZED | No target injection mapping has yet been assessed systematically | investigate OpenSVF/runtime injection surfaces |
+| Scenario event expectation | yes | target event identification / OpenSVF observation | out of scope | OUT_OF_SCOPE | PUS subtype alone is insufficient to identify the originating Core event without an explicit observation mapping | design event observation mapping before adding to declared scope |
+| Scenario mode expectation | yes | target mode observation | out of scope | OUT_OF_SCOPE | Current operation records the expectation as `not_projected` | define explicit mode observation mapping before adding to declared scope |
+| Scenario telemetry expectation | yes | OpenSVF parameter or TM observation | out of scope | OUT_OF_SCOPE | Current operation records parameter-level telemetry expectation as `not_projected` | evaluate native parameter assertion mapping before adding to declared scope |
+| Scenario telemetry injection | yes | OpenSVF `ProcedureContext.inject()` writes to a target equipment IN port | out of scope | OUT_OF_SCOPE | OrbitFabric Scenario injection mutates a named telemetry value, while OpenSVF injection addresses an equipment command/input port. Those are not semantically equivalent without an explicit telemetry-to-target-input mapping. | design an explicit injection mapping contract before adding to declared scope |
 | Core host-side `command_status` expectation | yes | PUS acceptance/completion telemetry is related but not semantically identical | in scope | TARGET_UNSUPPORTED | Adapter explicitly refuses to equate Core host-side command status with PUS acceptance telemetry | retain semantic distinction unless a future contract defines equivalence |
 | Aggregate host expectations (`data_flow`, `payload_lifecycle`, `scenario_status`) | no | these are OrbitFabric host-side aggregate evidence semantics, not target runtime primitives | out of scope | NOT_APPLICABLE | Verification plan preserves their disposition instead of manufacturing downstream evidence | none unless Core defines a portable observation contract |
 
@@ -143,40 +146,61 @@ remove -> empty inventory
 
 ```text
 Total rows:                         21
-Analyzed rows:                      19
-NOT_ANALYZED:                        2
+Analyzed rows:                      21
+NOT_ANALYZED:                        0
+Analysis Coverage:                 100%
 
 Known target-applicable rows:       19
-Target applicability unknown:        1
-NOT_APPLICABLE:                      1
+Target applicability unknown:        0
+NOT_APPLICABLE:                      2
 
-Declared in-scope rows:             13
+Declared first-release scope:        9
 FULL:                                6
 PARTIAL:                             2
-NOT_IMPLEMENTED:                     4
 TARGET_UNSUPPORTED:                  1
+NOT_IMPLEMENTED in declared scope:   0
 
-Known applicable but OUT_OF_SCOPE:   5
+Known applicable but OUT_OF_SCOPE:  10
 ```
 
 Interpretation:
 
 ```text
 Analysis Coverage
-    strong enough to expose the remaining investigation gaps explicitly;
-    relationship families and telemetry injection still need analysis.
+    complete for the current 21-area semantic inventory.
 
 Scope Completeness
-    the first-release scope has a real implemented core, but Scenario
-    projection still has four explicit implementation gaps.
+    the first-release scope contains no known implementation hole.
+    Two broad project-time areas remain intentionally PARTIAL because
+    the target mappings are narrower than the complete Core domain.
+    command_status remains an explicit semantic non-equivalence rather
+    than an implementation defect.
 
 Applicable Surface Coverage
-    deliberately narrower than the full applicable OrbitFabric surface;
-    subsystem topology, modes, FDIR, policies and non-HK packet families
-    are not silently claimed.
+    deliberately narrower than the complete target-applicable surface.
+    The first 0.1.0 is a focused integration product, not a promise to
+    project every OrbitFabric Scenario or runtime concept.
 ```
 
-No single maturity percentage is reported because it would hide the difference between deliberate scope, implementation gaps and a true target-semantic mismatch.
+No single maturity percentage is reported because it would hide the difference between deliberate scope, partial domain mapping and a true target-semantic mismatch.
+
+## First-release scope decision
+
+The `0.1.0` baseline should not widen scope merely to eliminate visible `OUT_OF_SCOPE` rows.
+
+The first release is intended to prove a coherent and reusable integration chain:
+
+```text
+OrbitFabric mission contract
+    -> OpenOBSW / obsw-srdb project artifacts
+
+OrbitFabric Scenario
+    -> validated no-argument PUS command projection
+    -> Profile-declared expected PUS responses
+    -> OpenSVF-native campaign / Procedure materialization
+```
+
+Later versions may widen verification projection one semantic family at a time. Each addition should first define the target-owned observation or encoding meaning, then add implementation and downstream-native evidence.
 
 ## Policy note
 
