@@ -1,203 +1,293 @@
 # Adapter Readiness Checklist
 
-Use this checklist before calling a concrete OrbitFabric adapter ready for reuse or release.
+Use this checklist before calling the OpenOBSW/OpenSVF adapter ready for reuse, stable release or public publication.
 
-It does not replace OrbitFabric Core conformance. It helps a maintainer verify that the adapter repository covers the responsibilities expected from a well-structured integration product.
+It complements OrbitFabric Core conformance. It does not replace it.
 
 ## 1. Identity
 
-Confirm that the repository deliberately separates and documents:
+Current product identity:
 
 ```text
-Python distribution identity
-Python package namespace
-console script identity
-adapter.id
-integration.id
-Adapter Source Coordinate
-release version identity
+repository       orbitfabric-openobsw-opensvf-adapter
+distribution     orbitfabric-openobsw-opensvf-adapter
+python package   orbitfabric_openobsw_opensvf_adapter
+console command  orbitfabric-openobsw-opensvf
+adapter.id       orbitfabric-openobsw-opensvf
+integration.id   orbitfabric-openobsw-opensvf
+version          0.1.0.dev0
 ```
 
-Useful Template support:
+Before stable publication, still decide explicitly:
 
 ```text
-tools/initialize_adapter.py
-docs/adapter-identity.md
-tools/check_template_consistency.py
+final Adapter Source Coordinate
+final publisher identity
+stable release version transition
 ```
 
-Do not treat initialization as a decision about official publisher identity, official Source Coordinate, release maturity, target compatibility or coverage claims.
+Do not infer those values from the historical PoC or from the fact that GitHub is used for development hosting.
 
 ## 2. Packaging
 
 Confirm that:
 
+- the adapter builds an installable wheel;
+- the wheel owns exactly one namespaced `integration_package.json`;
+- the Profile schema and target resources are packaged;
+- the console entry point resolves from the installed distribution;
+- runtime dependencies are explicit;
+- installation does not depend on ambient `PYTHONPATH` or a source checkout.
+
+The current CI proves these properties through package checks and the isolated installed lifecycle.
+
+## 3. Core integration contract
+
+Confirm that the package deliberately declares and implements:
+
 ```text
-the adapter builds an installable artifact
-the artifact owns exactly one integration_package.json
-target-specific Profile schemas are packaged
-the console entry point resolves from the installed distribution
-runtime dependencies are declared explicitly
-```
-
-For the Python backend demonstrated by this Template, the Integration Package Manifest lives inside the namespaced adapter package and is discovered from the installed distribution.
-
-## 3. Integration contract
-
-Confirm that the adapter deliberately declares and implements:
-
-```text
-supported Core input surfaces
+supported Core Integration Input Set version
+required and companion Core surfaces
 Integration Package Manifest
 orbitfabric.adapter_cli.v1
-supported operations
-operation-input requirements
+project operation
+verification_projection operation
+Scenario operation-input role
 Core-conformant Integration Result
 ```
 
 Core remains normative for generic contract semantics.
 
-## 4. Projection
-
-Confirm that target-specific projection is explicit and reviewable:
+The current exact development baseline is:
 
 ```text
-Projection Profile schema
-Profile example
-source bindings
-target-specific settings
-target representation
-mapping traceability
-intentional non-projection behavior
+4377d6656c62aa1dc19a7ed81d2de872b6b22ccd
 ```
 
-Do not copy the Dummy target vocabulary into a real adapter unless it genuinely represents the downstream target.
+## 4. Projection Profile
+
+Confirm that target-specific projection remains explicit and reviewable:
+
+```text
+Profile schema
+example Profile
+source bindings
+PUS settings
+target allocations
+flight-contract symbols
+SRDB-specific settings
+event severity mapping
+expected target responses
+intentional do_not_project bindings
+```
+
+The current Profile vocabulary admits only:
+
+```text
+telemetry
+commands
+events
+packets
+```
+
+Do not imply support for modes, faults, policies, subsystems or relationship families unless a later Profile/implementation change deliberately adds them.
 
 ## 5. Implementation
 
-Confirm that implementation responsibilities are separated clearly enough to review:
+Confirm that implementation responsibilities remain separated:
 
 ```text
-input-set loading and integrity checks
+Core input-set loading and integrity checks
 Profile loading and validation
-CLI contract handling
-operation-input validation
-target projection
+target baseline loading
+compatibility validation
+projection resolution
 artifact generation
+verification projection
+OpenSVF materialization
 Integration Result construction
 I/O and hashing
 ```
 
-A concrete adapter may organize code differently, but Core contract interpretation and target-specific mapping logic should remain conceptually distinct.
+Generic Core contract interpretation and OpenOBSW/OpenSVF-specific mapping logic must remain conceptually distinct.
 
-## 6. Conformance and compatibility
+## 6. OpenOBSW / SRDB compatibility
 
-Confirm that the repository contains appropriate positive and negative controls:
+Current target-native CI pins:
 
 ```text
-successful operation tests
-invalid input and binding tests
-Core contract conformance
-package-layout checks
-installed lifecycle proof
-release and Project Lock proof
-target-native compatibility tests
-fail-closed behavior
+OpenOBSW commit 44ceb71a016f0541ff7a0aa74191e13bafdb59c1
+obsw-srdb 0.1.0 at that checkout
 ```
 
-Use the strongest meaningful downstream-native validation available. A compiler, parser, simulator, schema validator, project build or runtime smoke can provide evidence that generic Core conformance cannot.
-
-## 7. Evidence and traceability
-
-Confirm that an execution retains enough information to answer:
+Before release, confirm the evidence still proves:
 
 ```text
-what Core input was consumed?
-what Profile was used?
-what operation inputs were used?
-what target artifacts were generated?
-what exact bytes were produced?
-which source concepts map to which target elements?
-what was intentionally not projected?
+additive contribution load
+composition with native base SRDB
+materialization and reload
+expected target reuse/collision behavior
+native C header generation
+native XTCE generation
+C11 compilation of mission_contract.h
 ```
 
-Use the Core-owned Integration Result as the primary execution evidence surface. Keep release evidence and target-native evidence as separate layers when they answer different questions.
+Any refresh to a newer OpenOBSW baseline must be treated as a compatibility change with new evidence, not as a documentation-only version bump.
 
-## 8. Developer experience
+## 7. OpenSVF compatibility
 
-Confirm that a developer with no project history can understand:
+Current target-native CI pins:
 
 ```text
-what the adapter does
-what it intentionally does not do
-which files they normally change
-how to run safe local checks
-how to build the package
-how to debug failures by layer
-how to construct release identity
-how to declare integration coverage
+OpenSVF commit 667d3eadcb0bbd7814ac324b99946c4ed2f11f23
+observed package metadata 1.0.0
 ```
 
-Recommended entry points:
+Before release, confirm the evidence still proves:
 
 ```text
-README.md
-docs/getting-started.md
-docs/repository-anatomy.md
-docs/adapter-identity.md
-docs/projection-profile-and-bindings.md
-docs/testing-and-conformance.md
-docs/evidence-and-traceability.md
-docs/release-lifecycle.md
-docs/integration-coverage.md
-examples/
+verification materialization generated
+svf validate accepts generated spacecraft
+zero validation errors
+generated campaign loads through CampaignRunner.from_yaml()
+generated Procedure subclass imports and retains expected identity
 ```
 
-## 9. Automation
+Do not claim full SIL execution from this static/native acceptance gate. A release that claims an executed campaign must add explicit runtime evidence naming the OpenOBSW binary and selected OpenSVF mode.
 
-Confirm that CI verifies the parts of the lifecycle that should not depend on a maintainer running them manually:
+## 8. Installed lifecycle and release proof
+
+Confirm permanent CI proves:
 
 ```text
-lint
-unit and negative tests
-Core conformance
 wheel build
-packaged-asset verification
-strict documentation build
-isolated installed lifecycle
-release construction
-Project Lock proof
-evidence retention
+Adapter Manager install
+inventory
+verify
+project execution
+verification_projection execution
+Integration Result conformance
+OpenSVF materialization
+remove
+empty inventory
 ```
 
-Keep release construction separate from publication. GitHub Releases, PyPI or another provider may transport already identified release bytes without redefining OrbitFabric release identity.
-
-## Integration Coverage
-
-For a reusable adapter, analyze:
+and separately:
 
 ```text
-OrbitFabric Semantic Surface
-    -> Target Applicable Surface
-    -> Adapter Declared Scope
+Release Descriptor construction
+Project Lock construction
+MISSING -> install -> MATCH
+second install -> NOOP / MATCH
+verify
+remove
 ```
 
-Then record explicit dispositions such as:
+Keep release construction separate from provider-specific publication.
+
+## 9. Evidence and traceability
+
+Confirm that a user can answer:
 
 ```text
-FULL
-PARTIAL
-NOT_IMPLEMENTED
-TARGET_UNSUPPORTED
-NOT_APPLICABLE
-NOT_ANALYZED
-OUT_OF_SCOPE
+what Core input set was consumed?
+what Profile was used?
+what Scenario was used?
+what target baseline was selected?
+what OpenOBSW/SRDB artifacts were generated?
+what OpenSVF assets were generated?
+which source concepts map to which target elements?
+what was intentionally not projected or blocked?
+which exact downstream baseline accepted the output?
+what exact release bytes were installed?
 ```
 
-A focused community adapter may intentionally declare a narrow scope. An OrbitFabric-maintained general-purpose adapter should analyze the full Target Applicable Surface before a maturity or version decision.
+Use the Core-owned Integration Result as the primary execution evidence surface. Keep target-native, installed lifecycle and release evidence as separate layers.
+
+## 10. Documentation from both sides
+
+A visitor may arrive from OrbitFabric or from the downstream ecosystem.
+
+Before publication, verify that README and docs explain:
+
+```text
+what OrbitFabric is
+what OpenOBSW is
+what OpenSVF is
+why the integration exists
+what each system owns
+how to install/configure the OrbitFabric side
+how to configure the adapter
+what is required on the OpenOBSW/SRDB side
+what is required on the OpenSVF side
+which steps are required, recommended or optional
+how to validate the handoff natively
+what the adapter does not own
+```
+
+No side should be presented as a subordinate implementation detail of another project.
+
+## 11. Integration Coverage
+
+The current maintained matrix is:
+
+```text
+coverage/integration-coverage.md
+```
+
+Before stable release, review every disposition against the current code and downstream baselines.
+
+Current summary:
+
+```text
+Total rows:                         21
+Analyzed rows:                      19
+NOT_ANALYZED:                        2
+Declared in-scope rows:             13
+FULL:                                6
+PARTIAL:                             2
+NOT_IMPLEMENTED:                     4
+TARGET_UNSUPPORTED:                  1
+Known applicable but OUT_OF_SCOPE:   5
+NOT_APPLICABLE:                      1
+```
+
+The two current analysis gaps are:
+
+```text
+Core relationship-family applicability
+Scenario telemetry-injection target applicability
+```
+
+The four current implementation gaps inside declared scope are:
+
+```text
+Scenario command argument encoding
+Scenario event expectation mapping
+Scenario mode expectation mapping
+Scenario telemetry expectation mapping
+```
+
+A focused `0.1.0` may legitimately retain some gaps if they are explicitly accepted as release scope. They must not disappear from documentation through optimistic wording.
+
+## 12. Product cleanup
+
+Before stable/public release, search the product tree for historical construction language that should not define the product architecture, including:
+
+```text
+Dummy
+Template creation instructions
+internal pressure-test labels
+PoC Stage numbering in active product code/resources
+obsolete compatibility/version statements
+```
+
+Historical PoC references are acceptable where they are clearly labeled as history or migration evidence. Active runtime messages and target resource identities should be product-facing.
 
 ## Readiness conclusion
 
-A successful projection is necessary, but it is not enough by itself to establish adapter maturity.
+The current adapter is already much stronger than a code extraction: it has Core conformance, two independent downstream-native gates, installed lifecycle, release proof, balanced documentation and an explicit coverage matrix.
 
-Before release, review all nine responsibility areas, target compatibility, declared scope and Integration Coverage. The resulting version should reflect the actual maturity of that concrete adapter rather than the age of the repository or the amount of exploratory work that preceded it.
+It is not yet called stable or public because maturity is a release decision, not a count of green checks.
+
+The remaining work before `0.1.0` is to review the declared coverage gaps, remove residual PoC-construction language from active product assets, make the final source/publisher decision and run one final publication-readiness review against the exact release baseline.
