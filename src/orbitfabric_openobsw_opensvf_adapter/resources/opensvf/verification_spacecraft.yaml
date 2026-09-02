@@ -1,5 +1,5 @@
 version: 1
-spacecraft: OrbitFabric-OpenOBSW-Stage7.10
+spacecraft: OrbitFabric-OpenOBSW-OpenSVF-Verification
 
 obsw:
   type: pipe

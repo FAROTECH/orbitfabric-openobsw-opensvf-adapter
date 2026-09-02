@@ -182,7 +182,7 @@ def _validate_semantics(payload: dict[str, Any]) -> None:
                 )
 
         if atom["disposition"] == "projected" and atom["role"] == "expectation":
-            raise _failure("Stage 7.10 v0 does not admit projected OrbitFabric expectation atoms")
+            raise _failure("the current verification_projection operation does not admit projected OrbitFabric expectation atoms")
 
         if atom["disposition"] == "projected" and atom["kind"] == "scenario_metadata":
             if refs:

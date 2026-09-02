@@ -28,30 +28,30 @@ KNOWN_EXPECT_KEYS = {
 
 NOT_PROJECTED_REASONS = {
     "initial_mode": (
-        "Stage 7.10 v0 does not project Core scenario initial mode into "
+        "the current verification_projection operation does not project Core scenario initial mode into "
         "target runtime initialization."
     ),
     "initial_telemetry": (
-        "Stage 7.10 v0 does not project Core scenario initial telemetry into "
+        "the current verification_projection operation does not project Core scenario initial telemetry into "
         "target runtime initialization."
     ),
     "telemetry_injection": (
-        "Stage 7.10 v0 has no explicit Core telemetry injection to target injection mapping."
+        "the current verification_projection operation has no explicit Core telemetry injection to target injection mapping."
     ),
-    "expect_mode": ("Stage 7.10 v0 has no explicit Core mode to target observation mapping."),
-    "expect_event": ("Stage 7.10 v0 does not identify Core events from target PUS subtype alone."),
+    "expect_mode": ("the current verification_projection operation has no explicit Core mode to target observation mapping."),
+    "expect_event": ("the current verification_projection operation does not identify Core events from target PUS subtype alone."),
     "expect_command": (
-        "Stage 7.10 v0 does not map Core host-side command dispatch history "
+        "the current verification_projection operation does not map Core host-side command dispatch history "
         "to target runtime evidence."
     ),
     "expect_command_status": (
         "Core host-side command_status semantics are not equivalent to PUS acceptance telemetry."
     ),
     "expect_telemetry": (
-        "Stage 7.10 v0 has no explicit Core telemetry to target observation mapping."
+        "the current verification_projection operation has no explicit Core telemetry to target observation mapping."
     ),
     "expect_payload_lifecycle": (
-        "Stage 7.10 v0 has no target payload lifecycle observation contract."
+        "the current verification_projection operation has no target payload lifecycle observation contract."
     ),
     "expect_data_flow": (
         "OrbitFabric data-flow expectation semantics remain host-side Mission "
@@ -138,7 +138,7 @@ def project_verification_scenario(
     input_set_manifest: Path,
     profile_path: Path,
 ) -> dict[str, Any]:
-    """Validate an OrbitFabric scenario and project the Stage 7.10 v0 subset."""
+    """Validate an OrbitFabric scenario and project the supported verification subset."""
 
     core = load_core_input_set(input_set_manifest)
     profile = load_projection_profile(profile_path)
@@ -168,7 +168,7 @@ def project_loaded_scenario(
     profile: ProjectionProfile,
     orbitfabric_version: str,
 ) -> dict[str, Any]:
-    """Project an already Core-validated LoadedScenario into a v0 plan."""
+    """Project an already Core-validated LoadedScenario into a verification plan."""
 
     scenario_path = scenario_path.resolve()
     _validate_core_runtime_and_mission_identity(
@@ -431,7 +431,7 @@ def _project_command(
 
     if step.args:
         reason = (
-            "Stage 7.10 v0 cannot project command arguments without an explicit "
+            "the current verification_projection operation cannot project command arguments without an explicit "
             "target argument encoder."
         )
         atom = builder.add_atom(
@@ -446,7 +446,7 @@ def _project_command(
         builder.add_blocking_diagnostic(
             "OFI-VPROJ-CMDARGS-001",
             f"Command {step.command!r} at scenario step {step_index} has arguments "
-            "but Stage 7.10 v0 defines no target argument encoder.",
+            "but the adapter defines no target argument encoder for verification_projection.",
         )
         for _argument_name in sorted(step.args):
             builder.add_atom(
