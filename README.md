@@ -4,7 +4,7 @@ Integration adapter connecting [OrbitFabric](https://github.com/FAROTECH/orbitfa
 
 This repository is intentionally written for users arriving from either side of the integration. OrbitFabric, OpenOBSW and OpenSVF remain independent systems with their own responsibilities. The adapter owns the projection boundary between them.
 
-> Development status: the first `0.1.0.dev0` product baseline has completed technical and editorial readiness review. It is exercised through Core conformance, OpenOBSW/SRDB native compatibility, OpenSVF native compatibility, installed Adapter Manager lifecycle and provider-neutral release proof. Stable `0.1.0` publication remains a separate checkpoint because the final Adapter Source Coordinate, publisher identity and exact stable release bytes are not yet frozen.
+> Release candidate status: this branch prepares the stable `0.1.0` OrbitFabric-maintained adapter release. The semantic scope is unchanged from the validated `0.1.0.dev0` product baseline. Stable logical identity and first release source authority are now frozen, but the release is not public until the exact candidate is merged, the repository is made public, GitHub release immutability is enabled and the published bytes and attestations are verified.
 
 ## The participating systems
 
@@ -167,7 +167,7 @@ python -m pip install --upgrade pip
 python -m pip install -e ".[dev]"
 ```
 
-The package currently declares the exact OrbitFabric Core development baseline it requires, so installation resolves that dependency automatically. CI also installs the same Core commit explicitly as a conformance control.
+The package declares the exact OrbitFabric Core baseline it requires, so installation resolves that dependency automatically. CI also installs the same Core commit explicitly as a conformance control.
 
 Run the repository checks:
 
@@ -181,7 +181,7 @@ mkdocs build --strict
 
 ### Adapter Manager
 
-The repository already proves the complete installed lifecycle through OrbitFabric Adapter Manager:
+The repository proves the complete installed lifecycle through OrbitFabric Adapter Manager:
 
 ```text
 release artifact
@@ -196,7 +196,15 @@ release artifact
   -> empty inventory
 ```
 
-The final public Source Coordinate and publisher identity are intentionally not frozen while the stable release boundary is still being decided.
+For stable `0.1.0`, the selected logical/source identity is:
+
+```text
+logical key        orbitfabric/openobsw-opensvf
+source authority   github.com/FAROTECH
+Source Coordinate  github.com/FAROTECH:orbitfabric/openobsw-opensvf
+```
+
+The GitHub authority identifies the first concrete release source. It does not make the GitHub organization the logical publisher and does not define GitHub as a universal OrbitFabric registry.
 
 ## Adapter identity
 
@@ -207,8 +215,11 @@ python package   orbitfabric_openobsw_opensvf_adapter
 console command  orbitfabric-openobsw-opensvf
 adapter.id       orbitfabric-openobsw-opensvf
 integration.id   orbitfabric-openobsw-opensvf
-version          0.1.0.dev0
+logical key      orbitfabric/openobsw-opensvf
+version          0.1.0
 ```
+
+The release is classified as an **OrbitFabric-maintained stable adapter**. It is not yet described as registry-classified official because the generic official publisher/registry governance layer has not been promoted.
 
 ## Operations
 
@@ -235,6 +246,30 @@ orbitfabric-openobsw-opensvf run \
 
 When invoked through Adapter Manager, operation inputs use the manager-facing `ROLE=PATH` form and Core normalizes them for the adapter CLI protocol.
 
+## Release artifacts
+
+Publisher-owned stable release material is constructed with:
+
+```bash
+python tools/build_release_bundle.py \
+  --wheel dist/orbitfabric_openobsw_opensvf_adapter-0.1.0-py3-none-any.whl \
+  --authority github.com/FAROTECH \
+  --publisher orbitfabric \
+  --name openobsw-opensvf \
+  --release-only
+```
+
+This produces:
+
+```text
+adapter-release.json
+SHA256SUMS
+```
+
+alongside the selected wheel.
+
+A canonical `adapter-project-lock.json` is not part of publisher release membership. Project Lock belongs to the consuming project and records that project's exact selected resolution. The default tool mode still derives a lock for lifecycle and conformance proof.
+
 ## Setup from both sides
 
 The integration documentation follows four steps:
@@ -257,13 +292,13 @@ Compatibility is explicit and evidence-backed.
 | `obsw-srdb` | package `0.1.0` at the validated OpenOBSW baseline | target-native composition and generation control |
 | OpenSVF | commit `667d3eadcb0bbd7814ac324b99946c4ed2f11f23`, package metadata `1.0.0` | `svf validate`, native campaign load and generated Procedure import |
 
-The current OpenSVF upstream README still lists `v0.8.0` in its compatibility table while the same `main` checkout declares package version `1.0.0` in `pyproject.toml`. This adapter therefore records the exact validated commit and observed package metadata rather than inferring compatibility from a single version label.
+The current OpenSVF upstream README still lists `v0.8.0` in its compatibility table while the same validated checkout declares package version `1.0.0` in `pyproject.toml`. This adapter records the exact validated commit and observed package metadata rather than inferring compatibility from a single version label.
 
 YAMCS is not a mandatory dependency of projection. It becomes relevant only when a runtime or ground-validation workflow explicitly uses the OpenSVF/YAMCS path.
 
 ## Validation model
 
-A release is not accepted because Core conformance alone passes:
+A stable release is not accepted because Core conformance alone passes:
 
 ```text
 Core contract conformance
@@ -277,6 +312,8 @@ OpenSVF native compatibility
 installed Adapter Manager lifecycle
         +
 release / Project Lock proof
+        +
+publisher release-only artifact proof
 ```
 
 Historical PoC runtime evidence remains useful for live TM/TC/YAMCS continuity, but it is not silently promoted into a current product compatibility claim.
@@ -323,6 +360,24 @@ Start with:
 6. [Evidence and Traceability](docs/evidence-and-traceability.md)
 7. [Integration Coverage](docs/integration-coverage.md)
 8. [Release Lifecycle](docs/release-lifecycle.md)
+
+## Publication boundary
+
+The `0.1.0` source baseline can be merged only after the exact release-candidate CI is green.
+
+Public release then requires a separate publication step:
+
+```text
+make repository public
+enable GitHub immutable releases
+create v0.1.0 as a draft release
+attach wheel + adapter-release.json + SHA256SUMS
+publish the immutable release
+verify tag, asset digests and release/provenance attestation
+retain final evidence
+```
+
+Merging the release branch does not by itself claim that those publication steps have happened.
 
 ## Historical PoC
 
