@@ -41,6 +41,11 @@ markdown_extensions:
 nav:
   - Home: index.md
   - Getting Started: getting-started.md
+  - Examples:
+      - Overview: examples/index.md
+      - Mission Contract Projection: examples/mission-contract-projection.md
+      - Scenario Verification Projection: examples/scenario-verification-projection.md
+      - Closed-Loop Ping: examples/closed-loop-ping.md
   - Repository Anatomy: repository-anatomy.md
   - Adapter Identity: adapter-identity.md
   - Architecture and Ownership: architecture-and-ownership.md

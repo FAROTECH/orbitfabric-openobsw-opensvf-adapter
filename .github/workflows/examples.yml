@@ -1,0 +1,86 @@
+name: Product Examples
+
+on:
+  pull_request:
+    paths:
+      - "examples/**"
+      - "src/**"
+      - "pyproject.toml"
+      - ".github/workflows/examples.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "examples/**"
+      - "src/**"
+      - "pyproject.toml"
+      - ".github/workflows/examples.yml"
+
+jobs:
+  projection-examples:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install adapter and exact Core dependency
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
+
+      - name: Run mission contract projection example
+        run: bash examples/01-mission-contract-projection/run.sh
+
+      - name: Run scenario verification projection example
+        run: bash examples/02-scenario-verification-projection/run.sh
+
+  closed-loop-ping:
+    needs: projection-examples
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout adapter
+        uses: actions/checkout@v4
+
+      - name: Checkout validated OpenOBSW baseline
+        uses: actions/checkout@v4
+        with:
+          repository: lipofefeyt/openobsw
+          ref: 44ceb71a016f0541ff7a0aa74191e13bafdb59c1
+          path: _openobsw
+
+      - name: Checkout validated OpenSVF baseline
+        uses: actions/checkout@v4
+        with:
+          repository: lipofefeyt/opensvf
+          ref: 667d3eadcb0bbd7814ac324b99946c4ed2f11f23
+          path: _opensvf
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install adapter and downstream-native packages
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
+          python -m pip install -e ./_openobsw/srdb
+          python -m pip install -e ./_opensvf
+
+      - name: Run closed-loop ping example
+        env:
+          OPENOBSW_ROOT: ${{ github.workspace }}/_openobsw
+          OPENSVF_ROOT: ${{ github.workspace }}/_opensvf
+        run: bash examples/03-closed-loop-ping/run.sh
+
+      - name: Upload closed-loop native evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: product-example-closed-loop-ping
+          path: examples/.work/03-closed-loop-ping/native-evidence
+          if-no-files-found: warn
