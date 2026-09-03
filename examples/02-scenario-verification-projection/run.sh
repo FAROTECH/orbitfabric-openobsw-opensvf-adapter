@@ -9,13 +9,30 @@ output="$work/verification-output"
 mission="$root/examples/reference/mission"
 profile="$root/examples/profile.yaml"
 scenario="$root/examples/reference/scenarios/ping-verification.yaml"
+adapter_instance="${ORBITFABRIC_ADAPTER_INSTANCE_ID:-}"
 
-for command_name in orbitfabric orbitfabric-openobsw-opensvf python; do
+for command_name in orbitfabric python; do
   if ! command -v "$command_name" >/dev/null 2>&1; then
     echo "Missing required command: $command_name" >&2
     exit 2
   fi
 done
+
+if [[ -n "$adapter_instance" ]]; then
+  if ! orbitfabric adapter inspect "$adapter_instance" --json >/dev/null 2>&1; then
+    echo "Adapter Manager instance is not installed: $adapter_instance" >&2
+    exit 2
+  fi
+  if ! orbitfabric adapter verify "$adapter_instance" >/dev/null; then
+    echo "Adapter Manager verification failed: $adapter_instance" >&2
+    exit 2
+  fi
+else
+  if ! command -v orbitfabric-openobsw-opensvf >/dev/null 2>&1; then
+    echo "Set ORBITFABRIC_ADAPTER_INSTANCE_ID to an installed Adapter Manager instance, or install the adapter console command for contributor mode." >&2
+    exit 2
+  fi
+fi
 
 rm -rf "$work"
 mkdir -p "$work"
@@ -24,12 +41,21 @@ orbitfabric export integration-input-set \
   "$mission" \
   --output-dir "$core_input"
 
-orbitfabric-openobsw-opensvf run \
-  --operation verification_projection \
-  --input-set-manifest "$core_input/integration_input_manifest.json" \
-  --profile "$profile" \
-  --operation-input scenario "$scenario" \
-  --output-dir "$output"
+if [[ -n "$adapter_instance" ]]; then
+  orbitfabric adapter execute "$adapter_instance" \
+    --operation verification_projection \
+    --input-set-manifest "$core_input/integration_input_manifest.json" \
+    --profile "$profile" \
+    --operation-input "scenario=$scenario" \
+    --output-dir "$output"
+else
+  orbitfabric-openobsw-opensvf run \
+    --operation verification_projection \
+    --input-set-manifest "$core_input/integration_input_manifest.json" \
+    --profile "$profile" \
+    --operation-input scenario "$scenario" \
+    --output-dir "$output"
+fi
 
 OUTPUT="$output" python - <<'PY'
 from __future__ import annotations
