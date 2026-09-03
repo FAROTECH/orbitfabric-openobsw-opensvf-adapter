@@ -13,7 +13,10 @@ Projection Profile
 Core Integration Input Set
         |
         v
-orbitfabric-openobsw-opensvf project
+OrbitFabric Adapter Manager
+        |
+        v
+installed OpenOBSW/OpenSVF adapter
         |
         +-> flight_software/mission_contract.h
         +-> obsw_srdb_contribution/
@@ -29,13 +32,27 @@ The example proves the reference mappings for:
 
 ## Prerequisites
 
-Install this repository in a Python 3.11+ environment:
+### Consumer / Adapter Manager mode
+
+Use an OrbitFabric Core installation with this adapter installed through Adapter Manager, then export the installed instance ID:
+
+```bash
+export ORBITFABRIC_ADAPTER_INSTANCE_ID=<instance-id>
+```
+
+The runner verifies that the instance exists and passes `orbitfabric adapter verify` before executing it.
+
+No OpenOBSW or OpenSVF checkout is required for this example.
+
+### Contributor fallback
+
+From a development checkout, the runner can still use the adapter console command directly when `ORBITFABRIC_ADAPTER_INSTANCE_ID` is not set:
 
 ```bash
 python -m pip install -e ".[dev]"
 ```
 
-No OpenOBSW or OpenSVF checkout is required for this example.
+The Adapter Manager path is the recommended consumer path.
 
 ## Inputs
 
@@ -57,6 +74,14 @@ bash examples/01-mission-contract-projection/run.sh
 ```
 
 Set `OF_EXAMPLE_WORK_ROOT` if you want generated output outside `examples/.work/`.
+
+When `ORBITFABRIC_ADAPTER_INSTANCE_ID` is set, the runner executes:
+
+```text
+orbitfabric adapter execute <instance-id> --operation project ...
+```
+
+rather than requiring the adapter console command in the host environment.
 
 ## Generated artifacts
 
