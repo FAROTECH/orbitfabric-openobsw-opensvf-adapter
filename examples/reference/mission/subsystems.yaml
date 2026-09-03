@@ -1,0 +1,12 @@
+subsystems:
+  - id: obc
+    name: On-Board Computer
+    type: core
+    criticality: critical
+    description: On-board computer domain used by the product examples.
+
+  - id: eps
+    name: Electrical Power System
+    type: subsystem
+    criticality: critical
+    description: Electrical power domain used by the product examples.

@@ -1,0 +1,15 @@
+commands:
+  - id: obc.ping
+    target: obc
+    description: Reference no-argument ping command used by projection and closed-loop examples.
+    arguments: []
+    allowed_modes:
+      - NOMINAL
+      - SAFE
+    requires_ack: true
+    timeout_ms: 500
+    risk: low
+    emits:
+      - obc.ping_requested
+    expected_effects:
+      no_state_change: true

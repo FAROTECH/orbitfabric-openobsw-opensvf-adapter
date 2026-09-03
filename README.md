@@ -246,6 +246,20 @@ orbitfabric-openobsw-opensvf run \
 
 When invoked through Adapter Manager, operation inputs use the manager-facing `ROLE=PATH` form and Core normalizes them for the adapter CLI protocol.
 
+## Runnable product examples
+
+The repository now contains three consumer-facing examples built on the public Core and adapter CLIs:
+
+```text
+examples/01-mission-contract-projection/
+examples/02-scenario-verification-projection/
+examples/03-closed-loop-ping/
+```
+
+Examples 01 and 02 regenerate projection artifacts from shared authored inputs. Example 03 additionally composes the target-owned SRDB, builds the validated OpenOBSW host simulator and executes the generated OpenSVF campaign on Linux/WSL2, producing native CampaignReport JSON evidence.
+
+Start with [Examples](docs/examples/index.md). The examples are deliberately separate from `tests/fixtures/` and do not treat generated artifacts as source of truth.
+
 ## Release artifacts
 
 Publisher-owned stable release material is constructed with:
@@ -328,7 +342,8 @@ src/orbitfabric_openobsw_opensvf_adapter/
     target resources
 
 examples/
-    reference Projection Profile
+    shared authored reference inputs
+    runnable product examples
 
 tests/
     contract, projection and lifecycle fixtures/tests
@@ -337,7 +352,7 @@ coverage/
     Integration Coverage Matrix
 
 docs/
-    architecture, setup, compatibility, evidence and release guidance
+    architecture, setup, examples, compatibility, evidence and release guidance
 
 tools/
     adapter consistency and release tooling
@@ -353,13 +368,14 @@ The documentation is authored in `docs/`, built with MkDocs and validated with `
 Start with:
 
 1. [Getting Started](docs/getting-started.md)
-2. [Architecture and Ownership](docs/architecture-and-ownership.md)
-3. [Adapter Identity](docs/adapter-identity.md)
-4. [Projection Profile and Bindings](docs/projection-profile-and-bindings.md)
-5. [Testing and Conformance](docs/testing-and-conformance.md)
-6. [Evidence and Traceability](docs/evidence-and-traceability.md)
-7. [Integration Coverage](docs/integration-coverage.md)
-8. [Release Lifecycle](docs/release-lifecycle.md)
+2. [Examples](docs/examples/index.md)
+3. [Architecture and Ownership](docs/architecture-and-ownership.md)
+4. [Adapter Identity](docs/adapter-identity.md)
+5. [Projection Profile and Bindings](docs/projection-profile-and-bindings.md)
+6. [Testing and Conformance](docs/testing-and-conformance.md)
+7. [Evidence and Traceability](docs/evidence-and-traceability.md)
+8. [Integration Coverage](docs/integration-coverage.md)
+9. [Release Lifecycle](docs/release-lifecycle.md)
 
 ## Publication boundary
 
