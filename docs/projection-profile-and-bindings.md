@@ -1,10 +1,10 @@
 # Projection Profile and Bindings
 
-The Projection Profile is where adapter users express target-specific projection choices without editing the OrbitFabric Mission Model.
+The Projection Profile is where users express OpenOBSW/OpenSVF-specific projection choices without editing the OrbitFabric Mission Model.
 
-OrbitFabric owns the generic Profile envelope. The adapter owns the schema and semantics of its target-specific settings and binding configuration.
+OrbitFabric owns the generic Profile envelope. This adapter owns the schema and semantics of the target-specific settings and binding configuration.
 
-## Template files
+## Files
 
 ```text
 src/orbitfabric_openobsw_opensvf_adapter/schemas/profile-0.1.schema.json
@@ -13,79 +13,144 @@ src/orbitfabric_openobsw_opensvf_adapter/profile.py
 src/orbitfabric_openobsw_opensvf_adapter/projection.py
 ```
 
-A real adapter should replace the Dummy schema and projection semantics while preserving the generic OrbitFabric envelope expected by Core.
+The reference Profile is executable test material, not only documentation.
 
 ## Settings
 
-The Dummy adapter defines one setting:
+The stable reference Profile declares target compatibility and projection policy explicitly:
 
 ```yaml
 settings:
-  target_prefix: DUMMY_
+  compatibility:
+    target_baseline: openobsw-0.7.0-obsw-srdb-0.1.0-reference
+  flight_contract:
+    c_prefix: OF_
+  pus:
+    tm_apid: 0x103
+    tc_apid: 0x010
+  obsw_srdb:
+    event_severity_map:
+      info: INFO
+      warning: MEDIUM
+      error: HIGH
+      critical: HIGH
 ```
 
-This is intentionally target-specific. OrbitFabric Core does not assign meaning to `target_prefix`.
+These are adapter-owned projection choices. OrbitFabric Core does not assign target meaning to the C prefix, PUS APIDs or OpenOBSW event severity names.
 
-A real adapter can define settings such as target naming policy, target namespace, output grouping or other choices that belong to the downstream projection.
-
-Keep settings focused on projection behavior. Do not use them to redefine Mission Model semantics.
+Settings must not redefine Mission Model semantics already supplied by Core.
 
 ## Bindings
 
-A binding connects one or more OrbitFabric source entities to target projection intent.
+A binding connects OrbitFabric source entities to target projection intent.
 
-The Dummy example is:
+The reference Profile exercises four source domains:
+
+```text
+telemetry
+packets
+commands
+events
+```
+
+### Telemetry
 
 ```yaml
-bindings:
-  - id: telemetry.battery_voltage
-    intent: project
-    sources:
-      - domain: telemetry
-        id: eps.battery.voltage
-    config:
-      target_name: BATTERY_VOLTAGE
+- id: tm.obc_bus_voltage
+  intent: project
+  sources:
+    - domain: telemetry
+      id: eps.obc.bus_voltage_mv
+  config:
+    flight_contract:
+      c_symbol: OF_TM_OBC_BUS_VOLTAGE_MV
+    obsw_srdb:
+      parameter_id: 0x6001
 ```
 
-The adapter resolves the source against the Core Integration Input Set, then applies its target-specific mapping rules.
+The adapter resolves the telemetry entity from the Core Integration Input Set, applies explicit target allocation and generates the corresponding contract/SRDB representation.
 
-For the Dummy adapter:
+### Housekeeping packet
 
-```text
-source
-    telemetry / eps.battery.voltage
-        -> resolve in Entity Index
-        -> apply target_name or generated default
-        -> emit dummy target telemetry identity
-        -> retain mapping in Integration Result
+```yaml
+- id: packet.obc_hk
+  intent: project
+  sources:
+    - domain: packets
+      id: obc_hk
+  config:
+    flight_contract:
+      c_symbol: OF_HK_SET_OBC
+    obsw_srdb:
+      hk_set:
+        sid: 0x05
+        fields:
+          - domain: telemetry
+            id: eps.obc.bus_voltage_mv
 ```
 
-## Project and do_not_project
+Packet membership is taken from Core semantics and checked against the target-specific Profile choices rather than recreated as a second source of truth.
 
-The Dummy schema supports:
+### Command
 
-```text
-project
-do_not_project
+```yaml
+- id: cmd.ping
+  intent: project
+  sources:
+    - domain: commands
+      id: obc.ping
+  config:
+    flight_contract:
+      c_symbol: OF_CMD_PING
+      command_id: 0x1701
+    pus:
+      service: 17
+      subtype: 1
+    expected_responses:
+      - service: 1
+        subtype: 1
+      - service: 17
+        subtype: 2
+      - service: 1
+        subtype: 7
 ```
 
-A `do_not_project` decision requires a reason. This makes an intentional omission distinguishable from an implementation gap or unresolved source.
+The PUS tuple and expected responses are target projection facts. They are also used by the supported verification projection path.
 
-A real adapter should use the generic binding intent model supported by the applicable Core contract and add only target-specific configuration that it genuinely needs.
+### Event
+
+```yaml
+- id: event.voltage_out_of_bounds
+  intent: project
+  sources:
+    - domain: events
+      id: eps.voltage_out_of_bounds
+  config:
+    flight_contract:
+      c_symbol: OF_EVENT_VOLTAGE_OUT_OF_BOUNDS
+    obsw_srdb:
+      event_id: 0x5001
+```
+
+Core event severity is translated through the explicit Profile severity map.
+
+## `project` and `do_not_project`
+
+The schema supports explicit projection intent. An intentional `do_not_project` decision requires a reason, keeping a deliberate omission distinguishable from an implementation gap or unresolved source.
+
+Unsupported mappings fail closed rather than being silently approximated.
 
 ## Supported Core input surfaces
 
-The Integration Package Manifest declares which Core input surfaces the adapter consumes.
+The Integration Package Manifest declares the Core surfaces consumed by the adapter. Bindings resolve against those Core-produced surfaces. A source is not accepted merely because its identifier appears in the Profile.
 
-The Dummy adapter currently declares the Entity Index surface because `project` resolves telemetry identity from it.
-
-Do not declare a Core surface only because it exists. Declare the surfaces that an operation actually consumes and test them against real Core-produced input where practical.
+The adapter therefore checks both source identity and the target-specific constraints required by the selected binding.
 
 ## Operation inputs
 
 Operation inputs are separate from the main Core Integration Input Set.
 
-The Dummy `verification_projection` operation declares one required file-backed role:
+`verification_projection` declares one required file-backed role:
 
 ```text
 scenario
@@ -97,23 +162,38 @@ The CLI receives it as:
 --operation-input scenario PATH
 ```
 
-The adapter records availability, identity and SHA-256 provenance for that operation input in the Integration Result.
+The Scenario is validated through OrbitFabric runtime semantics and its identity and SHA-256 provenance are retained in the Integration Result and Verification Projection Plan.
 
-Do not invent another execution mechanism for adapter-specific files. Use the Core-defined operation-input boundary when it applies.
+## What is intentionally not claimed in 0.1.0
 
-## What a real adapter should test
+The first release does not claim generic projection for every OrbitFabric semantic family. Examples intentionally outside scope include:
 
-At minimum:
+```text
+command argument encoding
+Scenario event expectations
+Scenario mode expectations
+Scenario telemetry expectations
+Scenario telemetry injection
+subsystem topology
+FDIR runtime behavior
+mission policies
+```
+
+See [Integration Coverage](integration-coverage.md) for the full disposition matrix.
+
+## Validation expectations
+
+The repository tests at least:
 
 ```text
 valid Profile accepted
-invalid target-specific configuration rejected
+invalid target configuration rejected
 source binding resolves
 missing source fails closed
 unsupported source domain fails closed
 intentional do_not_project remains explicit
 projected mapping appears in Integration Result
 operation-input requirements match the Manifest
+OpenOBSW/SRDB accepts generated project output
+OpenSVF accepts generated verification materialization
 ```
-
-If the downstream has a native parser, compiler, validator, simulator or runtime acceptance path, add a compatibility test for the generated target artifact as a separate layer.
