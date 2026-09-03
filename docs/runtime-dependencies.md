@@ -17,23 +17,23 @@ downstream execution dependencies
 
 ## Adapter runtime dependencies
 
-The package currently declares:
+The stable package declares:
 
 ```text
 PyYAML
 jsonschema
 rfc8785
-OrbitFabric Core at exact development commit
+OrbitFabric Core at exact commit
 4377d6656c62aa1dc19a7ed81d2de872b6b22ccd
 ```
 
 The exact OrbitFabric dependency is intentional.
 
-The `project` operation consumes only public Core-owned machine-readable integration surfaces and does not need OrbitFabric Python internals to reconstruct Mission Model semantics.
+The `project` operation consumes public Core-owned machine-readable integration surfaces and does not reconstruct Mission Model semantics from a source checkout.
 
 The `verification_projection` operation additionally validates the supplied Scenario through the public OrbitFabric Scenario loader/runtime so that the adapter does not implement a second private Scenario parser. It also verifies that the Scenario Mission Model identity matches the consumed Core Integration Input Set.
 
-Because that operation intentionally uses the OrbitFabric runtime, the adapter declares the Core dependency explicitly. It must not rely on an ambient host installation merely because Adapter Manager launched the managed environment.
+Because that operation intentionally uses the OrbitFabric runtime, the adapter declares the Core dependency explicitly. It does not rely on an ambient host installation merely because Adapter Manager launched the managed environment.
 
 ## OpenOBSW is not an adapter runtime dependency
 
