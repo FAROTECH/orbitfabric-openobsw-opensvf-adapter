@@ -4,7 +4,7 @@ Integration Coverage describes which OrbitFabric semantics are applicable to the
 
 It is not a count of downstream product features and it is not a generic OrbitFabric Core conformance contract.
 
-The maintained declaration is:
+The maintained row-by-row declaration is stored in the repository at:
 
 ```text
 coverage/integration-coverage.md
@@ -115,5 +115,3 @@ explicit target limitation
 ```
 
 Future releases should widen the matrix one semantic family at a time, first defining the target-owned meaning, then adding implementation and downstream-native evidence.
-
-The full row-by-row rationale is maintained in [the coverage matrix](../coverage/integration-coverage.md).
