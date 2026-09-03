@@ -22,7 +22,7 @@ jobs:
   projection-examples:
     runs-on: ubuntu-latest
     env:
-      ORBITFABRIC_STATE_DIR: ${{ runner.temp }}/orbitfabric-state
+      ORBITFABRIC_STATE_DIR: ${{ github.workspace }}/.orbitfabric-state
 
     steps:
       - uses: actions/checkout@v4
@@ -63,7 +63,7 @@ jobs:
     needs: projection-examples
     runs-on: ubuntu-latest
     env:
-      ORBITFABRIC_STATE_DIR: ${{ runner.temp }}/orbitfabric-state
+      ORBITFABRIC_STATE_DIR: ${{ github.workspace }}/.orbitfabric-state
 
     steps:
       - name: Checkout adapter
