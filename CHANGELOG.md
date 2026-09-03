@@ -1,8 +1,8 @@
 # Changelog
 
-## 0.1.0 - Pending publication
+## 0.1.0 - 2026-09-03
 
-First stable OrbitFabric-maintained source baseline for the OpenOBSW/OpenSVF adapter.
+First stable OrbitFabric-maintained release of the OpenOBSW/OpenSVF adapter.
 
 ### Added
 
@@ -52,4 +52,6 @@ In particular:
 
 ### Publication status
 
-This changelog entry describes the accepted `0.1.0` product scope. Until the immutable GitHub Release is published and its assets are verified, `0.1.0` remains a validated release candidate rather than an already published distribution.
+`v0.1.0` was published on 2026-09-03 as an immutable GitHub Release. The GitHub-generated release attestation and all three publisher-owned release assets were verified after publication. A fresh external greenfield consumer run then installed the published wheel through OrbitFabric Adapter Manager, passed managed verification, passed Examples 01 and 02, and completed the native OpenOBSW/OpenSVF Closed-Loop Ping example with a 100% OpenSVF campaign pass rate.
+
+The current consumer installation path remains explicit-source: users download the published release assets and then install them through Adapter Manager. Future catalog/release-resolution support is expected to automate release discovery and acquisition without changing this immutable release.
