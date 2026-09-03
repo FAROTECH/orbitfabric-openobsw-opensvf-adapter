@@ -79,7 +79,7 @@ Use these documents when working on the implementation:
 - [Integration Coverage](integration-coverage.md)
 - [Migration from the PoC](migrating-from-poc.md)
 
-The repository-level [CONTRIBUTING.md](../CONTRIBUTING.md) contains the contribution rules and local pre-PR checklist.
+The repository-level [CONTRIBUTING.md](https://github.com/FAROTECH/orbitfabric-openobsw-opensvf-adapter/blob/main/CONTRIBUTING.md) contains the contribution rules and local pre-PR checklist.
 
 ## Release work is a separate role
 
