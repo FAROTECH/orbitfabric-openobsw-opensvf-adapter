@@ -2,7 +2,7 @@
 
 This repository separates publisher release construction, consumer project selection and publication transport.
 
-The operational publication gate for the first release is [v0.1.0 Publication Readiness Audit](publication-readiness-audit.md).
+Reusable publication guidance is maintained here and in the [Maintainer / Publisher Guide](publishing.md).
 
 ## Current v0.1.0 state
 
@@ -20,7 +20,7 @@ Examples 01 and 02 from the published adapter
 native OpenOBSW/OpenSVF Closed-Loop Ping acceptance
 ```
 
-The public greenfield run completed the native OpenSVF campaign with a 100% pass rate. Publication gates P1-P12 are therefore complete. P13 remains the final Architecture Lab evidence-retention step.
+The public greenfield run completed the native OpenSVF campaign with a 100% pass rate. Publication gates P1-P13 are complete, including final Architecture Lab evidence retention.
 
 The current consumer installation path is still explicit-source: users download the published Release Descriptor and wheel before calling Adapter Manager. Future catalog/release-resolution support may automate discovery and acquisition, but must consume the existing immutable release rather than redefine it.
 
@@ -236,7 +236,7 @@ The `v0.1.0` publication and acceptance sequence is:
 17. retain final Architecture Lab publication evidence
 ```
 
-Steps 1-16 are complete for `v0.1.0`. Step 17 is tracked as P13 in the publication readiness audit.
+All 17 steps are complete for `v0.1.0`; final publication evidence is retained in Architecture Lab Evidence 046.
 
 All normative assets must be attached and verified before immutable publication because the release must not rely on post-publication mutation.
 
@@ -303,7 +303,7 @@ adapter-release.json
 release-only SHA256SUMS
 ```
 
-After final P13 closure, Architecture Lab evidence retains:
+Architecture Lab evidence retains:
 
 ```text
 accepted source commit
