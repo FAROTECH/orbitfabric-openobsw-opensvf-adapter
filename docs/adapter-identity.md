@@ -1,6 +1,6 @@
 # Adapter Identity
 
-The OpenOBSW/OpenSVF adapter uses several related identities. They are intentionally kept distinct because package identity, execution identity and release-source identity serve different contracts.
+The OpenOBSW/OpenSVF adapter uses several related identities. They are intentionally kept distinct because package identity, execution identity, logical product identity and release-source identity serve different contracts.
 
 ## Repository and package identity
 
@@ -21,7 +21,7 @@ The Integration Package Manifest uses:
 adapter.id = orbitfabric-openobsw-opensvf
 ```
 
-This identifies the adapter implementation to OrbitFabric Core. It is not a GitHub repository key or registry coordinate.
+This identifies the adapter implementation to OrbitFabric Core. It is not the GitHub repository key or Source Coordinate.
 
 ## Integration identity
 
@@ -35,39 +35,76 @@ This identifies the target-specific integration semantics implemented by this re
 
 The execution and integration identifiers are intentionally equal for this adapter. That is a local product decision, not a universal OrbitFabric rule.
 
-## Version
+## Logical product identity
 
-The productization branch starts at:
+The stable product lineage uses:
 
 ```text
-0.1.0.dev0
+publisher = orbitfabric
+name      = openobsw-opensvf
 ```
 
-The development version is kept aligned between `pyproject.toml` and the Integration Package Manifest. The first stable `0.1.0` is reserved for the point at which target compatibility, Integration Coverage, installed lifecycle and release proof are all accepted.
+Logical key:
 
-The earlier PoC baseline and its still-open closure PR remain historical evidence. Their version labels do not automatically become the release state of this clean product repository.
+```text
+orbitfabric/openobsw-opensvf
+```
+
+This identity is intended to survive ordinary changes in repository location or distribution backend.
+
+## Version
+
+The stable release candidate is:
+
+```text
+0.1.0
+```
+
+The version is aligned between `pyproject.toml`, the Integration Package Manifest and the runtime adapter identity used in Integration Results.
+
+The earlier PoC baseline and `0.1.0.dev0` productization baseline remain historical evidence. Their version labels do not redefine this stable release.
 
 ## Source Coordinate
 
-Release identity uses the Core-defined logical coordinate:
+The first stable release source uses:
 
 ```text
-authority
-publisher
-name
+authority = github.com/FAROTECH
+publisher = orbitfabric
+name      = openobsw-opensvf
 ```
 
-The CI currently uses local test values:
+Rendered for the current explicit-source Adapter Manager CLI:
 
 ```text
-local.adapter.test
-farotech
-openobsw-opensvf
+github.com/FAROTECH:orbitfabric/openobsw-opensvf
 ```
 
-These values prove provider-neutral release construction and Project Lock behavior. They are not the final publication Source Coordinate.
+The source authority identifies the concrete resolution context for the first release.
 
-A publication provider such as GitHub Releases may transport the adapter release without becoming the adapter's logical identity.
+It does not mean:
+
+```text
+FAROTECH = logical publisher
+GitHub repository slug = logical adapter key
+GitHub = universal OrbitFabric registry
+```
+
+A future source authority may change while the logical key remains:
+
+```text
+orbitfabric/openobsw-opensvf
+```
+
+## Release classification
+
+The first stable release is classified as:
+
+```text
+OrbitFabric-maintained stable adapter
+```
+
+It is intentionally not yet described as registry-classified official. Formal official status belongs to future promoted publisher/source-authority governance rather than being self-declared by repository ownership or release bytes.
 
 ## Identity consistency
 
@@ -85,6 +122,10 @@ src/orbitfabric_openobsw_opensvf_adapter/integration_package.json
     integration.id
     execution.argv_prefix
 
+src/orbitfabric_openobsw_opensvf_adapter/adapter/model.py
+    ADAPTER_ID
+    ADAPTER_VERSION
+
 src/orbitfabric_openobsw_opensvf_adapter/schemas/profile-*.schema.json
     integration.id constraint
 
@@ -92,10 +133,10 @@ examples/profile.yaml
     integration.id
 
 release construction
-    authority
-    publisher
-    name
-    release_version
+    authority = github.com/FAROTECH
+    publisher = orbitfabric
+    name = openobsw-opensvf
+    release_version = 0.1.0
 ```
 
 Run:
@@ -104,4 +145,4 @@ Run:
 python tools/check_adapter_consistency.py
 ```
 
-The check catches mechanical drift. It does not decide compatibility, maturity, coverage or publication policy.
+The consistency check catches mechanical drift. Release tooling tests and CI additionally verify the stable Source Coordinate. Neither mechanism substitutes for compatibility, coverage or publication policy review.
