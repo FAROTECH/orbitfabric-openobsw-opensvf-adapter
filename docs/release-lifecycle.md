@@ -12,9 +12,11 @@ The package is currently:
 0.1.0.dev0
 ```
 
-This is a development product baseline. The first stable `0.1.0` is intentionally withheld until coverage, compatibility, documentation and publication-readiness review are complete.
+This development product baseline has completed its technical and editorial merge-readiness review. Coverage analysis, downstream compatibility, installed lifecycle, release proof, documentation and active-product cleanup are all established for the current development identity.
 
-The final public publisher identity and Source Coordinate are not yet frozen.
+The first stable `0.1.0` is still intentionally withheld because the final public publisher identity, Adapter Source Coordinate and exact stable release bytes are not yet frozen.
+
+Merge readiness and stable publication readiness are separate checkpoints.
 
 ## What the repository builds
 
@@ -147,7 +149,7 @@ Provider URLs must not be smuggled into Project Lock identity simply because one
 
 ## Public release boundary
 
-Before changing `0.1.0.dev0` to `0.1.0`, review at least:
+The development baseline has already completed review of:
 
 ```text
 Integration Coverage Matrix
@@ -156,12 +158,23 @@ OpenSVF exact compatibility evidence
 runtime dependency declaration
 README and downstream setup completeness
 installed lifecycle evidence
-release / Project Lock evidence
-remaining PoC-history language in product code/resources
-final Source Coordinate and publisher identity
+release / Project Lock mechanics
+active product cleanup
 ```
 
-The repository should become public only after this review is complete and the published documentation accurately describes the released compatibility envelope.
+The remaining stable-release decisions are deliberately narrower:
+
+```text
+final Adapter Source Coordinate
+final publisher identity
+0.1.0 version transition
+exact stable wheel and Integration Package bytes
+final Release Descriptor and Project Lock for those bytes
+final CI and downstream-native proof on the stable baseline
+publication transport and retained release evidence
+```
+
+The repository should become public only after those exact release decisions are complete and the published documentation accurately describes the released compatibility envelope.
 
 ## Evidence
 
