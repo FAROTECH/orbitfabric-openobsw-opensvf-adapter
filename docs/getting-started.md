@@ -19,7 +19,7 @@ You do **not** need to install this repository in editable mode, build a wheel, 
 If you want to modify the adapter, use the [Developer / Contributor Guide](development.md). If you are preparing a release, use the [Maintainer / Publisher Guide](publishing.md).
 
 !!! note "v0.1.0 publication status"
-    The `0.1.0` source baseline is validated, but the first immutable GitHub Release is prepared as a separate publication step. Until `v0.1.0` is actually published, locally built assets are engineering/release-candidate material rather than the normal external-consumer installation path.
+    `v0.1.0` is published as an immutable GitHub Release and has passed post-publication Adapter Manager verification and external greenfield acceptance. The current Adapter Manager still uses an explicit-source installation flow, so consumers download the published release assets first and then install them locally. Future catalog/release-resolution support is expected to remove this manual acquisition step without changing the immutable `v0.1.0` release.
 
 ## Validated baselines
 
@@ -64,7 +64,7 @@ A new isolated state directory should initially report no installed adapters.
 
 ## 3. Obtain the published adapter release assets
 
-A published `v0.1.0` release contains the consumer-relevant assets:
+The published `v0.1.0` release contains the consumer-relevant assets:
 
 ```text
 orbitfabric_openobsw_opensvf_adapter-0.1.0-py3-none-any.whl
@@ -72,15 +72,22 @@ adapter-release.json
 SHA256SUMS
 ```
 
-Download those exact files from the GitHub Release. Do not rebuild them locally for normal consumer use.
+Download those exact files from the [GitHub Release](https://github.com/FAROTECH/orbitfabric-openobsw-opensvf-adapter/releases/tag/v0.1.0). Do not rebuild them locally for normal consumer use.
 
-After publication, keep the three files together in a local release directory, for example:
+Keep the three files together in a local release directory, for example:
 
 ```text
 release-v0.1.0/
   orbitfabric_openobsw_opensvf_adapter-0.1.0-py3-none-any.whl
   adapter-release.json
   SHA256SUMS
+```
+
+Verify the downloaded bytes before installation:
+
+```bash
+cd release-v0.1.0
+sha256sum -c SHA256SUMS
 ```
 
 ## 4. Install through OrbitFabric Adapter Manager
