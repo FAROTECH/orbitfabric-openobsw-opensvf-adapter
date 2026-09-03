@@ -4,7 +4,7 @@ Integration adapter connecting [OrbitFabric](https://github.com/FAROTECH/orbitfa
 
 This repository is intentionally written for users arriving from either side of the integration. OrbitFabric, OpenOBSW and OpenSVF remain independent systems with their own responsibilities. The adapter owns the projection boundary between them.
 
-> Release candidate status: this branch prepares the stable `0.1.0` OrbitFabric-maintained adapter release. The semantic scope is unchanged from the validated `0.1.0.dev0` product baseline. Stable logical identity and first release source authority are now frozen, but the release is not public until the exact candidate is merged, the repository is made public, GitHub release immutability is enabled and the published bytes and attestations are verified.
+> Stable source status: `0.1.0` is the validated OrbitFabric-maintained source baseline. Its semantic scope, logical identity, target compatibility and release construction are frozen by CI. Source readiness and published distribution remain separate states, so release assets are authoritative only after the corresponding immutable GitHub Release is published and verified.
 
 ## The participating systems
 
@@ -98,7 +98,7 @@ Mission Model + Scenario
   -> native OpenSVF campaign/procedure/spacecraft assets
 ```
 
-See [Getting Started](docs/getting-started.md) for the development installation and execution path.
+See [Getting Started](docs/getting-started.md) for local installation and the complete execution path.
 
 ## If you come from OpenOBSW/OpenSVF
 
@@ -363,21 +363,22 @@ Start with:
 
 ## Publication boundary
 
-The `0.1.0` source baseline can be merged only after the exact release-candidate CI is green.
+The stable source baseline and the published release are separate states.
 
-Public release then requires a separate publication step:
+The source baseline is accepted only after its exact CI is green. Publication then follows this sequence:
 
 ```text
 make repository public
 enable GitHub immutable releases
-create v0.1.0 as a draft release
+create v0.1.0 as a draft release from the accepted stable commit
 attach wheel + adapter-release.json + SHA256SUMS
+verify asset digests
 publish the immutable release
-verify tag, asset digests and release/provenance attestation
+verify tag, published digests and release/provenance attestation
 retain final evidence
 ```
 
-Merging the release branch does not by itself claim that those publication steps have happened.
+The presence of `version = 0.1.0` in source does not by itself claim that those publication steps have happened.
 
 ## Historical PoC
 
