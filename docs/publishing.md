@@ -19,7 +19,7 @@ accepted main commit
     -> immutable publication
     -> published-asset verification
     -> final external greenfield acceptance
-    -> Architecture Lab evidence retention
+    -> architecture evidence retention
 ```
 
 For `v0.1.0`, the authoritative publisher-owned binary/material set is:
@@ -48,14 +48,7 @@ external greenfield acceptance: PASS
 native OpenOBSW/OpenSVF closed loop: PASS
 ```
 
-The completed evidence is retained in the [v0.1.0 Publication Readiness Audit](publication-readiness-audit.md) and in Architecture Lab evidence:
-
-```text
-evidence/adapter-management/
-046-openobsw-opensvf-v0.1.0-publication-and-greenfield-acceptance.md
-```
-
-The audit is now a closed release record rather than an active publication gate.
+Detailed cross-repository publication evidence is retained separately in the OrbitFabric Architecture Lab. This repository keeps the reusable product, lifecycle and publisher guidance rather than release-specific audit records.
 
 ## Before publication
 
@@ -79,7 +72,7 @@ native closed-loop evidence where claimed
 
 Do not publish from a pull-request synthetic merge ref or from an unreviewed working tree.
 
-The detailed first-release sequence and reusable publication boundaries remain documented in [Release Lifecycle](release-lifecycle.md).
+The reusable publication sequence and boundaries are documented in [Release Lifecycle](release-lifecycle.md).
 
 ## v0.1.0 provenance boundary
 
@@ -150,7 +143,6 @@ A future Adapter Catalog + Release Resolution layer may automate discovery, exac
 
 ## Publisher references
 
-- [v0.1.0 Publication Readiness Audit](publication-readiness-audit.md)
 - [Release Lifecycle](release-lifecycle.md)
 - [Adapter Readiness Checklist](adapter-readiness-checklist.md)
 - [Evidence and Traceability](evidence-and-traceability.md)
