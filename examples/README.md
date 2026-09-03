@@ -39,9 +39,23 @@ examples/.work/<example>/
 
 Set `OF_EXAMPLE_WORK_ROOT` to place generated material elsewhere.
 
-## Prerequisites common to Examples 01 and 02
+## Recommended consumer mode: Adapter Manager
 
-From a development checkout:
+The product examples prefer an adapter instance installed through OrbitFabric Adapter Manager.
+
+After installing the adapter, export its instance ID:
+
+```bash
+export ORBITFABRIC_ADAPTER_INSTANCE_ID=<instance-id>
+```
+
+All three runners then verify the installed instance and execute projection through `orbitfabric adapter execute`. The adapter console command does not need to be installed in the host Python environment.
+
+Examples 01 and 02 require only OrbitFabric Core plus the installed adapter instance. Example 03 additionally requires the pinned OpenOBSW/OpenSVF downstream checkouts and native build/runtime prerequisites documented in its README.
+
+## Contributor fallback
+
+A development checkout can still run the examples without `ORBITFABRIC_ADAPTER_INSTANCE_ID` by installing the repository directly:
 
 ```bash
 python3 -m venv .venv
@@ -50,9 +64,7 @@ python -m pip install --upgrade pip
 python -m pip install -e ".[dev]"
 ```
 
-This installs the adapter console command and its exact OrbitFabric Core dependency.
-
-Example 03 has additional downstream prerequisites documented in its own README.
+In that mode the runners use the `orbitfabric-openobsw-opensvf` console command directly. This path is retained for contributors; it is not the preferred consumer lifecycle.
 
 ## Why the examples are separate from tests
 
