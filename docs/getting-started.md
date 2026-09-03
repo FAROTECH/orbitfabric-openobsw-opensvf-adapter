@@ -2,7 +2,7 @@
 
 This guide covers installation and the complete handoff from OrbitFabric through the adapter into OpenOBSW/SRDB and OpenSVF-native assets.
 
-The repository remains private only until the publication switch. The `0.1.0` operations, compatibility baselines and release identity documented here are implemented and exercised by the release-candidate CI.
+The `0.1.0` operations, compatibility baselines and release identity documented here are implemented and exercised by CI. Repository visibility and published release assets are separate distribution states and do not change the adapter semantics described below.
 
 ## Validated baselines
 
