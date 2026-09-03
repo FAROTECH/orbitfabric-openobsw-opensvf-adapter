@@ -2,9 +2,9 @@
 
 This repository separates publisher release construction, consumer project selection and publication transport.
 
-## Current release status
+## Stable source identity
 
-This branch prepares:
+The `0.1.0` source baseline declares:
 
 ```text
 version:          0.1.0
@@ -13,9 +13,9 @@ source authority: github.com/FAROTECH
 classification:   OrbitFabric-maintained stable adapter
 ```
 
-The semantic scope is unchanged from the validated `0.1.0.dev0` product baseline. The purpose of this branch is to freeze stable identity, exact bytes and release-facing evidence.
+Its semantic scope is the reviewed first-release scope recorded by the Integration Coverage Matrix. Source acceptance, repository visibility and publication of immutable release assets remain separate states.
 
-The release is not public merely because the source version is `0.1.0`. Publication remains a separate immutable-release step after this exact candidate is accepted.
+The presence of `version = 0.1.0` in source does not by itself establish that a public release has been published.
 
 ## Three distinct objects
 
@@ -34,7 +34,7 @@ These roles must remain separate.
 
 ## Build the stable wheel
 
-From the accepted release candidate:
+From the accepted stable source baseline:
 
 ```bash
 python -m build --wheel
@@ -148,7 +148,7 @@ orbitfabric/openobsw-opensvf
 
 ## Stable validation gates
 
-Before merge and publication, the exact `0.1.0` candidate must pass:
+The exact `0.1.0` source baseline must pass:
 
 ```text
 Python 3.11 / 3.12
@@ -170,21 +170,20 @@ Core conformance and downstream-native acceptance remain separate evidence layer
 
 GitHub Releases is the first concrete publication backend for this adapter.
 
-Before publishing `v0.1.0`:
+For public `v0.1.0` publication:
 
 ```text
-1. merge the accepted stable release candidate
-2. make the repository public
-3. verify public repository state
-4. enable GitHub immutable releases
-5. create v0.1.0 as a draft release from the exact stable commit
-6. attach wheel, adapter-release.json and SHA256SUMS
-7. verify local asset digests before publication
-8. publish the draft as an immutable release
-9. confirm the release is marked immutable
-10. verify tag -> intended stable commit
-11. verify published asset digests
-12. retain release/provenance attestation evidence
+1. use the accepted stable source commit
+2. make the repository public and verify public repository state
+3. enable GitHub immutable releases
+4. create v0.1.0 as a draft release from the exact stable commit
+5. attach wheel, adapter-release.json and SHA256SUMS
+6. verify local asset digests before publication
+7. publish the draft as an immutable release
+8. confirm the release is marked immutable
+9. verify tag -> intended stable commit
+10. verify published asset digests
+11. retain release/provenance attestation evidence
 ```
 
 All normative assets must be attached before publication because an immutable release must not be mutated afterwards.
@@ -201,11 +200,11 @@ OrbitFabric-maintained stable adapter
 
 It is intentionally not yet called a registry-classified official OrbitFabric adapter.
 
-The technical release already has strong conformance, compatibility, immutability and provenance requirements. Formal official classification remains tied to future promoted publisher/source-authority governance rather than being self-declared by release bytes.
+The technical release has strong conformance, compatibility, immutability and provenance requirements. Formal official classification remains tied to future promoted publisher/source-authority governance rather than being self-declared by release bytes.
 
 ## Source provenance
 
-The released source provenance must identify the exact stable source commit.
+Released source provenance must identify the exact stable source commit.
 
 Do not use a synthetic pull-request merge ref as normative release provenance.
 
@@ -232,4 +231,4 @@ adapter-release.json
 release-only SHA256SUMS
 ```
 
-After public publication, Architecture Lab evidence must additionally retain the immutable GitHub release state, exact tag/commit association, published digests and release/provenance attestation result.
+After public publication, Architecture Lab evidence additionally retains the immutable GitHub release state, exact tag/commit association, published digests and release/provenance attestation result.
