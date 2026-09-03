@@ -1,30 +1,55 @@
 # Changelog
 
-## Unreleased
+## 0.1.0 - Pending publication
+
+First stable OrbitFabric-maintained source baseline for the OpenOBSW/OpenSVF adapter.
 
 ### Added
 
-- Executable OrbitFabric Adapter Developer Template.
-- Namespaced Dummy Adapter package with packaged Integration Package Manifest.
-- Dummy `project` operation for telemetry identity projection.
-- Dummy `verification_projection` operation with required Scenario input.
-- Core conformance tests for Integration Package Manifest and Integration Result.
-- Developer-first documentation for repository anatomy, identity, projection, evidence, testing, release lifecycle and Integration Coverage.
-- Adapter identity initializer with separate distribution, package, console script and execution identities.
-- Identity-agnostic Template consistency checks.
-- Positive and negative adapter tests.
-- Explicit traceability for intentionally non-projected bindings.
-- Isolated installed lifecycle proof using a real Core-produced Integration Input Set and Adapter Manager managed environment.
-- Provider-neutral release bundle builder for exact Adapter Release Descriptor and Adapter Project Lock construction.
-- Release proof covering MISSING, exact install from lock, MATCH, repeated NOOP and final removal.
-- Reusable Integration Coverage method with explicit target representation, declared scope and disposition.
-- Adapter Readiness Checklist for concrete adapter maintainers.
-- Strict MkDocs documentation build.
+- Concrete OrbitFabric adapter identity `orbitfabric/openobsw-opensvf` with source coordinate `github.com/FAROTECH:orbitfabric/openobsw-opensvf`.
+- Exact OrbitFabric Core conformance baseline at commit `4377d6656c62aa1dc19a7ed81d2de872b6b22ccd`.
+- `project` operation consuming a Core Integration Input Set and Projection Profile.
+- OpenOBSW-facing `mission_contract.h` generation.
+- Additive `obsw-srdb` contribution generation without modifying the OpenOBSW source checkout.
+- Core-conformant Integration Result with projection mappings, provenance, coverage and generated-artifact identity.
+- `verification_projection` operation for the supported OrbitFabric Scenario subset.
+- Explicit Verification Projection Plan separating Scenario-authored intent from Profile-authored target verification obligations.
+- OpenSVF-native spacecraft, campaign and Procedure materialization.
+- Target-native OpenOBSW/SRDB compatibility controls.
+- Target-native OpenSVF compatibility controls.
+- Isolated OrbitFabric Adapter Manager installed lifecycle validation.
+- Provider-neutral Release Descriptor and Project Lock proof.
+- Publisher-only release construction producing the wheel, `adapter-release.json` and `SHA256SUMS`.
+- Three consumer-facing product examples:
+  - Mission Contract Projection.
+  - Scenario Verification Projection.
+  - Closed-Loop Ping with native OpenOBSW `obsw_sim` build and OpenSVF campaign execution.
+- Clean greenfield acceptance through Adapter Manager, including a native closed-loop campaign with 100% pass rate.
+- Role-separated documentation for Users, Developers/Contributors and Maintainers/Publishers.
+- Strict MkDocs documentation validation and GitHub Pages documentation workflow.
 
-### Compatibility
+### Validated compatibility
 
-This repository is a developer pattern, not a normative replacement for OrbitFabric Core contracts.
+| System | Validated baseline |
+| --- | --- |
+| OrbitFabric Core | `4377d6656c62aa1dc19a7ed81d2de872b6b22ccd` |
+| OpenOBSW | `44ceb71a016f0541ff7a0aa74191e13bafdb59c1` |
+| `obsw-srdb` | package `0.1.0` at the validated OpenOBSW checkout |
+| OpenSVF | `667d3eadcb0bbd7814ac324b99946c4ed2f11f23`, package metadata `1.0.0` |
 
-Publication provider selection remains separate from release identity and release construction.
+### Scope boundaries
 
-Integration Coverage remains recommended documentation for community adapters and is not a generic Core conformance requirement.
+The first release intentionally does not claim complete OrbitFabric Scenario equivalence in OpenSVF.
+
+In particular:
+
+- commands with arguments are outside the current verification projection subset;
+- Core `command_status` is not reinterpreted as PUS acceptance/completion telemetry;
+- Core event, telemetry and mode expectations are not silently projected into OpenSVF observations;
+- Scenario time remains provenance/order information rather than target scheduling semantics;
+- YAMCS execution is not part of the `0.1.0` product claim;
+- hardware or production-flight qualification is not claimed.
+
+### Publication status
+
+This changelog entry describes the accepted `0.1.0` product scope. Until the immutable GitHub Release is published and its assets are verified, `0.1.0` remains a validated release candidate rather than an already published distribution.

@@ -2,33 +2,108 @@
 
 Integration adapter connecting [OrbitFabric](https://github.com/FAROTECH/orbitfabric) mission contracts with the native integration and validation surfaces provided by [OpenOBSW](https://github.com/lipofefeyt/openobsw) and [OpenSVF](https://github.com/lipofefeyt/opensvf).
 
-This repository is intentionally written for users arriving from either side of the integration. OrbitFabric, OpenOBSW and OpenSVF remain independent systems with their own responsibilities. The adapter owns the projection boundary between them.
+OrbitFabric, OpenOBSW and OpenSVF remain independent systems. OrbitFabric Core owns generic mission and integration contracts, this adapter owns target-specific projection, and the downstream projects own their native runtime and validation semantics.
 
-> Stable source status: `0.1.0` is the validated OrbitFabric-maintained source baseline. Its semantic scope, logical identity, target compatibility and release construction are frozen by CI. Source readiness and published distribution remain separate states, so release assets are authoritative only after the corresponding immutable GitHub Release is published and verified.
+> **Release status:** `0.1.0` is the validated OrbitFabric-maintained source baseline. Public immutable `v0.1.0` release assets are a separate publication step. Until that release is published and verified, locally built artifacts are release-candidate material rather than the normal external-consumer installation path.
 
-## The participating systems
+## Choose your path
 
-### OrbitFabric
+### I want to use the adapter
 
-OrbitFabric is a model-first Mission Data Fabric for small spacecraft. OrbitFabric Core owns mission semantics, generic integration contracts, conformance and Adapter Manager lifecycle behavior.
+Use the released adapter through **OrbitFabric Adapter Manager**.
 
-Official repository: [FAROTECH/orbitfabric](https://github.com/FAROTECH/orbitfabric)
+```text
+OrbitFabric Core
+    -> published adapter release
+    -> Adapter Manager install
+    -> verify
+    -> execute
+    -> product examples
+```
 
-### OpenOBSW
+You do **not** need to clone this repository to install the adapter, run `pip install -e`, build a wheel or construct a Release Descriptor.
 
-OpenOBSW is an open-source spacecraft on-board software stack implemented in portable C11. Its upstream provides a PUS-C flight-software stack, host simulation and multiple hardware or emulation targets. OpenOBSW owns flight/runtime behavior, packet framing, command dispatch, housekeeping, event materialization and target execution.
+Start with **[Getting Started](docs/getting-started.md)**.
 
-Official repository: [lipofefeyt/openobsw](https://github.com/lipofefeyt/openobsw)
+### I want to try the adapter
 
-### OpenSVF
+The repository contains three progressive product examples:
 
-OpenSVF is a Python-based spacecraft Software Validation Facility. Its upstream provides spacecraft configuration, simulation, campaign/procedure execution, PUS TM/TC handling, SRDB/XTCE tooling and optional YAMCS integration. OpenSVF owns its native simulation, verification and bridge semantics.
+1. **[Mission Contract Projection](docs/examples/mission-contract-projection.md)**  
+   Mission Model -> Core Integration Input Set -> OpenOBSW-facing contract and additive SRDB contribution.
 
-Official repository: [lipofefeyt/opensvf](https://github.com/lipofefeyt/opensvf)
+2. **[Scenario Verification Projection](docs/examples/scenario-verification-projection.md)**  
+   OrbitFabric Scenario -> explicit Verification Projection Plan -> OpenSVF-native assets.
 
-## Why connect them?
+3. **[Closed-Loop Ping](docs/examples/closed-loop-ping.md)**  
+   Same authored inputs -> target-owned SRDB composition -> OpenOBSW `obsw_sim` -> native OpenSVF campaign -> CampaignReport.
 
-The integration keeps mission intent, target projection and downstream execution separate:
+In consumer mode the example runners use an adapter instance already installed through Adapter Manager.
+
+Start with **[Examples](docs/examples/index.md)**.
+
+### I want to develop or contribute
+
+Clone the repository and use the development environment:
+
+```bash
+git clone https://github.com/FAROTECH/orbitfabric-openobsw-opensvf-adapter.git
+cd orbitfabric-openobsw-opensvf-adapter
+
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install --upgrade pip
+python -m pip install -e ".[dev]"
+```
+
+The direct adapter console command:
+
+```text
+orbitfabric-openobsw-opensvf
+```
+
+is primarily a contributor/development surface. Normal consumers should use `orbitfabric adapter ...` through Adapter Manager.
+
+Start with **[Developer / Contributor Guide](docs/development.md)** and [CONTRIBUTING.md](CONTRIBUTING.md).
+
+### I maintain or publish the adapter
+
+Release construction is a separate maintainer/publisher responsibility:
+
+```text
+accepted main commit
+    -> tag
+    -> wheel
+    -> adapter-release.json
+    -> SHA256SUMS
+    -> local proof
+    -> immutable GitHub Release
+    -> published-asset verification
+    -> external greenfield acceptance
+```
+
+A normal consumer must never need to perform these steps.
+
+Start with **[Maintainer / Publisher Guide](docs/publishing.md)** and [Release Lifecycle](docs/release-lifecycle.md).
+
+## What the adapter does
+
+The current product baseline:
+
+- consumes a coherent OrbitFabric Core Integration Input Set;
+- validates an OpenOBSW/OpenSVF-specific Projection Profile;
+- resolves target-specific bindings and compatibility facts;
+- projects supported telemetry, housekeeping packets, commands and events;
+- generates an OpenOBSW-facing C contract header;
+- generates an additive `obsw-srdb` contribution without modifying the OpenOBSW checkout;
+- emits Core-conformant Integration Results with provenance and coverage;
+- projects the supported subset of OrbitFabric Scenario intent into an explicit Verification Projection Plan;
+- materializes the plan into native OpenSVF spacecraft, campaign and Procedure assets;
+- fails explicitly when required compatibility or semantic information is unavailable.
+
+The adapter does **not** replace OpenOBSW, generate OpenOBSW runtime logic, replace OpenSVF campaign execution, redefine YAMCS semantics or make OrbitFabric Core aware of OpenOBSW/OpenSVF-specific concepts.
+
+## Integration boundary
 
 ```text
 OrbitFabric Mission Model
@@ -45,166 +120,67 @@ OpenOBSW/OpenSVF Adapter
         +--------------------------+
         |                          |
         v                          v
-OpenOBSW-facing              OpenSVF-compatible
+OpenOBSW-facing              OpenSVF-native
 contract + SRDB              verification assets
 contribution                       |
         |                          v
         v                       OpenSVF
      OpenOBSW                       |
                                    v
-                             YAMCS, optional
+                             native evidence
 ```
 
-OrbitFabric owns intent and generic contract. The adapter owns target-specific projection. OpenOBSW and OpenSVF own their native execution and validation behavior. Evidence retains provenance across the boundary.
-
-## What the adapter does
-
-The current product baseline:
-
-- consumes a coherent Core Integration Input Set produced by OrbitFabric;
-- validates an OpenOBSW/OpenSVF-specific Projection Profile;
-- resolves target-specific bindings and compatibility facts;
-- projects supported telemetry, housekeeping packets, commands and events;
-- generates a contract-only OpenOBSW-facing C header;
-- generates an additive `obsw-srdb` contribution without modifying an OpenOBSW checkout;
-- produces a Core-conformant Integration Result with mappings, provenance and coverage;
-- projects a supported subset of OrbitFabric Scenario intent into an explicit Verification Projection Plan;
-- materializes that plan into native OpenSVF spacecraft, campaign and Procedure assets;
-- fails explicitly when a required downstream compatibility fact is missing or incompatible.
-
-The adapter does not replace OpenOBSW, generate OpenOBSW runtime logic, replace OpenSVF campaign execution, reimplement YAMCS semantics, or make OrbitFabric Core aware of OpenOBSW/OpenSVF-specific concepts.
-
-## If you come from OrbitFabric
-
-The normal project flow is:
+The ownership rule is simple:
 
 ```text
-Mission Model
-  -> Core validation
-  -> Core Integration Input Set
-  -> Projection Profile
-  -> adapter project operation
-  -> downstream artifacts + Integration Result
+OrbitFabric owns intent and generic contract.
+The adapter owns projection.
+OpenOBSW and OpenSVF own downstream execution and validation.
+Evidence retains provenance across the boundary.
 ```
 
-For verification projection:
+## Consumer execution model
 
-```text
-Mission Model + Scenario
-  -> Core Integration Input Set
-  -> Projection Profile
-  -> adapter verification_projection operation
-  -> Verification Projection Plan
-  -> native OpenSVF campaign/procedure/spacecraft assets
+After installing a published release through Adapter Manager, the main operations are executed through Core.
+
+### Project
+
+```bash
+orbitfabric adapter execute "$ORBITFABRIC_ADAPTER_INSTANCE_ID" \
+  --operation project \
+  --input-set-manifest <integration_input_manifest.json> \
+  --profile <projection-profile.yaml> \
+  --output-dir <output-directory>
 ```
 
-See [Getting Started](docs/getting-started.md) for local installation and the complete execution path.
-
-## If you come from OpenOBSW/OpenSVF
-
-You do not need to adopt OrbitFabric runtime semantics inside either downstream project. OrbitFabric supplies validated mission intent. The adapter translates explicit integration choices into representations owned and consumed by the downstream ecosystem.
-
-The adapter does not patch or mutate an OpenOBSW/OpenSVF source checkout. Generated artifacts are a handoff boundary that can be inspected, composed and validated before a downstream project chooses to include them in its own build or runtime workflow.
-
-### OpenOBSW / SRDB handoff
-
-A `project` run generates:
+Representative outputs:
 
 ```text
-flight_software/
-  mission_contract.h
-
-obsw_srdb_contribution/
-  contribution_manifest.json
-  parameters.yaml
-  telecommands.yaml
-  hk_sets.yaml
-  events.yaml
-
 integration_result.json
+flight_software/mission_contract.h
+obsw_srdb_contribution/
 ```
 
-The SRDB bundle is explicitly additive:
-
-```text
-mode = additive
-complete_srdb = false
-```
-
-The validated native flow composes this contribution with the OpenOBSW base SRDB using `obsw-srdb`, materializes the resulting SRDB, regenerates C and XTCE outputs through the target tooling, and compiles the generated `mission_contract.h` as C11 with warnings treated as errors.
-
-The adapter does not prescribe a private source-tree location for `mission_contract.h`. OpenOBSW or the consuming flight integration remains responsible for deciding where the contract header enters its build and for implementing the runtime behavior behind the declared symbols.
-
-### OpenSVF handoff
-
-A `verification_projection` run additionally generates:
-
-```text
-verification_projection/
-  verification_projection_plan.json
-  opensvf/
-    materialization_manifest.json
-    opensvf/
-      spacecraft.yaml
-    campaigns/
-      verification_projection_campaign.yaml
-    procedures/
-      verification_projection_procedure.py
-```
-
-The generated Procedure uses native OpenSVF `Procedure` / `ProcedureContext` primitives. The generated spacecraft configuration is validated with the upstream `svf validate` command, and the campaign is loaded through OpenSVF `CampaignRunner.from_yaml()` in CI.
-
-Actual SIL campaign execution is a separate downstream runtime step because it requires the selected OpenOBSW binary and any physics/runtime dependencies required by the chosen OpenSVF mode.
-
-## Installation
-
-### Development checkout
+### Verification projection
 
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install --upgrade pip
-python -m pip install -e ".[dev]"
+orbitfabric adapter execute "$ORBITFABRIC_ADAPTER_INSTANCE_ID" \
+  --operation verification_projection \
+  --input-set-manifest <integration_input_manifest.json> \
+  --profile <projection-profile.yaml> \
+  --operation-input scenario=<scenario.yaml> \
+  --output-dir <output-directory>
 ```
 
-The package declares the exact OrbitFabric Core baseline it requires, so installation resolves that dependency automatically. CI also installs the same Core commit explicitly as a conformance control.
-
-Run the repository checks:
-
-```bash
-ruff check .
-python tools/check_adapter_consistency.py
-pytest -q
-python -m build --wheel
-mkdocs build --strict
-```
-
-### Adapter Manager
-
-The repository proves the complete installed lifecycle through OrbitFabric Adapter Manager:
+Representative outputs:
 
 ```text
-release artifact
-  -> install
-  -> inventory
-  -> verify
-  -> project execution
-  -> verification_projection execution
-  -> result conformance
-  -> second install / NOOP in release proof
-  -> remove
-  -> empty inventory
+integration_result.json
+verification_projection/verification_projection_plan.json
+verification_projection/opensvf/
 ```
 
-For stable `0.1.0`, the selected logical/source identity is:
-
-```text
-logical key        orbitfabric/openobsw-opensvf
-source authority   github.com/FAROTECH
-Source Coordinate  github.com/FAROTECH:orbitfabric/openobsw-opensvf
-```
-
-The GitHub authority identifies the first concrete release source. It does not make the GitHub organization the logical publisher and does not define GitHub as a universal OrbitFabric registry.
+The current `verification_projection` release is intentionally conservative. Unsupported Scenario semantics remain explicit rather than being silently reinterpreted.
 
 ## Adapter identity
 
@@ -212,112 +188,33 @@ The GitHub authority identifies the first concrete release source. It does not m
 repository       orbitfabric-openobsw-opensvf-adapter
 distribution     orbitfabric-openobsw-opensvf-adapter
 python package   orbitfabric_openobsw_opensvf_adapter
-console command  orbitfabric-openobsw-opensvf
 adapter.id       orbitfabric-openobsw-opensvf
 integration.id   orbitfabric-openobsw-opensvf
 logical key      orbitfabric/openobsw-opensvf
 version          0.1.0
 ```
 
-The release is classified as an **OrbitFabric-maintained stable adapter**. It is not yet described as registry-classified official because the generic official publisher/registry governance layer has not been promoted.
+The release is classified as an **OrbitFabric-maintained stable adapter**. It is not yet described as registry-classified official because the generic OrbitFabric publisher/registry governance layer has not been promoted.
 
-## Operations
+## Validated compatibility baselines
 
-### Project
+| System | Validated baseline |
+| --- | --- |
+| OrbitFabric Core | `4377d6656c62aa1dc19a7ed81d2de872b6b22ccd` |
+| OpenOBSW | `44ceb71a016f0541ff7a0aa74191e13bafdb59c1` |
+| `obsw-srdb` | package `0.1.0` at the validated OpenOBSW baseline |
+| OpenSVF | `667d3eadcb0bbd7814ac324b99946c4ed2f11f23`, package metadata `1.0.0` |
 
-```bash
-orbitfabric-openobsw-opensvf run \
-  --operation project \
-  --input-set-manifest <integration_input_manifest.json> \
-  --profile <projection-profile.yaml> \
-  --output-dir <output-directory>
-```
-
-### Verification projection
-
-```bash
-orbitfabric-openobsw-opensvf run \
-  --operation verification_projection \
-  --input-set-manifest <integration_input_manifest.json> \
-  --profile <projection-profile.yaml> \
-  --operation-input scenario <scenario.yaml> \
-  --output-dir <output-directory>
-```
-
-When invoked through Adapter Manager, operation inputs use the manager-facing `ROLE=PATH` form and Core normalizes them for the adapter CLI protocol.
-
-## Runnable product examples
-
-The repository now contains three consumer-facing examples built on the public Core and adapter CLIs:
-
-```text
-examples/01-mission-contract-projection/
-examples/02-scenario-verification-projection/
-examples/03-closed-loop-ping/
-```
-
-Examples 01 and 02 regenerate projection artifacts from shared authored inputs. Example 03 additionally composes the target-owned SRDB, builds the validated OpenOBSW host simulator and executes the generated OpenSVF campaign on Linux/WSL2, producing native CampaignReport JSON evidence.
-
-Start with [Examples](docs/examples/index.md). The examples are deliberately separate from `tests/fixtures/` and do not treat generated artifacts as source of truth.
-
-## Release artifacts
-
-Publisher-owned stable release material is constructed with:
-
-```bash
-python tools/build_release_bundle.py \
-  --wheel dist/orbitfabric_openobsw_opensvf_adapter-0.1.0-py3-none-any.whl \
-  --authority github.com/FAROTECH \
-  --publisher orbitfabric \
-  --name openobsw-opensvf \
-  --release-only
-```
-
-This produces:
-
-```text
-adapter-release.json
-SHA256SUMS
-```
-
-alongside the selected wheel.
-
-A canonical `adapter-project-lock.json` is not part of publisher release membership. Project Lock belongs to the consuming project and records that project's exact selected resolution. The default tool mode still derives a lock for lifecycle and conformance proof.
-
-## Setup from both sides
-
-The integration documentation follows four steps:
-
-1. **OrbitFabric-side setup**: Core input production, adapter installation and Adapter Manager lifecycle.
-2. **Adapter configuration**: Projection Profile, compatibility selections and operation inputs.
-3. **OpenOBSW/OpenSVF-side setup**: downstream prerequisites, generated artifact consumption and native validation.
-4. **End-to-end validation**: Core conformance plus downstream-native acceptance and, where required by a release claim, runtime evidence.
-
-See [Getting Started](docs/getting-started.md).
-
-## Current validated compatibility baselines
-
-Compatibility is explicit and evidence-backed.
-
-| System | Validated baseline | Current evidence |
-| --- | --- | --- |
-| OrbitFabric Core | commit `4377d6656c62aa1dc19a7ed81d2de872b6b22ccd` | Integration Input Set, conformance, Adapter Manager lifecycle and release proof |
-| OpenOBSW | commit `44ceb71a016f0541ff7a0aa74191e13bafdb59c1` | additive SRDB composition, materialization, target codegen/XTCE and C11 contract compile |
-| `obsw-srdb` | package `0.1.0` at the validated OpenOBSW baseline | target-native composition and generation control |
-| OpenSVF | commit `667d3eadcb0bbd7814ac324b99946c4ed2f11f23`, package metadata `1.0.0` | `svf validate`, native campaign load and generated Procedure import |
-
-The current OpenSVF upstream README still lists `v0.8.0` in its compatibility table while the same validated checkout declares package version `1.0.0` in `pyproject.toml`. This adapter records the exact validated commit and observed package metadata rather than inferring compatibility from a single version label.
-
-YAMCS is not a mandatory dependency of projection. It becomes relevant only when a runtime or ground-validation workflow explicitly uses the OpenSVF/YAMCS path.
+Compatibility is evidence-backed. Changing a pinned downstream baseline is not a documentation-only change.
 
 ## Validation model
 
-A stable release is not accepted because Core conformance alone passes:
+The source baseline is accepted through multiple independent evidence layers:
 
 ```text
 Core contract conformance
         +
-Adapter projection tests
+adapter-owned tests
         +
 OpenOBSW / SRDB native compatibility
         +
@@ -327,84 +224,78 @@ installed Adapter Manager lifecycle
         +
 release / Project Lock proof
         +
-publisher release-only artifact proof
+publisher release-only proof
+        +
+consumer-facing product examples
+        +
+native closed-loop CampaignReport evidence
 ```
 
-Historical PoC runtime evidence remains useful for live TM/TC/YAMCS continuity, but it is not silently promoted into a current product compatibility claim.
+Core conformance does not substitute for downstream-native acceptance.
 
 ## Repository structure
 
 ```text
-src/orbitfabric_openobsw_opensvf_adapter/
-    adapter implementation
-    Integration Package Manifest
-    Profile schema
-    target resources
+src/
+    adapter implementation and packaged resources
 
 examples/
-    shared authored reference inputs
-    runnable product examples
+    user-facing reference inputs and runnable product examples
 
 tests/
-    contract, projection and lifecycle fixtures/tests
+    adapter, contract and compatibility regression controls
 
 coverage/
     Integration Coverage Matrix
 
 docs/
-    architecture, setup, examples, compatibility, evidence and release guidance
+    user, developer and publisher documentation
 
 tools/
-    adapter consistency and release tooling
+    consistency and release tooling
 
 .github/
-    CI, downstream-native controls, installed lifecycle and release proof
+    CI, compatibility, lifecycle, release and product-example controls
 ```
 
 ## Documentation
 
-The documentation is authored in `docs/`, built with MkDocs and validated with `mkdocs build --strict` in CI.
+The documentation is deliberately organized by role:
 
-Start with:
+### User
 
-1. [Getting Started](docs/getting-started.md)
-2. [Examples](docs/examples/index.md)
-3. [Architecture and Ownership](docs/architecture-and-ownership.md)
-4. [Adapter Identity](docs/adapter-identity.md)
-5. [Projection Profile and Bindings](docs/projection-profile-and-bindings.md)
-6. [Testing and Conformance](docs/testing-and-conformance.md)
-7. [Evidence and Traceability](docs/evidence-and-traceability.md)
-8. [Integration Coverage](docs/integration-coverage.md)
-9. [Release Lifecycle](docs/release-lifecycle.md)
+- [Getting Started](docs/getting-started.md)
+- [Examples](docs/examples/index.md)
+- [Projection Profile and Bindings](docs/projection-profile-and-bindings.md)
+- [Runtime Dependencies](docs/runtime-dependencies.md)
+- [Integration Coverage](docs/integration-coverage.md)
 
-## Publication boundary
+### Developer / Contributor
 
-The stable source baseline and the published release are separate states.
+- [Developer / Contributor Guide](docs/development.md)
+- [Repository Anatomy](docs/repository-anatomy.md)
+- [Architecture and Ownership](docs/architecture-and-ownership.md)
+- [Integration Contracts](docs/integration-contracts.md)
+- [Testing and Conformance](docs/testing-and-conformance.md)
 
-The source baseline is accepted only after its exact CI is green. Publication then follows this sequence:
+### Maintainer / Publisher
 
-```text
-make repository public
-enable GitHub immutable releases
-create v0.1.0 as a draft release from the accepted stable commit
-attach wheel + adapter-release.json + SHA256SUMS
-verify asset digests
-publish the immutable release
-verify tag, published digests and release/provenance attestation
-retain final evidence
-```
+- [Maintainer / Publisher Guide](docs/publishing.md)
+- [Release Lifecycle](docs/release-lifecycle.md)
+- [Adapter Readiness Checklist](docs/adapter-readiness-checklist.md)
+- [Evidence and Traceability](docs/evidence-and-traceability.md)
 
-The presence of `version = 0.1.0` in source does not by itself claim that those publication steps have happened.
+Documentation is built with MkDocs and validated with `mkdocs build --strict` in CI.
 
 ## Historical PoC
 
-The preceding engineering investigation remains available as historical evidence in the OrbitFabric OpenOBSW PoC repositories. PoC Stage numbering, experiments and runtime scaffolding are intentionally not copied wholesale into this product repository. Only durable adapter behavior, target resources, compatibility controls and reusable regression evidence are extracted.
+The preceding engineering investigation remains historical evidence. PoC Stage numbering, experiments and temporary runtime scaffolding are intentionally not product architecture.
 
-The historical open PoC pull request remains untouched. It is evidence and collaboration history, not a release gate for this product repository.
+Only durable adapter behavior, target resources, compatibility requirements and regression evidence are retained here.
 
 ## Project relationships
 
-OpenOBSW and OpenSVF are independent upstream projects. This adapter is maintained as part of the OrbitFabric ecosystem and integrates with their published/native interfaces without transferring ownership of downstream semantics to OrbitFabric.
+OpenOBSW and OpenSVF are independent upstream projects. This adapter integrates with their native interfaces without transferring ownership of downstream semantics to OrbitFabric.
 
 ## License
 

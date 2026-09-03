@@ -40,21 +40,30 @@ markdown_extensions:
 
 nav:
   - Home: index.md
-  - Getting Started: getting-started.md
-  - Examples:
-      - Overview: examples/index.md
-      - Mission Contract Projection: examples/mission-contract-projection.md
-      - Scenario Verification Projection: examples/scenario-verification-projection.md
-      - Closed-Loop Ping: examples/closed-loop-ping.md
-  - Repository Anatomy: repository-anatomy.md
-  - Adapter Identity: adapter-identity.md
-  - Architecture and Ownership: architecture-and-ownership.md
-  - Integration Contracts: integration-contracts.md
-  - Projection Profile and Bindings: projection-profile-and-bindings.md
-  - Testing and Conformance: testing-and-conformance.md
-  - Evidence and Traceability: evidence-and-traceability.md
-  - Runtime Dependencies: runtime-dependencies.md
-  - Release Lifecycle: release-lifecycle.md
-  - Integration Coverage: integration-coverage.md
-  - Adapter Readiness Checklist: adapter-readiness-checklist.md
-  - Migration from the PoC: migrating-from-poc.md
+  - User:
+      - Getting Started: getting-started.md
+      - Examples:
+          - Overview: examples/index.md
+          - Mission Contract Projection: examples/mission-contract-projection.md
+          - Scenario Verification Projection: examples/scenario-verification-projection.md
+          - Closed-Loop Ping: examples/closed-loop-ping.md
+      - Projection Profile and Bindings: projection-profile-and-bindings.md
+      - Runtime Dependencies: runtime-dependencies.md
+      - Integration Coverage: integration-coverage.md
+  - Developer / Contributor:
+      - Overview: development.md
+      - Repository Anatomy: repository-anatomy.md
+      - Architecture and Ownership: architecture-and-ownership.md
+      - Adapter Identity: adapter-identity.md
+      - Integration Contracts: integration-contracts.md
+      - Testing and Conformance: testing-and-conformance.md
+      - Evidence and Traceability: evidence-and-traceability.md
+      - Migration from the PoC: migrating-from-poc.md
+  - Maintainer / Publisher:
+      - Overview: publishing.md
+      - Publication Readiness Audit: publication-readiness-audit.md
+      - Release Lifecycle: release-lifecycle.md
+      - Adapter Readiness Checklist: adapter-readiness-checklist.md
+      - Evidence and Traceability: evidence-and-traceability.md
+      - Adapter Identity: adapter-identity.md
+      - Integration Coverage: integration-coverage.md

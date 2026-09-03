@@ -219,11 +219,35 @@ what exact release bytes were installed?
 
 Use the Core-owned Integration Result as the primary execution evidence surface. Keep target-native, installed lifecycle and release evidence as separate layers.
 
-## 10. Documentation from both sides
+## 10. Documentation by role and ecosystem entry point
 
-A visitor may arrive from OrbitFabric or from the downstream ecosystem.
+A visitor may arrive from OrbitFabric or from the downstream ecosystem, but the repository must also distinguish the visitor's role.
 
-Before publication, verify that README and docs explain:
+Before publication, verify that the landing page and docs provide three clear paths:
+
+```text
+USER
+    install released adapter
+    inspect / verify through Adapter Manager
+    execute adapter operations
+    try product examples
+    understand downstream consumption
+
+DEVELOPER / CONTRIBUTOR
+    clone source
+    editable development install
+    direct adapter CLI for contributor work
+    architecture / contracts / tests / compatibility
+
+MAINTAINER / PUBLISHER
+    accepted source selection
+    release construction
+    hashes and provenance
+    immutable publication
+    post-publication greenfield acceptance
+```
+
+The documentation must also explain:
 
 ```text
 what OrbitFabric is
@@ -231,7 +255,6 @@ what OpenOBSW is
 what OpenSVF is
 why the integration exists
 what each system owns
-how to install/configure the OrbitFabric side
 how to configure the adapter
 what is required on the OpenOBSW/SRDB side
 what is required on the OpenSVF side
@@ -240,7 +263,7 @@ how to validate the handoff natively
 what the adapter does not own
 ```
 
-No side should be presented as a subordinate implementation detail of another project.
+A normal user must not be instructed to build the adapter wheel or Release Descriptor locally. No downstream project should be presented as a subordinate implementation detail of another system.
 
 ## 11. Integration Coverage
 
@@ -313,6 +336,8 @@ The active OpenSVF verification resource is product-facing:
 verification_spacecraft.yaml
 ```
 
+The release changelog and release notes must also describe this concrete adapter rather than the Developer Template from which the repository was bootstrapped.
+
 ## Readiness conclusion
 
 The `0.1.0` release candidate has completed the architecture and product decisions required for stable publication readiness.
@@ -321,6 +346,7 @@ It has:
 
 ```text
 stable logical identity and first source authority
+public product repository
 Core conformance
 Python 3.11 / 3.12 checks
 OpenOBSW / SRDB target-native compatibility
@@ -328,23 +354,33 @@ OpenSVF target-native compatibility
 installed Adapter Manager lifecycle
 provider-neutral release / Project Lock proof
 publisher-only release construction
+consumer product examples through Adapter Manager
+native closed-loop campaign evidence
 100% analysis coverage for the maintained 21-area inventory
 zero known implementation holes inside declared first-release scope
-product-facing documentation from both sides of the integration
-active-product PoC-language cleanup
+role-separated User / Developer / Publisher documentation
+active-product PoC/Template-language cleanup
 ```
 
-The remaining boundary is publication, not product design:
+The remaining boundary is controlled publication, not product design.
+
+The operational sequence is maintained in [v0.1.0 Publication Readiness Audit](publication-readiness-audit.md). In summary:
 
 ```text
-merge the exact green release candidate
-make the repository public
-enable GitHub Immutable Releases
-create exact v0.1.0 release from the merged stable source baseline
-attach the wheel, adapter-release.json and SHA256SUMS
+merge the exact green publication-preparation candidate
+record the accepted main commit
+confirm accepted-main CI
+confirm GitHub Immutable Releases configuration
+create v0.1.0 against the exact accepted commit
+build the definitive wheel, adapter-release.json and SHA256SUMS
+verify the definitive bytes locally
+create and verify the draft GitHub Release
 publish immutably
-verify published digests and release attestation
+verify tag and published asset digests
+repeat external greenfield acceptance from the published assets
 retain final Architecture Lab publication evidence
 ```
+
+For `v0.1.0`, release provenance is the exact accepted commit, exact tag, immutable GitHub Release and verified published SHA-256 identities. Cryptographic artifact signing or signature-attestation verification is not part of the first-release claim.
 
 Until that publication sequence is complete, `0.1.0` is a validated stable release candidate rather than an already published release.
