@@ -24,6 +24,18 @@ OpenOBSW obsw_sim ---------------------------+
                   native CampaignReport
 ```
 
+## Adapter execution
+
+For the recommended consumer path, install the adapter through OrbitFabric Adapter Manager and select the resulting instance:
+
+```bash
+export ORBITFABRIC_ADAPTER_INSTANCE_ID=<instance-id>
+```
+
+The runner verifies that instance and executes both `project` and `verification_projection` through `orbitfabric adapter execute`. The adapter console command does not need to be installed in the host Python environment.
+
+A direct console-command path remains available only as a contributor fallback when no Adapter Manager instance is selected.
+
 ## Validated downstream baselines
 
 | System | Commit |
