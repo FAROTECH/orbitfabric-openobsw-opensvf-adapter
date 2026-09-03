@@ -198,13 +198,14 @@ assert [item["plan_operation_id"] for item in manifest["operation_trace"]] == ex
 assert manifest["execution_policy"]["scenario_time_interpretation"] == "provenance_only"
 
 assert report["n_procedures"] == 1
-assert report["n_pass"] == 1
-assert report["n_fail"] == 0
-assert report["n_error"] == 0
+assert report["n_inconclusive"] == 0
+assert report["pass_rate"] == 1.0
 assert report["declared_requirements"] == []
+assert report["uncovered_requirements"] == []
 assert len(report["results"]) == 1
 result = report["results"][0]
 assert result["verdict"] == "PASS"
+assert result["error"] is None
 assert result["requirement"] == ""
 assert len(result["steps"]) == 4
 assert all(step["verdict"] == "PASS" for step in result["steps"])
