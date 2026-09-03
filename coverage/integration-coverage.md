@@ -1,6 +1,6 @@
 # OpenOBSW/OpenSVF Adapter Integration Coverage
 
-Status: initial maintainer coverage declaration for the `0.1.0.dev0` product baseline.
+Status: maintainer coverage declaration for the stable `0.1.0` release candidate.
 
 This matrix describes the OrbitFabric semantic surface that has been assessed against the OpenOBSW/OpenSVF integration role, the subset deliberately claimed by this adapter, and the current implementation disposition.
 
@@ -36,111 +36,51 @@ A complete OpenOBSW/OpenSVF feature mapping is not the denominator. The denomina
 
 ```text
 OrbitFabric Semantic Surface
-        ↓
+        |
+        v
 Target Applicable Surface
-        ↓
+        |
+        v
 Adapter Declared Scope
 ```
 
-The current matrix deliberately separates project-time mission-contract projection from Scenario verification projection. A capability may be well supported by `project` and still be deliberately outside the first-release `verification_projection` subset.
+The matrix uses the following dispositions:
+
+```text
+FULL
+PARTIAL
+NOT_IMPLEMENTED
+TARGET_UNSUPPORTED
+NOT_APPLICABLE
+NOT_ANALYZED
+OUT_OF_SCOPE
+```
 
 ## Matrix
 
-| OrbitFabric capability area | Target applicable | Target representation or constraint | Adapter declared scope | Disposition | Evidence or rationale | Roadmap |
-| --- | --- | --- | --- | --- | --- | --- |
-| Mission identity and provenance | yes | Integration Result, contribution manifest, Verification Projection Plan provenance | in scope | FULL | Core mission id/model version and input digests are preserved and cross-checked; installed lifecycle exercises the chain | complete for current contract |
-| Telemetry parameter projection | yes | OpenOBSW C contract symbol + `obsw-srdb` parameter | in scope | PARTIAL | Explicit Profile bindings are projected and target-native SRDB composition/codegen passes; unsupported Core telemetry types fail explicitly instead of being guessed | assess additional Core/target type mappings |
-| Command contract projection | yes | OpenOBSW C contract symbol + PUS TC / `obsw-srdb` telecommand | in scope | FULL | PUS compatibility, APID policy, target reuse/collision and argument-contract compatibility are checked; target-native composition passes | complete for current Profile vocabulary |
-| Event projection | yes | OpenOBSW C contract symbol + PUS Service 5 / `obsw-srdb` event | in scope | FULL | Core severity is mapped through explicit Profile policy and validated against target severity/subtype baseline | complete for current Profile vocabulary |
-| Housekeeping packet projection | yes | PUS TM(3,25) + `obsw-srdb` HK set | in scope | PARTIAL | Core packet membership is consumed, projected telemetry fields are verified and downstream SRDB generation passes; scope is housekeeping rather than arbitrary packet families | assess additional packet roles separately |
-| General non-housekeeping packet semantics | yes | target-specific PUS packet/runtime mechanisms | out of scope | OUT_OF_SCOPE | First product baseline intentionally claims HK projection only | reassess after first release |
-| Spacecraft and subsystem topology | yes | OpenSVF spacecraft/equipment model and OpenOBSW application architecture | out of scope | OUT_OF_SCOPE | Adapter currently uses a verification spacecraft template and does not project the OrbitFabric subsystem graph | separate design investigation before widening scope |
-| Modes and runtime mode initialization | yes | OpenOBSW mode/runtime behavior and OpenSVF observable state | out of scope | OUT_OF_SCOPE | `verification_projection` preserves mode intent as `not_projected`; adapter does not own target FSM initialization | reassess as a later explicit capability |
-| Fault / FDIR runtime behavior | yes | OpenOBSW fault/runtime implementation and observable event behavior | out of scope | OUT_OF_SCOPE | Event contract projection is supported, but generating target FDIR behavior would exceed the current adapter ownership boundary | require explicit downstream FDIR contract before considering |
-| Mission policies | yes | potentially target runtime/operations-specific policy mechanisms | out of scope | OUT_OF_SCOPE | No generic policy projection is claimed by this adapter | reassess only with a concrete target-owned representation |
-| Relationship Manifest as a direct projection surface | no | no independent OpenOBSW/OpenSVF relationship-graph artifact is owned by this adapter | out of scope | NOT_APPLICABLE | The Core manifest remains a required coherence surface. Relationship semantics relevant to current projection, such as packet membership, are consumed through the corresponding Core entity semantics rather than projected as a second graph artifact. | reassess only if a downstream-native relationship representation becomes part of adapter scope |
-| Scenario validation and provenance | yes | Core `ScenarioLoader` validation + Verification Projection Plan provenance | in scope | FULL | Scenario is validated by the exact Core runtime and mission identity is checked against the consumed Integration Input Set | complete for current operation contract |
-| Scenario command action without arguments | yes | OpenSVF Procedure `ctx.tc()` with Profile-resolved PUS mapping | in scope | FULL | Generated Procedure is imported through native OpenSVF `CampaignRunner`; installed lifecycle exercises materialization | complete for current subset |
-| Scenario command arguments | yes | target-specific encoding into PUS TC application data | out of scope | OUT_OF_SCOPE | The first release deliberately blocks rather than inventing an argument encoder | define an explicit target argument encoding contract before adding to declared scope |
-| Profile-configured expected PUS responses | yes | OpenSVF Procedure `ctx.expect_tm()` | in scope | FULL | Expected responses are resolved from target Profile mapping and materialized into native Procedure operations | complete for current subset |
-| Scenario event expectation | yes | target event identification / OpenSVF observation | out of scope | OUT_OF_SCOPE | PUS subtype alone is insufficient to identify the originating Core event without an explicit observation mapping | design event observation mapping before adding to declared scope |
-| Scenario mode expectation | yes | target mode observation | out of scope | OUT_OF_SCOPE | Current operation records the expectation as `not_projected` | define explicit mode observation mapping before adding to declared scope |
-| Scenario telemetry expectation | yes | OpenSVF parameter or TM observation | out of scope | OUT_OF_SCOPE | Current operation records parameter-level telemetry expectation as `not_projected` | evaluate native parameter assertion mapping before adding to declared scope |
-| Scenario telemetry injection | yes | OpenSVF `ProcedureContext.inject()` writes to a target equipment IN port | out of scope | OUT_OF_SCOPE | OrbitFabric Scenario injection mutates a named telemetry value, while OpenSVF injection addresses an equipment command/input port. Those are not semantically equivalent without an explicit telemetry-to-target-input mapping. | design an explicit injection mapping contract before adding to declared scope |
-| Core host-side `command_status` expectation | yes | PUS acceptance/completion telemetry is related but not semantically identical | in scope | TARGET_UNSUPPORTED | Adapter explicitly refuses to equate Core host-side command status with PUS acceptance telemetry | retain semantic distinction unless a future contract defines equivalence |
-| Aggregate host expectations (`data_flow`, `payload_lifecycle`, `scenario_status`) | no | these are OrbitFabric host-side aggregate evidence semantics, not target runtime primitives | out of scope | NOT_APPLICABLE | Verification plan preserves their disposition instead of manufacturing downstream evidence | none unless Core defines a portable observation contract |
-
-## Current evidence
-
-### Core and adapter contract evidence
-
-The main CI matrix proves on Python 3.11 and 3.12:
-
-```text
-exact Core development baseline installation
-Ruff
-adapter consistency
-unit / projection tests
-wheel build
-packaged asset ownership
-MkDocs strict build
-```
-
-### OpenOBSW / SRDB native evidence
-
-The `target-compatibility-openobsw` job pins OpenOBSW commit:
-
-```text
-44ceb71a016f0541ff7a0aa74191e13bafdb59c1
-```
-
-and proves:
-
-```text
-adapter project generation
-obsw-srdb contribution load
-additive composition with the native OpenOBSW SRDB
-materialization round trip
-existing telecommand reuse
-native C header generation
-native XTCE generation
-C11 compilation of mission_contract.h with warnings as errors
-```
-
-### OpenSVF native evidence
-
-The `target-compatibility-opensvf` job pins OpenSVF commit:
-
-```text
-667d3eadcb0bbd7814ac324b99946c4ed2f11f23
-```
-
-with installed package metadata `1.0.0` and proves:
-
-```text
-verification_projection generation
-OpenSVF spacecraft pre-flight validation with svf validate
-native CampaignRunner campaign load
-generated Procedure subclass import
-```
-
-This is downstream acceptance evidence, not a claim that a full SIL campaign was executed in that job.
-
-### Lifecycle and release evidence
-
-The installed lifecycle and provider-neutral release proof establish:
-
-```text
-wheel installation through Adapter Manager
-inventory and verify
-project execution
-verification_projection execution
-Integration Result conformance
-OpenSVF materialization
-Project Lock MISSING -> install -> MATCH
-second install -> NOOP / MATCH
-remove -> empty inventory
-```
+| OrbitFabric semantic area | Target applicability | First-release scope | Disposition | Evidence / rationale |
+| --- | --- | --- | --- | --- |
+| Telemetry parameter projection | Applicable | In scope | PARTIAL | The adapter projects selected telemetry into the OpenOBSW/SRDB contribution and generated contract. Mapping is intentionally target-profile driven rather than a blanket projection of every Core telemetry semantic. |
+| Command contract projection | Applicable | In scope | FULL | Selected commands are projected into the generated OpenOBSW-facing contract and additive SRDB contribution. |
+| Command argument encoding | Applicable | Out of scope | OUT_OF_SCOPE | The current release does not claim a general target-owned argument encoding model. |
+| Event projection | Applicable | In scope | FULL | Selected events are projected with explicit target severity mapping and target-native SRDB validation. |
+| Housekeeping packet projection | Applicable | In scope | PARTIAL | The adapter projects selected housekeeping definitions into additive SRDB content. Non-housekeeping packet semantics remain separate. |
+| Non-housekeeping packet semantics | Applicable | Out of scope | OUT_OF_SCOPE | Not required for the first declared role. |
+| Traceability and provenance | Applicable | In scope | FULL | Integration Result mappings and source/target evidence retain projection provenance. |
+| Scenario parsing and validation | Applicable | In scope | FULL | `verification_projection` consumes the required Scenario role through OrbitFabric Scenario loading and rejects unsupported semantic forms explicitly. |
+| Scenario no-argument command projection | Applicable | In scope | FULL | Supported no-argument command actions materialize into OpenSVF procedure TC calls. |
+| Scenario expected PUS response projection | Applicable | In scope | FULL | Profile-configured expected target responses materialize into OpenSVF TM expectations. |
+| Scenario host `command_status` expectation | Applicable | In scope | TARGET_UNSUPPORTED | Host-side OrbitFabric `command_status` semantics are not automatically equivalent to PUS acceptance/completion telemetry and are rejected rather than approximated. |
+| Scenario event expectation | Applicable | Out of scope | OUT_OF_SCOPE | Current release does not claim general event-expectation projection into OpenSVF. |
+| Scenario mode expectation | Applicable | Out of scope | OUT_OF_SCOPE | Current release does not claim a generic OrbitFabric-mode to OpenSVF verification mapping. |
+| Scenario telemetry expectation | Applicable | Out of scope | OUT_OF_SCOPE | Current release does not claim generic telemetry expectation projection. |
+| Scenario telemetry injection | Applicable | Out of scope | OUT_OF_SCOPE | Current release does not claim telemetry injection semantics. |
+| Subsystem topology | Applicable | Out of scope | OUT_OF_SCOPE | Useful downstream structure exists, but the current adapter role does not project generic subsystem topology. |
+| Mode/state model | Applicable | Out of scope | OUT_OF_SCOPE | No stable target-owned mapping is claimed by `0.1.0`. |
+| FDIR/fault behavior | Applicable | Out of scope | OUT_OF_SCOPE | Fault semantics remain target/runtime-owned and are not projected by the current release. |
+| Policies/constraints | Applicable | Out of scope | OUT_OF_SCOPE | No generic policy projection is claimed. |
+| Relationship families | Not applicable to current role | Out of scope | NOT_APPLICABLE | The current Core Integration Package explicitly declares no relationship-family consumption. |
+| Runtime execution semantics | Not adapter-projectable | Out of scope | NOT_APPLICABLE | OpenOBSW and OpenSVF own their native runtime behavior. The adapter produces handoff and verification material rather than replacing runtime execution. |
 
 ## Summary
 
@@ -151,7 +91,6 @@ NOT_ANALYZED:                        0
 Analysis Coverage:                 100%
 
 Known target-applicable rows:       19
-Target applicability unknown:        0
 NOT_APPLICABLE:                      2
 
 Declared first-release scope:        9
@@ -163,45 +102,8 @@ NOT_IMPLEMENTED in declared scope:   0
 Known applicable but OUT_OF_SCOPE:  10
 ```
 
-Interpretation:
+The stable `0.1.0` release candidate therefore has no known implementation hole inside its declared first-release scope.
 
-```text
-Analysis Coverage
-    complete for the current 21-area semantic inventory.
+The `PARTIAL` rows are bounded by explicit target mapping decisions rather than unfinished implementation. The `TARGET_UNSUPPORTED` row preserves a semantic mismatch instead of hiding it behind an approximate translation.
 
-Scope Completeness
-    the first-release scope contains no known implementation hole.
-    Two broad project-time areas remain intentionally PARTIAL because
-    the target mappings are narrower than the complete Core domain.
-    command_status remains an explicit semantic non-equivalence rather
-    than an implementation defect.
-
-Applicable Surface Coverage
-    deliberately narrower than the complete target-applicable surface.
-    The first 0.1.0 is a focused integration product, not a promise to
-    project every OrbitFabric Scenario or runtime concept.
-```
-
-No single maturity percentage is reported because it would hide the difference between deliberate scope, partial domain mapping and a true target-semantic mismatch.
-
-## First-release scope decision
-
-The `0.1.0` baseline should not widen scope merely to eliminate visible `OUT_OF_SCOPE` rows.
-
-The first release is intended to prove a coherent and reusable integration chain:
-
-```text
-OrbitFabric mission contract
-    -> OpenOBSW / obsw-srdb project artifacts
-
-OrbitFabric Scenario
-    -> validated no-argument PUS command projection
-    -> Profile-declared expected PUS responses
-    -> OpenSVF-native campaign / Procedure materialization
-```
-
-Later versions may widen verification projection one semantic family at a time. Each addition should first define the target-owned observation or encoding meaning, then add implementation and downstream-native evidence.
-
-## Policy note
-
-This is an OrbitFabric-maintained adapter candidate. The matrix is therefore treated as a maturity input before version and publication decisions are made, even though Integration Coverage is not a generic Core conformance requirement.
+Capabilities outside the first-release scope remain visible so later releases can widen scope deliberately and attach target-native evidence rather than retroactively redefining what `0.1.0` meant.
