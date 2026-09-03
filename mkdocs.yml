@@ -61,6 +61,7 @@ nav:
       - Migration from the PoC: migrating-from-poc.md
   - Maintainer / Publisher:
       - Overview: publishing.md
+      - Publication Readiness Audit: publication-readiness-audit.md
       - Release Lifecycle: release-lifecycle.md
       - Adapter Readiness Checklist: adapter-readiness-checklist.md
       - Evidence and Traceability: evidence-and-traceability.md
