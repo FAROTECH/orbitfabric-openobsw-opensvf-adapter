@@ -229,65 +229,104 @@ No side should be presented as a subordinate implementation detail of another pr
 
 ## 11. Integration Coverage
 
-The current maintained matrix is:
+The maintained matrix is:
 
 ```text
 coverage/integration-coverage.md
 ```
 
-Before stable release, review every disposition against the current code and downstream baselines.
-
-Current summary:
+Current first-release review summary:
 
 ```text
 Total rows:                         21
-Analyzed rows:                      19
-NOT_ANALYZED:                        2
-Declared in-scope rows:             13
+Analyzed rows:                      21
+NOT_ANALYZED:                        0
+Analysis Coverage:                 100%
+
+Known target-applicable rows:       19
+NOT_APPLICABLE:                      2
+
+Declared first-release scope:        9
 FULL:                                6
 PARTIAL:                             2
-NOT_IMPLEMENTED:                     4
 TARGET_UNSUPPORTED:                  1
-Known applicable but OUT_OF_SCOPE:   5
-NOT_APPLICABLE:                      1
+NOT_IMPLEMENTED in declared scope:   0
+
+Known applicable but OUT_OF_SCOPE:  10
 ```
 
-The two current analysis gaps are:
+The first-release scope therefore contains no known implementation hole.
+
+The two `PARTIAL` areas are deliberately bounded project-time mappings:
 
 ```text
-Core relationship-family applicability
-Scenario telemetry-injection target applicability
+telemetry parameter projection
+housekeeping packet projection
 ```
 
-The four current implementation gaps inside declared scope are:
+They are partial because the target mapping is narrower than the complete Core domain, not because the implemented path is unproven.
+
+The `TARGET_UNSUPPORTED` row preserves an explicit semantic distinction:
 
 ```text
-Scenario command argument encoding
-Scenario event expectation mapping
-Scenario mode expectation mapping
-Scenario telemetry expectation mapping
+Core host-side command_status expectation
+    != automatically PUS acceptance/completion telemetry
 ```
 
-A focused `0.1.0` may legitimately retain some gaps if they are explicitly accepted as release scope. They must not disappear from documentation through optimistic wording.
+Target-applicable capabilities outside the first-release scope remain visible in the matrix, including command argument encoding, event/mode/telemetry expectations, telemetry injection, subsystem topology, FDIR behavior, policies and non-housekeeping packet semantics.
+
+Do not widen `0.1.0` merely to reduce the number of `OUT_OF_SCOPE` rows. Add future semantic families only after their target-owned meaning is explicit and downstream-native evidence exists.
 
 ## 12. Product cleanup
 
-Before stable/public release, search the product tree for historical construction language that should not define the product architecture, including:
+The active product tree has been reviewed for historical construction language that should not define product architecture.
+
+The cleanup removed or replaced active references such as:
 
 ```text
-Dummy
-Template creation instructions
-internal pressure-test labels
-PoC Stage numbering in active product code/resources
-obsolete compatibility/version statements
+Dummy-oriented product wording
+Template creation instructions in product-facing guidance
+PoC Stage numbering in active code/resources
+obsolete coverage statements
 ```
 
-Historical PoC references are acceptable where they are clearly labeled as history or migration evidence. Active runtime messages and target resource identities should be product-facing.
+Historical PoC references remain acceptable where they are clearly identified as history or migration evidence.
+
+The active OpenSVF verification resource is product-facing:
+
+```text
+verification_spacecraft.yaml
+```
 
 ## Readiness conclusion
 
-The current adapter is already much stronger than a code extraction: it has Core conformance, two independent downstream-native gates, installed lifecycle, release proof, balanced documentation and an explicit coverage matrix.
+The `0.1.0.dev0` product baseline has completed the technical and editorial readiness review required before merging the productization work.
 
-It is not yet called stable or public because maturity is a release decision, not a count of green checks.
+It has:
 
-The remaining work before `0.1.0` is to review the declared coverage gaps, remove residual PoC-construction language from active product assets, make the final source/publisher decision and run one final publication-readiness review against the exact release baseline.
+```text
+Core conformance
+Python 3.11 / 3.12 checks
+OpenOBSW / SRDB target-native compatibility
+OpenSVF target-native compatibility
+installed Adapter Manager lifecycle
+provider-neutral release / Project Lock proof
+100% analysis coverage for the maintained 21-area inventory
+zero known implementation holes inside declared first-release scope
+product-facing documentation from both sides of the integration
+active-product PoC-language cleanup
+```
+
+This is sufficient to treat the development baseline as a coherent reusable adapter product.
+
+It is intentionally not yet called the stable public `0.1.0` release. That transition still requires a separate official-release decision for:
+
+```text
+final Adapter Source Coordinate
+final publisher identity
+exact stable release version and bytes
+final release proof against those exact values
+publication mechanism and retained release evidence
+```
+
+Merge readiness and stable publication readiness are therefore distinct checkpoints.
