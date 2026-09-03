@@ -4,7 +4,7 @@ Integration adapter connecting [OrbitFabric](https://github.com/FAROTECH/orbitfa
 
 OrbitFabric, OpenOBSW and OpenSVF remain independent systems. OrbitFabric Core owns generic mission and integration contracts, this adapter owns target-specific projection, and the downstream projects own their native runtime and validation semantics.
 
-> **Release status:** `0.1.0` is the validated OrbitFabric-maintained source baseline. Public immutable `v0.1.0` release assets are a separate publication step. Until that release is published and verified, locally built artifacts are release-candidate material rather than the normal external-consumer installation path.
+> **Release status:** `v0.1.0` is published as an immutable GitHub Release and has passed post-publication Adapter Manager verification and external greenfield acceptance. Until OrbitFabric gains catalog/release-resolution support, normal consumers obtain the published release assets explicitly and install them through Adapter Manager.
 
 ## Choose your path
 
