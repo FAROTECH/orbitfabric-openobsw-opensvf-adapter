@@ -1,10 +1,10 @@
 # Getting Started
 
-This guide covers the current development installation path and the complete handoff from OrbitFabric through the adapter into OpenOBSW/SRDB and OpenSVF-native assets.
+This guide covers installation and the complete handoff from OrbitFabric through the adapter into OpenOBSW/SRDB and OpenSVF-native assets.
 
-The repository is still private while the first product baseline is reviewed for coverage and publication readiness, but the operations documented here are implemented and exercised in CI.
+The repository remains private only until the publication switch. The `0.1.0` operations, compatibility baselines and release identity documented here are implemented and exercised by the release-candidate CI.
 
-## Validated development baselines
+## Validated baselines
 
 | System | Baseline used by CI |
 | --- | --- |
@@ -13,9 +13,9 @@ The repository is still private while the first product baseline is reviewed for
 | `obsw-srdb` | `0.1.0` at the validated OpenOBSW checkout |
 | OpenSVF | `667d3eadcb0bbd7814ac324b99946c4ed2f11f23`, installed package metadata `1.0.0` |
 
-The OrbitFabric Core checkout above still reports package version `1.2.0`, but it contains integration lifecycle seams promoted after the public v1.2.0 release. The adapter therefore pins the exact Core commit instead of implying that every `orbitfabric==1.2.0` installation has the same surface.
+The OrbitFabric Core checkout above reports package version `1.2.0`, but it contains integration lifecycle seams promoted after the public v1.2.0 release. The adapter therefore pins the exact Core commit instead of implying that every `orbitfabric==1.2.0` installation has the same surface.
 
-OpenSVF currently has a similar documentation/version observation in the other direction: its `main` checkout declares package version `1.0.0` while its README compatibility table still states `v0.8.0`. The adapter records exact commit evidence rather than resolving that upstream discrepancy on OpenSVF's behalf.
+OpenSVF has a similar documentation/version observation in the other direction: its validated checkout declares package version `1.0.0` while its README compatibility table still states `v0.8.0`. The adapter records exact commit evidence rather than resolving that upstream discrepancy on OpenSVF's behalf.
 
 ## 1. Local adapter setup
 
@@ -26,7 +26,7 @@ python -m pip install --upgrade pip
 python -m pip install -e ".[dev]"
 ```
 
-The adapter package declares the exact Core development dependency it currently requires.
+The adapter package declares the exact Core dependency it requires.
 
 Run the repository checks:
 
@@ -233,7 +233,7 @@ svf validate \
   <output-dir>/verification_projection/opensvf/opensvf/spacecraft.yaml
 ```
 
-The CI baseline currently passes with zero warnings.
+The CI baseline passes with zero warnings.
 
 Then verify that OpenSVF can load the generated campaign and discover the generated Procedure:
 
@@ -268,13 +268,13 @@ YAMCS is optional. It is relevant only when the selected OpenSVF workflow uses t
 
 ## 8. Adapter Manager lifecycle
 
-The adapter is already exercised as an installed distribution, not only from its source tree.
+The adapter is exercised as an installed distribution, not only from its source tree.
 
 The CI control proves:
 
 ```text
 build wheel
-  -> construct development release descriptor
+  -> construct exact release descriptor
   -> Adapter Manager install
   -> inventory
   -> verify
@@ -298,7 +298,16 @@ Project Lock check = MISSING
   -> remove
 ```
 
-The final public Source Coordinate and publisher identity are not frozen while the adapter remains private.
+The stable release identity is:
+
+```text
+logical key        orbitfabric/openobsw-opensvf
+source authority   github.com/FAROTECH
+Source Coordinate  github.com/FAROTECH:orbitfabric/openobsw-opensvf
+release version    0.1.0
+```
+
+The publisher-only release proof separately constructs the wheel, `adapter-release.json` and `SHA256SUMS` without treating a Project Lock as publisher release membership.
 
 ## 9. End-to-end validation model
 
@@ -316,6 +325,8 @@ OpenSVF native compatibility
 installed Adapter Manager lifecycle
         +
 release / Project Lock proof
+        +
+publisher release-only artifact proof
 ```
 
 Historical PoC evidence also demonstrates representative live OpenOBSW/OpenSVF/YAMCS continuity. That evidence remains historical until a product release deliberately repeats or claims the corresponding runtime path.
