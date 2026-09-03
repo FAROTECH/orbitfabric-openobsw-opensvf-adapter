@@ -66,11 +66,14 @@ accepted main commit
     + immutable GitHub Release
     + published SHA-256 values
     + Release Descriptor binding
+    + GitHub-generated immutable-release attestation
 ```
 
-`v0.1.0` does not claim cryptographic artifact signing or signature-attestation verification.
+`v0.1.0` does not introduce an adapter-authored signing scheme or an OrbitFabric-specific signature format.
 
-If signing or artifact attestation is introduced later, it should be treated as a separate trust capability with its own implementation and verification evidence rather than implied by the `0.1.0` release proof.
+When GitHub Immutable Releases is enabled, GitHub automatically generates a cryptographically verifiable release attestation binding the release tag, commit SHA and published assets. That provider-generated attestation is part of the publication evidence and should be verified after release publication.
+
+Any future adapter-authored signing or additional trust mechanism remains a separate capability with its own implementation and verification evidence.
 
 ## Release construction
 
@@ -91,7 +94,7 @@ This produces the publisher-owned Release Descriptor and checksum summary.
 
 ## Publication and final acceptance
 
-GitHub Releases is the first concrete publication backend for this adapter. Publication is complete only after the exact tag, immutable release state and published asset digests are verified.
+GitHub Releases is the first concrete publication backend for this adapter. Publication is complete only after the exact tag, immutable release state, published asset digests and GitHub-generated release attestation are verified.
 
 The final acceptance is then repeated from a new consumer workspace using the published assets rather than a locally built adapter bundle:
 
