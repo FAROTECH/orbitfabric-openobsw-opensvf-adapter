@@ -4,7 +4,7 @@ Integration adapter connecting [OrbitFabric](https://github.com/FAROTECH/orbitfa
 
 This repository is intentionally written for users arriving from either side of the integration. OrbitFabric, OpenOBSW and OpenSVF remain independent systems with their own responsibilities. The adapter owns the projection boundary between them.
 
-> Development status: the first product baseline is under final productization. The real adapter implementation has been extracted from the validated PoC and is exercised through Core conformance, OpenOBSW/SRDB native compatibility, OpenSVF native compatibility, installed Adapter Manager lifecycle and provider-neutral release proof. The repository remains private until coverage and publication-readiness review are complete.
+> Development status: the first `0.1.0.dev0` product baseline has completed technical and editorial readiness review. It is exercised through Core conformance, OpenOBSW/SRDB native compatibility, OpenSVF native compatibility, installed Adapter Manager lifecycle and provider-neutral release proof. Stable `0.1.0` publication remains a separate checkpoint because the final Adapter Source Coordinate, publisher identity and exact stable release bytes are not yet frozen.
 
 ## The participating systems
 
@@ -196,7 +196,7 @@ release artifact
   -> empty inventory
 ```
 
-The final public Source Coordinate and publisher identity are intentionally not frozen while the repository remains in private productization.
+The final public Source Coordinate and publisher identity are intentionally not frozen while the stable release boundary is still being decided.
 
 ## Adapter identity
 
