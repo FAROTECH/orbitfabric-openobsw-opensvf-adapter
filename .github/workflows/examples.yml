@@ -6,6 +6,7 @@ on:
       - "examples/**"
       - "src/**"
       - "pyproject.toml"
+      - "tools/build_release_bundle.py"
       - ".github/workflows/examples.yml"
   push:
     branches:
@@ -14,11 +15,14 @@ on:
       - "examples/**"
       - "src/**"
       - "pyproject.toml"
+      - "tools/build_release_bundle.py"
       - ".github/workflows/examples.yml"
 
 jobs:
   projection-examples:
     runs-on: ubuntu-latest
+    env:
+      ORBITFABRIC_STATE_DIR: ${{ runner.temp }}/orbitfabric-state
 
     steps:
       - uses: actions/checkout@v4
@@ -27,10 +31,27 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install adapter and exact Core dependency
+      - name: Install Core and release build tooling
         run: |
           python -m pip install --upgrade pip
-          python -m pip install -e ".[dev]"
+          python -m pip install build
+          python -m pip install "git+https://github.com/FAROTECH/orbitfabric.git@4377d6656c62aa1dc19a7ed81d2de872b6b22ccd"
+
+      - name: Build and install adapter through Adapter Manager
+        run: |
+          python -m build --wheel
+          python tools/build_release_bundle.py \
+            --wheel dist/orbitfabric_openobsw_opensvf_adapter-0.1.0-py3-none-any.whl \
+            --authority github.com/FAROTECH \
+            --publisher orbitfabric \
+            --name openobsw-opensvf \
+            --release-only
+          orbitfabric adapter install \
+            generated/release/adapter-release.json \
+            --artifact dist/orbitfabric_openobsw_opensvf_adapter-0.1.0-py3-none-any.whl
+          INSTANCE_ID="$(orbitfabric adapter list --json | python -c 'import json, sys; data = json.load(sys.stdin); assert len(data) == 1; print(data[0]["instance_id"])')"
+          orbitfabric adapter verify "$INSTANCE_ID"
+          echo "ORBITFABRIC_ADAPTER_INSTANCE_ID=$INSTANCE_ID" >> "$GITHUB_ENV"
 
       - name: Run mission contract projection example
         run: bash examples/01-mission-contract-projection/run.sh
@@ -41,6 +62,8 @@ jobs:
   closed-loop-ping:
     needs: projection-examples
     runs-on: ubuntu-latest
+    env:
+      ORBITFABRIC_STATE_DIR: ${{ runner.temp }}/orbitfabric-state
 
     steps:
       - name: Checkout adapter
@@ -64,10 +87,35 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install adapter and downstream-native packages
+      - name: Install native build prerequisites
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ninja-build
+
+      - name: Install Core and release build tooling
         run: |
           python -m pip install --upgrade pip
-          python -m pip install -e ".[dev]"
+          python -m pip install build
+          python -m pip install "git+https://github.com/FAROTECH/orbitfabric.git@4377d6656c62aa1dc19a7ed81d2de872b6b22ccd"
+
+      - name: Build and install adapter through Adapter Manager
+        run: |
+          python -m build --wheel
+          python tools/build_release_bundle.py \
+            --wheel dist/orbitfabric_openobsw_opensvf_adapter-0.1.0-py3-none-any.whl \
+            --authority github.com/FAROTECH \
+            --publisher orbitfabric \
+            --name openobsw-opensvf \
+            --release-only
+          orbitfabric adapter install \
+            generated/release/adapter-release.json \
+            --artifact dist/orbitfabric_openobsw_opensvf_adapter-0.1.0-py3-none-any.whl
+          INSTANCE_ID="$(orbitfabric adapter list --json | python -c 'import json, sys; data = json.load(sys.stdin); assert len(data) == 1; print(data[0]["instance_id"])')"
+          orbitfabric adapter verify "$INSTANCE_ID"
+          echo "ORBITFABRIC_ADAPTER_INSTANCE_ID=$INSTANCE_ID" >> "$GITHUB_ENV"
+
+      - name: Install downstream-native packages
+        run: |
           python -m pip install -e ./_openobsw/srdb
           python -m pip install -e ./_opensvf
 
