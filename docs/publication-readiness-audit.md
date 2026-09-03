@@ -22,7 +22,7 @@ accepted product
     -> local byte verification
     -> draft GitHub Release
     -> immutable publication
-    -> published-byte verification
+    -> published-byte and release-attestation verification
     -> external greenfield acceptance
 ```
 
@@ -37,7 +37,7 @@ accepted product
 - Logical adapter key is `orbitfabric/openobsw-opensvf`.
 - First source coordinate is `github.com/FAROTECH:orbitfabric/openobsw-opensvf`.
 - No existing GitHub Release is published for this repository.
-- No `v0.1.0` tag currently exists, so there is no tag collision to resolve.
+- No `v0.1.0` tag exists before release-source freeze.
 
 ### Core and target compatibility
 
@@ -83,11 +83,11 @@ The closed-loop path additionally proved:
 - native CampaignReport JSON evidence;
 - unchanged OpenOBSW and OpenSVF source checkouts.
 
-The Product Examples CI now exercises the same managed consumer lifecycle.
+The Product Examples workflow exercises the same managed consumer lifecycle whenever product-relevant paths change.
 
 ### Documentation product model
 
-The publication-preparation branch separates:
+The repository separates:
 
 ```text
 USER
@@ -104,25 +104,7 @@ The repository README is a role-based landing page and `Getting Started` is cons
 
 ### Release notes source
 
-`CHANGELOG.md` has been replaced with adapter-specific `0.1.0` content. Template/Dummy Adapter release notes are no longer considered valid publication material.
-
-## Current blockers before release-source acceptance
-
-### B1. Publication-preparation PR must be green
-
-The current release-preparation branch must pass the complete repository CI after all documentation cleanup.
-
-The first documentation run exposed one strict-MkDocs link issue. That issue has been corrected; the replacement CI run must pass before merge.
-
-**Gate:** complete CI success on the reviewed PR head.
-
-### B2. Consolidated readiness documents must match current claims
-
-Older readiness text still contains historical publication steps such as making the repository public even though it is already public.
-
-It also uses wording that can be read as requiring a cryptographic release attestation, although the current `0.1.0` release proof implements byte identity, hashes and lifecycle proof rather than a signature/attestation mechanism.
-
-**Gate:** align Release Lifecycle and Adapter Readiness Checklist with the actual `0.1.0` claim before merge.
+`CHANGELOG.md` contains adapter-specific `0.1.0` content. Template/Dummy Adapter release notes are not valid publication material.
 
 ## v0.1.0 provenance boundary
 
@@ -134,13 +116,16 @@ exact accepted main commit
     + immutable GitHub Release
     + exact published asset SHA-256 values
     + Release Descriptor binding to the wheel and packaged manifest
+    + GitHub-generated release attestation
 ```
 
-`v0.1.0` does **not** claim cryptographic artifact signing or signature-attestation verification.
+`v0.1.0` does not introduce an adapter-authored signing scheme or an OrbitFabric-specific signature format.
 
-Those capabilities may be added later as a separate trust enhancement. They must not be implied by the first release documentation unless an implementation and verification path is added before publication.
+GitHub Immutable Releases automatically generate a cryptographically verifiable release attestation containing the release tag, commit SHA and release assets. This provider-generated attestation is part of publication evidence and must be verified after release publication.
 
-This boundary is also consistent with Adapter Manager acceptance warnings that distinguish exact byte/lifecycle checks from unavailable signature or publisher-trust attestations.
+Any future adapter-authored signing or additional trust mechanism remains a separate capability with its own implementation and verification evidence.
+
+This preserves the distinction between Adapter Manager byte/lifecycle checks, GitHub provider publication evidence and any future OrbitFabric trust layer.
 
 ## Required publisher-owned release membership
 
@@ -158,13 +143,11 @@ GitHub-generated source archives may exist as provider conveniences, but they ar
 
 `adapter-project-lock.json` is explicitly excluded. A Project Lock belongs to a consuming project and records that project's exact selected resolution.
 
-## Publication gates after merge
+## Publication gates
 
 ### P1. Select the accepted release source commit
 
-Merge the fully green publication-preparation PR to `main`.
-
-Then record the exact resulting `main` commit as the release source.
+Merge the fully green release-preparation source to `main` and record the exact resulting `main` commit.
 
 Do not release from:
 
@@ -172,24 +155,21 @@ Do not release from:
 - a pull-request synthetic merge ref;
 - an unreviewed local working tree.
 
+If any release-relevant correction is merged after the candidate is selected, P1 must be repeated against the new `main` commit.
+
 ### P2. Reconfirm accepted-main CI
 
-The exact accepted `main` commit must retain green evidence for the release-relevant controls.
+The exact accepted `main` commit must retain green evidence for release-relevant controls.
 
-At minimum confirm:
-
-```text
-CI
-Product Examples
-```
-
-and the release-proof evidence emitted by CI.
+At minimum confirm the full `CI` workflow on the accepted source commit. Product Examples evidence must correspond to the same product implementation. If a post-merge commit touches only release documentation and therefore does not trigger the path-filtered Product Examples workflow, retain the latest green Product Examples run for the unchanged product implementation and record that relationship explicitly.
 
 ### P3. Confirm GitHub immutable-release configuration
 
-Before creating the final release, confirm that GitHub Immutable Releases is enabled for the repository and understand the point after which release assets cannot be changed.
+Before creating the final release, confirm that GitHub Immutable Releases is enabled for the repository.
 
-This is currently a manual/provider configuration gate and is not inferred from source code.
+GitHub documents that immutable releases protect the associated tag and release assets after publication and automatically generate a release attestation. Immutability applies to future releases after the setting is enabled.
+
+This is a provider configuration gate and is not inferred from source code.
 
 ### P4. Create exact `v0.1.0` tag
 
@@ -199,7 +179,7 @@ Create `v0.1.0` against the accepted `main` source commit and verify:
 v0.1.0 -> exact accepted source SHA
 ```
 
-No tag should be created before the release source is frozen.
+No tag should be created before the release source is frozen and P3 is confirmed.
 
 ### P5. Build definitive release bytes from the accepted source
 
@@ -260,12 +240,12 @@ Add the frozen release notes.
 
 ### P9. Verify draft release before immutable publication
 
-Before the irreversible publication step, verify:
+Before publication, verify:
 
 - tag points to the accepted source commit;
 - asset names are exact;
 - downloaded draft asset bytes match the local SHA-256 values;
-- Release Descriptor still binds the published wheel;
+- Release Descriptor still binds the uploaded wheel;
 - no Project Lock is attached;
 - release notes match the accepted product scope.
 
@@ -273,11 +253,13 @@ Before the irreversible publication step, verify:
 
 Publish the verified draft under the repository's immutable-release policy.
 
-After publication confirm the release is final/immutable according to GitHub's repository state.
+After publication confirm the release is marked immutable by GitHub.
 
-### P11. Verify published distribution
+### P11. Verify published distribution and release attestation
 
 Download the public release assets again and verify their SHA-256 values independently.
+
+Also verify the GitHub-generated release attestation for the immutable release.
 
 Record:
 
@@ -288,7 +270,8 @@ source commit
 wheel SHA-256
 Release Descriptor SHA-256
 SHA256SUMS identity
-publication state
+immutable publication state
+release attestation verification result
 ```
 
 ### P12. External greenfield acceptance
@@ -316,6 +299,7 @@ After successful public acceptance, retain a final Architecture Lab evidence rec
 - tag association;
 - immutable release identity;
 - published asset digests;
+- GitHub-generated release attestation verification;
 - post-publication Adapter Manager verification;
 - external greenfield example evidence;
 - any lessons that should feed the cross-adapter Product Model or Developer Template.

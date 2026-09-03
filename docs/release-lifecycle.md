@@ -173,7 +173,7 @@ Core conformance and downstream-native acceptance remain separate evidence layer
 
 ## v0.1.0 provenance boundary
 
-The first release proves release provenance through exact source and byte identity:
+The first release proves release provenance through exact source and byte identity plus the provider-generated immutable-release record:
 
 ```text
 accepted main commit
@@ -181,11 +181,14 @@ accepted main commit
     + immutable GitHub Release
     + exact published SHA-256 values
     + Release Descriptor binding to the wheel and packaged manifest
+    + GitHub-generated release attestation
 ```
 
-`v0.1.0` does not claim cryptographic artifact signing or signature-attestation verification.
+`v0.1.0` does not introduce an adapter-authored signing scheme or an OrbitFabric-specific signature format.
 
-Those capabilities may be introduced later as a separate trust enhancement with their own implementation and evidence.
+GitHub Immutable Releases automatically generate a cryptographically verifiable release attestation containing the release tag, commit SHA and release assets. That attestation is provider-owned publication evidence and is verified after publication alongside exact asset digests.
+
+Any future adapter-authored signing or additional trust mechanism remains a separate capability with its own implementation and evidence.
 
 ## GitHub publication boundary
 
@@ -208,13 +211,14 @@ For public `v0.1.0` publication:
 12. confirm final immutable release state
 13. verify tag -> intended stable commit
 14. download the public assets and re-verify their digests
-15. repeat the external greenfield consumer acceptance from published assets
-16. retain final Architecture Lab publication evidence
+15. verify the GitHub-generated release attestation
+16. repeat the external greenfield consumer acceptance from published assets
+17. retain final Architecture Lab publication evidence
 ```
 
 All normative assets must be attached and verified before immutable publication because the release must not rely on post-publication mutation.
 
-GitHub release URLs are provider metadata. They do not replace the OrbitFabric Release Descriptor.
+GitHub release URLs and the generated release attestation are provider publication metadata/evidence. They do not replace the OrbitFabric Release Descriptor.
 
 ## Release classification
 
@@ -236,7 +240,7 @@ Do not use a synthetic pull-request merge ref as normative release provenance.
 
 The final tag and definitive release build must operate from the accepted stable commit.
 
-The exact tag-to-commit association and published asset digests are retained as publication evidence.
+The exact tag-to-commit association, published asset digests and GitHub-generated release attestation are retained as publication evidence.
 
 ## External greenfield acceptance
 
@@ -283,6 +287,7 @@ accepted source commit
 exact v0.1.0 tag association
 immutable GitHub Release identity/state
 published asset SHA-256 values
+GitHub-generated release attestation verification
 post-publication Adapter Manager verification
 external greenfield product-example evidence
 ```

@@ -367,7 +367,7 @@ The remaining boundary is controlled publication, not product design.
 The operational sequence is maintained in [v0.1.0 Publication Readiness Audit](publication-readiness-audit.md). In summary:
 
 ```text
-merge the exact green publication-preparation candidate
+merge the exact green release-preparation candidate
 record the accepted main commit
 confirm accepted-main CI
 confirm GitHub Immutable Releases configuration
@@ -376,11 +376,11 @@ build the definitive wheel, adapter-release.json and SHA256SUMS
 verify the definitive bytes locally
 create and verify the draft GitHub Release
 publish immutably
-verify tag and published asset digests
+verify tag, published asset digests and GitHub-generated release attestation
 repeat external greenfield acceptance from the published assets
 retain final Architecture Lab publication evidence
 ```
 
-For `v0.1.0`, release provenance is the exact accepted commit, exact tag, immutable GitHub Release and verified published SHA-256 identities. Cryptographic artifact signing or signature-attestation verification is not part of the first-release claim.
+For `v0.1.0`, release provenance is the exact accepted commit, exact tag, immutable GitHub Release, verified published SHA-256 identities and the GitHub-generated release attestation. The release does not introduce an adapter-authored signing scheme or an OrbitFabric-specific signature format.
 
 Until that publication sequence is complete, `0.1.0` is a validated stable release candidate rather than an already published release.
