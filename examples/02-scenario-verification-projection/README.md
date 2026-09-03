@@ -12,6 +12,12 @@ Core Integration Input Set
 Projection Profile
         |
         v
+OrbitFabric Adapter Manager
+        |
+        v
+installed OpenOBSW/OpenSVF adapter
+        |
+        v
 Verification Projection Plan
         |
         +-> generated OpenSVF Procedure
@@ -40,13 +46,27 @@ The three TM expectations are not reinterpreted as OrbitFabric Scenario expectat
 
 ## Prerequisites
 
-Install this repository in a Python 3.11+ environment:
+### Consumer / Adapter Manager mode
+
+Use an OrbitFabric Core installation with this adapter installed through Adapter Manager, then export the installed instance ID:
+
+```bash
+export ORBITFABRIC_ADAPTER_INSTANCE_ID=<instance-id>
+```
+
+The runner verifies that the instance exists and passes `orbitfabric adapter verify` before executing it.
+
+OpenSVF itself is not required merely to generate the materialization.
+
+### Contributor fallback
+
+From a development checkout, the runner can still use the adapter console command directly when `ORBITFABRIC_ADAPTER_INSTANCE_ID` is not set:
 
 ```bash
 python -m pip install -e ".[dev]"
 ```
 
-OpenSVF itself is not required merely to generate the materialization.
+The Adapter Manager path is the recommended consumer path.
 
 ## Inputs
 
@@ -67,6 +87,14 @@ From the repository root:
 ```bash
 bash examples/02-scenario-verification-projection/run.sh
 ```
+
+When `ORBITFABRIC_ADAPTER_INSTANCE_ID` is set, the runner executes the installed adapter through:
+
+```text
+orbitfabric adapter execute <instance-id> --operation verification_projection ...
+```
+
+The manager-facing Scenario input is passed as `scenario=<path>` and normalized by Core for the adapter CLI protocol.
 
 ## Generated artifacts
 
