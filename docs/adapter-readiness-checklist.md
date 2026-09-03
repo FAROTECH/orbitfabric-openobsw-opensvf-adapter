@@ -6,7 +6,7 @@ It complements OrbitFabric Core conformance. It does not replace it.
 
 ## 1. Identity
 
-Current stable release-candidate identity:
+Current stable release identity:
 
 ```text
 repository       orbitfabric-openobsw-opensvf-adapter
@@ -54,7 +54,7 @@ Core-conformant Integration Result
 
 Core remains normative for generic contract semantics.
 
-The exact Core baseline validated by this release candidate is:
+The exact Core baseline validated by `v0.1.0` is:
 
 ```text
 4377d6656c62aa1dc19a7ed81d2de872b6b22ccd
@@ -116,7 +116,7 @@ OpenOBSW commit 44ceb71a016f0541ff7a0aa74191e13bafdb59c1
 obsw-srdb 0.1.0 at that checkout
 ```
 
-The release candidate must continue to prove:
+A future release must continue to prove:
 
 ```text
 additive contribution load
@@ -139,7 +139,7 @@ OpenSVF commit 667d3eadcb0bbd7814ac324b99946c4ed2f11f23
 observed package metadata 1.0.0
 ```
 
-The release candidate must continue to prove:
+A future release must continue to prove:
 
 ```text
 verification materialization generated
@@ -340,7 +340,7 @@ The release changelog and release notes must also describe this concrete adapter
 
 ## Readiness conclusion
 
-The `0.1.0` release candidate has completed the architecture and product decisions required for stable publication readiness.
+The published `v0.1.0` release completed the architecture and product decisions required for stable publication readiness.
 
 It has:
 
@@ -362,9 +362,9 @@ role-separated User / Developer / Publisher documentation
 active-product PoC/Template-language cleanup
 ```
 
-The remaining boundary is controlled publication, not product design.
+For `v0.1.0`, controlled publication and post-publication acceptance are complete.
 
-The operational sequence is maintained in [v0.1.0 Publication Readiness Audit](publication-readiness-audit.md). In summary:
+The reusable operational sequence is maintained in [Release Lifecycle](release-lifecycle.md). For the first stable release, the completed sequence was:
 
 ```text
 merge the exact green release-preparation candidate
@@ -383,4 +383,4 @@ retain final Architecture Lab publication evidence
 
 For `v0.1.0`, release provenance is the exact accepted commit, exact tag, immutable GitHub Release, verified published SHA-256 identities and the GitHub-generated release attestation. The release does not introduce an adapter-authored signing scheme or an OrbitFabric-specific signature format.
 
-Until that publication sequence is complete, `0.1.0` is a validated stable release candidate rather than an already published release.
+For `v0.1.0`, that publication sequence is complete and the immutable release has passed external greenfield acceptance.
