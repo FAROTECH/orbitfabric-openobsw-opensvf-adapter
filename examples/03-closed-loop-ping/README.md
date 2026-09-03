@@ -49,7 +49,8 @@ This example is intentionally Linux/WSL2-only because it executes the validated 
 
 Required:
 
-- Python 3.11+ with this adapter installed from the current checkout;
+- Python 3.11+ with OrbitFabric Core installed;
+- the OpenOBSW/OpenSVF adapter installed through OrbitFabric Adapter Manager, with its exact instance id exported as `ORBITFABRIC_ADAPTER_INSTANCE_ID`;
 - CMake;
 - Ninja;
 - a checkout of OpenOBSW at `44ceb71a016f0541ff7a0aa74191e13bafdb59c1`;
@@ -57,22 +58,29 @@ Required:
 - the target-owned `obsw-srdb` package installed from that OpenOBSW checkout;
 - OpenSVF installed from that OpenSVF checkout.
 
-Representative setup:
+Representative consumer setup:
 
 ```bash
-python -m pip install -e ".[dev]"
+export ORBITFABRIC_ADAPTER_INSTANCE_ID=<installed-instance-id>
+export OPENOBSW_ROOT=/path/to/openobsw
+export OPENSVF_ROOT=/path/to/opensvf
+
+orbitfabric adapter verify "$ORBITFABRIC_ADAPTER_INSTANCE_ID"
 python -m pip install -e "$OPENOBSW_ROOT/srdb"
 python -m pip install -e "$OPENSVF_ROOT"
 ```
 
-The script requires these environment variables:
+The runner executes adapter operations through:
 
-```bash
-export OPENOBSW_ROOT=/path/to/openobsw
-export OPENSVF_ROOT=/path/to/opensvf
+```text
+orbitfabric adapter execute <instance-id> ...
 ```
 
-It verifies both exact Git commits before running.
+so the adapter remains inside its Core-managed environment rather than being installed into the host Python environment.
+
+For adapter contributors only, the runner retains a fallback mode using the directly installed `orbitfabric-openobsw-opensvf` console command when `ORBITFABRIC_ADAPTER_INSTANCE_ID` is not set.
+
+The script verifies both exact downstream Git commits before running.
 
 ## Inputs
 
