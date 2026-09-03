@@ -54,6 +54,24 @@ native closed-loop ping evidence
 
 Do not publish from a pull-request synthetic merge ref or from an unreviewed working tree.
 
+The current operational gate is the [v0.1.0 Publication Readiness Audit](publication-readiness-audit.md).
+
+## v0.1.0 provenance boundary
+
+The first release proves provenance through exact source and byte identity:
+
+```text
+accepted main commit
+    + exact v0.1.0 tag
+    + immutable GitHub Release
+    + published SHA-256 values
+    + Release Descriptor binding
+```
+
+`v0.1.0` does not claim cryptographic artifact signing or signature-attestation verification.
+
+If signing or artifact attestation is introduced later, it should be treated as a separate trust capability with its own implementation and verification evidence rather than implied by the `0.1.0` release proof.
+
 ## Release construction
 
 From the accepted source commit:
@@ -90,10 +108,11 @@ That final run validates the real external-consumer distribution path.
 
 ## Publisher references
 
+- [v0.1.0 Publication Readiness Audit](publication-readiness-audit.md)
 - [Release Lifecycle](release-lifecycle.md)
 - [Adapter Readiness Checklist](adapter-readiness-checklist.md)
 - [Evidence and Traceability](evidence-and-traceability.md)
 - [Integration Coverage](integration-coverage.md)
 - [Adapter Identity](adapter-identity.md)
 
-The detailed normative release sequence remains in [Release Lifecycle](release-lifecycle.md). This page is the role-oriented entry point for maintainers and publishers.
+The detailed release sequence remains in [Release Lifecycle](release-lifecycle.md). This page is the role-oriented entry point for maintainers and publishers.
