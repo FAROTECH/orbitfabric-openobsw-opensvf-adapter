@@ -1,47 +1,121 @@
 # v0.1.0 Publication Readiness Audit
 
-Audit date: **2026-09-03**
+Audit date: **2026-09-03**  
+Final status: **COMPLETED / P1-P13 PASS**
 
-Status: **PRODUCT READY / PUBLICATION GATES REMAIN**
+This document is the completed publication audit for the first public `v0.1.0` distribution of the OrbitFabric OpenOBSW/OpenSVF Adapter.
 
-This audit is the operational gate for the first public `v0.1.0` distribution of the OrbitFabric OpenOBSW/OpenSVF Adapter.
-
-It separates product readiness from publication readiness. A green source baseline is not yet a published release.
+The publication process is closed. The release is published, immutable, provider-attested and externally accepted from a clean consumer workspace.
 
 ## Executive conclusion
-
-The adapter product is ready to enter final publication preparation.
-
-The remaining work is not new adapter design. It is the controlled conversion of one accepted `main` commit into one exact, immutable and externally consumable release.
 
 ```text
 accepted product
     -> accepted main commit
-    -> exact v0.1.0 tag
+    -> exact signed v0.1.0 tag
     -> exact release assets
     -> local byte verification
-    -> draft GitHub Release
+    -> verified draft GitHub Release
     -> immutable publication
-    -> published-byte and release-attestation verification
+    -> published-byte verification
+    -> GitHub release-attestation verification
     -> external greenfield acceptance
+    -> Architecture Lab evidence retention
 ```
 
-`v0.1.0` must not be published until every blocking item below is closed.
+Result:
 
-## Current PASS evidence
+```text
+OpenOBSW/OpenSVF Adapter v0.1.0
+PUBLICATION ACCEPTED
+EXTERNAL GREENFIELD ACCEPTED
+P1-P13 PASS
+```
 
-### Repository and product identity
+## Final release identity
 
-- Repository is public.
-- Distribution version is `0.1.0`.
-- Logical adapter key is `orbitfabric/openobsw-opensvf`.
-- First source coordinate is `github.com/FAROTECH:orbitfabric/openobsw-opensvf`.
-- No existing GitHub Release is published for this repository.
-- No `v0.1.0` tag exists before release-source freeze.
+Repository:
 
-### Core and target compatibility
+```text
+FAROTECH/orbitfabric-openobsw-opensvf-adapter
+```
 
-Validated baselines remain:
+Logical adapter key:
+
+```text
+orbitfabric/openobsw-opensvf
+```
+
+Source Coordinate:
+
+```text
+github.com/FAROTECH:orbitfabric/openobsw-opensvf
+```
+
+Accepted release source commit:
+
+```text
+8f26955e573d6ea5917ece927742aaf9ede30365
+```
+
+Tag:
+
+```text
+v0.1.0
+```
+
+Annotated tag object:
+
+```text
+02003e4d1457880ba05bcaef21c2e6c5e2e6e18c
+```
+
+Public release:
+
+```text
+https://github.com/FAROTECH/orbitfabric-openobsw-opensvf-adapter/releases/tag/v0.1.0
+```
+
+Observed release state:
+
+```text
+draft:      false
+prerelease: false
+immutable:  true
+```
+
+## Publisher-owned release membership
+
+The exact publisher-owned release membership is:
+
+```text
+orbitfabric_openobsw_opensvf_adapter-0.1.0-py3-none-any.whl
+adapter-release.json
+SHA256SUMS
+```
+
+`adapter-project-lock.json` is not release membership. A Project Lock belongs to a consuming project.
+
+Observed SHA-256 identities:
+
+```text
+wheel
+ed4a6316d66fc7267320083d3bbd482374f529b797937d5ef85e805e45230696
+
+adapter-release.json
+ef1b568c06a1573b580bbb91308b1311b81ba65dca29331fcf1610fc7ee5c016
+
+SHA256SUMS
+295bc1dcf06caf876e9456880e339a051e3f7afd195e515086d11567ada3ce4a
+```
+
+The Release Descriptor additionally binds the packaged Integration Package Manifest digest:
+
+```text
+fe10afebb38311549c8fb66497678267108b476593c087c241178637b05c889c
+```
+
+## Validated compatibility baselines
 
 ```text
 OrbitFabric Core
@@ -54,275 +128,196 @@ OpenSVF
 667d3eadcb0bbd7814ac324b99946c4ed2f11f23
 ```
 
-The accepted product baseline proves:
+The accepted product baseline retains Core conformance, Python 3.11/3.12 checks, OpenOBSW/SRDB compatibility, OpenSVF compatibility, managed Adapter Manager lifecycle proof, Release Descriptor / Project Lock proof, publisher release-only proof and consumer product examples.
 
-- Core conformance;
-- Python 3.11 and 3.12 checks;
-- OpenOBSW/SRDB target-native compatibility;
-- OpenSVF target-native compatibility;
-- isolated Adapter Manager installed lifecycle;
-- provider-neutral Release Descriptor / Project Lock proof;
-- publisher-only release construction.
+## Final gate record
 
-### Consumer product examples
+| Gate | Result | Final evidence |
+| --- | --- | --- |
+| P1 accepted source commit | PASS | `8f26955e573d6ea5917ece927742aaf9ede30365` |
+| P2 accepted-main CI | PASS | final release source retained green release-relevant CI evidence |
+| P3 immutable release configuration | PASS | repository Immutable Releases enabled before publication |
+| P4 exact signed tag | PASS | `v0.1.0`, GitHub-valid signed annotated tag resolving to accepted source |
+| P5 definitive release bytes | PASS | wheel + Release Descriptor + SHA256SUMS built from exact release source |
+| P6 frozen release notes | PASS | final GitHub Release body published |
+| P7 local asset verification | PASS | checksum, descriptor and packaged-manifest verification passed |
+| P8 draft release | PASS | exact tag and three normative assets attached |
+| P9 pre-publication audit | PASS | draft metadata and GitHub-computed asset digests matched frozen local bytes |
+| P10 immutable publication | PASS | public release reports `immutable: true` |
+| P11 public release verification | PASS | `gh release verify` and all three `gh release verify-asset` checks passed |
+| P12 external greenfield acceptance | PASS | public release installed through Adapter Manager; Examples 01-03 passed |
+| P13 Architecture Lab evidence | PASS | `evidence/adapter-management/046-openobsw-opensvf-v0.1.0-publication-and-greenfield-acceptance.md` |
 
-Manual clean greenfield acceptance has passed through Adapter Manager for:
+## P11 release attestation result
 
-```text
-Example 01 - Mission Contract Projection
-Example 02 - Scenario Verification Projection
-Example 03 - Closed-Loop Ping
-```
-
-The closed-loop path additionally proved:
-
-- target-owned SRDB composition;
-- native OpenOBSW `obsw_sim` build;
-- generated OpenSVF campaign execution;
-- 100% campaign pass rate;
-- native CampaignReport JSON evidence;
-- unchanged OpenOBSW and OpenSVF source checkouts.
-
-The Product Examples workflow exercises the same managed consumer lifecycle whenever product-relevant paths change.
-
-### Documentation product model
-
-The repository separates:
+GitHub's provider-generated immutable-release attestation was verified successfully:
 
 ```text
-USER
-    install / verify / execute / examples
-
-DEVELOPER / CONTRIBUTOR
-    source checkout / editable install / internals / tests
-
-MAINTAINER / PUBLISHER
-    accepted source / release construction / publication / final acceptance
+gh release verify v0.1.0
+    -> PASS
 ```
 
-The repository README is a role-based landing page and `Getting Started` is consumer-first.
-
-### Release notes source
-
-`CHANGELOG.md` contains adapter-specific `0.1.0` content. Template/Dummy Adapter release notes are not valid publication material.
-
-## v0.1.0 provenance boundary
-
-For the first release, provenance means:
-
-```text
-exact accepted main commit
-    + exact v0.1.0 tag
-    + immutable GitHub Release
-    + exact published asset SHA-256 values
-    + Release Descriptor binding to the wheel and packaged manifest
-    + GitHub-generated release attestation
-```
-
-`v0.1.0` does not introduce an adapter-authored signing scheme or an OrbitFabric-specific signature format.
-
-GitHub Immutable Releases automatically generate a cryptographically verifiable release attestation containing the release tag, commit SHA and release assets. This provider-generated attestation is part of publication evidence and must be verified after release publication.
-
-Any future adapter-authored signing or additional trust mechanism remains a separate capability with its own implementation and verification evidence.
-
-This preserves the distinction between Adapter Manager byte/lifecycle checks, GitHub provider publication evidence and any future OrbitFabric trust layer.
-
-## Required publisher-owned release membership
-
-The normative publisher-owned asset set is:
-
-```text
-orbitfabric_openobsw_opensvf_adapter-0.1.0-py3-none-any.whl
-adapter-release.json
-SHA256SUMS
-```
-
-The GitHub Release body carries the release notes.
-
-GitHub-generated source archives may exist as provider conveniences, but they are not OrbitFabric adapter release membership.
-
-`adapter-project-lock.json` is explicitly excluded. A Project Lock belongs to a consuming project and records that project's exact selected resolution.
-
-## Publication gates
-
-### P1. Select the accepted release source commit
-
-Merge the fully green release-preparation source to `main` and record the exact resulting `main` commit.
-
-Do not release from:
-
-- a feature branch;
-- a pull-request synthetic merge ref;
-- an unreviewed local working tree.
-
-If any release-relevant correction is merged after the candidate is selected, P1 must be repeated against the new `main` commit.
-
-### P2. Reconfirm accepted-main CI
-
-The exact accepted `main` commit must retain green evidence for release-relevant controls.
-
-At minimum confirm the full `CI` workflow on the accepted source commit. Product Examples evidence must correspond to the same product implementation. If a post-merge commit touches only release documentation and therefore does not trigger the path-filtered Product Examples workflow, retain the latest green Product Examples run for the unchanged product implementation and record that relationship explicitly.
-
-### P3. Confirm GitHub immutable-release configuration
-
-Before creating the final release, confirm that GitHub Immutable Releases is enabled for the repository.
-
-GitHub documents that immutable releases protect the associated tag and release assets after publication and automatically generate a release attestation. Immutability applies to future releases after the setting is enabled.
-
-This is a provider configuration gate and is not inferred from source code.
-
-### P4. Create exact `v0.1.0` tag
-
-Create `v0.1.0` against the accepted `main` source commit and verify:
-
-```text
-v0.1.0 -> exact accepted source SHA
-```
-
-No tag should be created before the release source is frozen and P3 is confirmed.
-
-### P5. Build definitive release bytes from the accepted source
-
-From a clean checkout of the accepted release commit:
-
-```bash
-python -m build --wheel
-
-python tools/build_release_bundle.py \
-  --wheel dist/orbitfabric_openobsw_opensvf_adapter-0.1.0-py3-none-any.whl \
-  --authority github.com/FAROTECH \
-  --publisher orbitfabric \
-  --name openobsw-opensvf \
-  --release-only
-```
-
-Record the resulting exact SHA-256 values.
-
-The definitive bytes are the bytes that will be attached to GitHub. CI artifacts from a different build are evidence, not automatically the publication bytes.
-
-### P6. Freeze release notes
-
-Prepare the GitHub Release notes from the accepted `CHANGELOG.md` scope.
-
-The notes must state:
-
-- first stable adapter release;
-- validated Core/OpenOBSW/OpenSVF baselines;
-- product examples and closed-loop evidence;
-- explicit semantic non-claims;
-- consumer installation path through Adapter Manager.
-
-### P7. Verify definitive assets locally
-
-Before uploading:
-
-- verify `SHA256SUMS` against the wheel and descriptor;
-- load/validate `adapter-release.json`;
-- confirm release identity and version;
-- confirm descriptor wheel digest equals the definitive wheel;
-- confirm the wheel contains the expected Integration Package Manifest and Profile schema.
-
-A final local Adapter Manager install/verify from these exact bytes is recommended before upload.
-
-### P8. Create draft GitHub Release
-
-Create a draft GitHub Release for `v0.1.0` from the exact accepted tag.
-
-Attach only the definitive publisher-owned assets:
+Each frozen publication asset was independently checked against the release attestation:
 
 ```text
 wheel
+    -> PASS
+
 adapter-release.json
+    -> PASS
+
 SHA256SUMS
+    -> PASS
 ```
 
-Add the frozen release notes.
+This is provider publication evidence. It does not replace the OrbitFabric Release Descriptor and does not introduce an OrbitFabric-specific signing format.
 
-### P9. Verify draft release before immutable publication
+## P12 external greenfield result
 
-Before publication, verify:
+The final consumer exercise used a new workspace and the public `v0.1.0` release assets.
 
-- tag points to the accepted source commit;
-- asset names are exact;
-- downloaded draft asset bytes match the local SHA-256 values;
-- Release Descriptor still binds the uploaded wheel;
-- no Project Lock is attached;
-- release notes match the accepted product scope.
+The adapter was not built or installed from the adapter source checkout.
 
-### P10. Publish immutably
-
-Publish the verified draft under the repository's immutable-release policy.
-
-After publication confirm the release is marked immutable by GitHub.
-
-### P11. Verify published distribution and release attestation
-
-Download the public release assets again and verify their SHA-256 values independently.
-
-Also verify the GitHub-generated release attestation for the immutable release.
-
-Record:
+Observed path:
 
 ```text
-release URL
-tag
-source commit
-wheel SHA-256
-Release Descriptor SHA-256
-SHA256SUMS identity
-immutable publication state
-release attestation verification result
-```
-
-### P12. External greenfield acceptance
-
-Repeat the clean consumer exercise from a new workspace, but **do not clone/build the adapter as a publisher**.
-
-The intended final path is:
-
-```text
-install OrbitFabric Core
-    -> obtain public v0.1.0 release assets
-    -> orbitfabric adapter install
+install exact validated Core baseline
+    -> download public v0.1.0 assets
+    -> verify SHA256SUMS
+    -> Adapter Manager install
     -> inspect / verify
-    -> execute product examples
-    -> native closed-loop acceptance
+    -> Example 01
+    -> Example 02
+    -> pinned OpenOBSW/OpenSVF downstreams
+    -> Example 03 native closed loop
 ```
 
-The adapter source repository may be cloned only if needed to obtain example source inputs; it must not be used to install or build the adapter in this acceptance run.
+Adapter Manager verification:
 
-### P13. Retain Architecture Lab publication evidence
+```text
+release_descriptor_integrity: PASS
+manifest_integrity:            PASS
+manifest_conformance:          PASS
+execution_binding:             PASS
+backend_materialization:       PASS
+Result:                        PASSED
+```
 
-After successful public acceptance, retain a final Architecture Lab evidence record containing:
+Product examples:
 
-- exact accepted adapter source commit;
-- tag association;
-- immutable release identity;
+```text
+Example 01 - Mission Contract Projection
+PASS
+
+Example 02 - Scenario Verification Projection
+PASS
+
+Example 03 - Closed-Loop Ping
+PASS
+```
+
+Native closed-loop evidence:
+
+```text
+OpenOBSW obsw_sim build: PASS
+OpenSVF validation:      PASS, 0 warnings
+Campaign procedures:     1
+PASS:                    1
+FAIL:                    0
+ERROR:                   0
+INCONCLUSIVE:            0
+Pass rate:               100.0%
+```
+
+The runner also verified that the pinned OpenOBSW and OpenSVF source checkout states were unchanged by execution.
+
+## P13 retained Architecture Lab evidence
+
+Final cross-repository publication evidence is retained in:
+
+```text
+FAROTECH/OrbitFabric-Architecture-Lab
+
+evidence/adapter-management/
+046-openobsw-opensvf-v0.1.0-publication-and-greenfield-acceptance.md
+```
+
+That record retains:
+
+- exact release source and tag association;
+- immutable release state;
 - published asset digests;
-- GitHub-generated release attestation verification;
+- provider-generated attestation verification;
 - post-publication Adapter Manager verification;
-- external greenfield example evidence;
-- any lessons that should feed the cross-adapter Product Model or Developer Template.
+- external greenfield Examples 01-03 evidence;
+- native downstream closed-loop acceptance;
+- lessons for the next Catalog / Release Resolution frontier.
 
-## Release decision rule
+## Current consumer boundary after v0.1.0
 
-The release may be published only when:
-
-```text
-all source/product gates PASS
-and all pre-publication gates P1-P9 PASS
-```
-
-The release is considered fully accepted only when post-publication gates P10-P13 also PASS.
-
-Until then, the correct product status is:
+The current normal consumer flow is intentionally explicit:
 
 ```text
-0.1.0 validated release candidate
+GitHub Release
+    -> manually obtain adapter-release.json + wheel
+    -> Adapter Manager install
+    -> verify
+    -> execute
 ```
 
-not:
+`SHA256SUMS` accompanies the release for independent integrity checking.
+
+Catalog discovery, remote exact release resolution and automatic artifact acquisition are not part of the `v0.1.0` Core consumer surface.
+
+That limitation does not invalidate this release. The future Catalog / Release Resolution layer should discover and consume this same immutable `v0.1.0` release rather than requiring it to be rebuilt.
+
+## Post-release findings
+
+### Remote release acquisition
+
+The current Adapter Manager source layer still uses explicit local descriptor/artifact inputs. The next architecture frontier is therefore above the already-proven installation boundary:
 
 ```text
-0.1.0 published release
+Adapter Catalog
+release discovery
+remote exact resolution
+automatic acquisition
 ```
+
+### Trust evidence ingestion
+
+The GitHub release is immutable and provider-attested, but the current explicit-source installation path does not automatically import those remote publication facts into Adapter Manager trust evidence.
+
+This is a resolver/source-layer capability gap, not a defect in the immutable `v0.1.0` release.
+
+## Release classification
+
+`v0.1.0` is an:
+
+```text
+OrbitFabric-maintained stable adapter
+```
+
+This audit does not self-promote it to a generic registry-classified official adapter. Generic catalog, source-authority and publisher-governance policy remains a separate architecture concern.
+
+## Closure
+
+The first OpenOBSW/OpenSVF Adapter publication cycle is complete.
+
+```text
+P1  PASS
+P2  PASS
+P3  PASS
+P4  PASS
+P5  PASS
+P6  PASS
+P7  PASS
+P8  PASS
+P9  PASS
+P10 PASS
+P11 PASS
+P12 PASS
+P13 PASS
+```
+
+The next adapter-management task is no longer publication readiness. It is the separate **Adapter Catalog + Release Resolution** frontier.
