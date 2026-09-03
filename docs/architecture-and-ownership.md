@@ -1,109 +1,149 @@
 # Architecture and Ownership
 
-The repository boundary is:
+The adapter sits between OrbitFabric Core and two downstream systems with deliberately separate ownership.
 
 ```text
 OrbitFabric Core
-    contracts
-    schemas
-    conformance
+    mission semantics
+    generic integration contracts
+    schemas and conformance
     Adapter Manager lifecycle
 
-Adapter Developer Template
-    repository pattern
-    executable examples
-    tests
-    developer guidance
-    recommended coverage method
+OpenOBSW/OpenSVF Adapter
+    target-specific Projection Profile
+    projection and materialization
+    target compatibility checks
+    declared Integration Coverage
+    target-facing evidence
 
-Concrete Adapter
-    target-specific schema
-    target-specific projection
-    target compatibility
-    declared scope
-    native evidence
+OpenOBSW
+    flight software runtime
+    PUS behavior
+    SRDB-native integration semantics
+    target build and execution
+
+OpenSVF
+    spacecraft validation
+    campaign and Procedure semantics
+    SIL/runtime behavior
+    optional YAMCS integration
 ```
 
-## Know which kind of rule you are reading
+## Core owns generic meaning
 
-The Template uses several kinds of guidance. Keep them distinct.
+The adapter consumes Core-owned contracts rather than creating a parallel specification.
 
-| Kind | Meaning | Example |
-| --- | --- | --- |
-| Core-owned normative contract | Generic OrbitFabric integration meaning | Integration Package Manifest, `orbitfabric.adapter_cli.v1`, Integration Result |
-| Template convention | Recommended repository pattern demonstrated here | source layout, developer docs structure, local consistency checker |
-| Python backend-specific convention | Required only by the current Python wheel managed-environment backend | exactly one distribution-owned `integration_package.json` |
-| Adapter-specific target behavior | Meaning owned by one concrete integration | target Profile settings, target artifact format, mapping rules |
-| Recommended community practice | Useful but not required by generic Core conformance | publishing an Integration Coverage Matrix |
-| OrbitFabric-maintained adapter policy | Stricter project policy for adapters maintained as official OrbitFabric integrations | analyze full Target Applicable Surface before maturity decision |
+Generic surfaces include:
 
-Do not promote a Template convention into a universal OrbitFabric contract merely because the Dummy example uses it.
+```text
+Core Integration Input Set
+Integration Package Manifest
+orbitfabric.adapter_cli.v1
+Integration Result
+Adapter Release Descriptor
+Adapter Project Lock
+Adapter Manager lifecycle
+```
 
-## Core wins
+If Core rejects one of those generic objects, the adapter must be corrected or its compatibility declaration changed. A target-specific convenience is not a reason to redefine Core semantics locally.
 
-The Template must never become an alternative specification.
+## The adapter owns projection
 
-Do not copy Core schemas into a concrete adapter to modify their meaning.
-
-Do not invent a second adapter execution protocol.
-
-Do not parse Mission Model YAML as a semantic fallback when Core Integration Input Set surfaces are available.
-
-When a generic rule belongs in Core, change Core deliberately and then update the Template to consume the promoted rule.
-
-## Adapter owns projection
-
-The adapter owns the translation from OrbitFabric intent to downstream representation.
-
-That includes:
+The adapter translates validated OrbitFabric intent into downstream representations. Its responsibilities include:
 
 ```text
 target-specific Profile schema
-target settings
-target binding configuration
-target naming and mapping rules
-generated artifact formats
+target settings and bindings
+PUS and target allocation choices
+OpenOBSW/SRDB contribution generation
+OpenSVF verification materialization
 target-specific diagnostics
-target-native compatibility evidence
+downstream compatibility evidence
+Integration Coverage declaration
 ```
 
-The adapter does not acquire authority to reinterpret Core semantic facts.
+The adapter does not acquire authority to reinterpret OrbitFabric semantic facts.
+
+## OpenOBSW ownership
+
+The adapter generates a contract-only C header and an additive `obsw-srdb` contribution. OpenOBSW and the consuming flight integration remain responsible for:
+
+```text
+runtime implementation behind generated symbols
+flight application architecture
+packet transport and dispatch
+command execution
+housekeeping runtime behavior
+event emission
+build integration and target execution
+```
+
+The adapter does not patch an OpenOBSW checkout or generate flight runtime logic.
+
+## OpenSVF ownership
+
+The adapter materializes supported Scenario intent into OpenSVF-compatible spacecraft, campaign and Procedure assets. OpenSVF remains responsible for:
+
+```text
+spacecraft validation
+campaign loading and execution
+Procedure runtime semantics
+SIL behavior
+physics/runtime dependencies
+optional YAMCS bridge behavior
+```
+
+Static/native acceptance is not presented as executed SIL evidence unless a runtime control actually runs the selected target.
 
 ## Python packaging
 
-The Python wheel backend identifies the exact installed adapter distribution and requires exactly one `integration_package.json` owned by that distribution.
-
-The Template therefore places the manifest inside the namespaced adapter package:
+The current Python wheel backend requires exactly one distribution-owned `integration_package.json` inside the installed adapter package:
 
 ```text
 src/orbitfabric_openobsw_opensvf_adapter/
     integration_package.json
 ```
 
-The filename and distribution discovery mechanics are Python backend policy. Manifest contents remain governed by Core.
+This discovery rule is backend-specific. Manifest contents remain governed by Core.
 
-A future non-Python backend may use a different materialization and discovery mechanism without changing the generic adapter lifecycle contract.
+A future non-Python backend may materialize its execution package differently without changing the generic adapter lifecycle model.
 
 ## Runtime dependency ownership
 
-An adapter declares the runtime dependencies required by its own implementation.
+Dependencies required to execute adapter code belong to the adapter distribution.
 
-The installation backend materializes those dependencies.
+Downstream dependencies required only to prove OpenOBSW or OpenSVF acceptance stay in the corresponding compatibility controls. Dependencies required only for a selected SIL/runtime path remain downstream workflow dependencies.
 
-Adapter Manager does not silently inject missing dependencies from the host Core process.
-
-The Dummy adapter deliberately avoids importing the OrbitFabric Python package at runtime because it can consume public machine-readable surfaces directly.
+See [Runtime Dependencies](runtime-dependencies.md).
 
 ## Release source versus execution
 
-Where release bytes are found is separate from how an installed adapter executes.
+Release transport is separate from installed execution:
 
 ```text
-publication or release source
+release source
     -> exact resolved release
     -> Adapter Manager installation
     -> installed execution endpoint
     -> orbitfabric.adapter_cli.v1
 ```
 
-GitHub, PyPI, a future OrbitFabric registry or a local explicit source must not become a second execution protocol.
+For `0.1.0`, the first concrete source authority is:
+
+```text
+github.com/FAROTECH
+```
+
+while the logical adapter key is:
+
+```text
+orbitfabric/openobsw-opensvf
+```
+
+GitHub therefore supplies the first release-source context. It does not become the adapter execution protocol or a universal OrbitFabric registry.
+
+## Historical Template and PoC boundary
+
+The repository was created from the public Adapter Developer Template and productized from validated PoC evidence. Neither construction history is normative product architecture.
+
+The active repository is the concrete adapter product. The Template remains reusable developer guidance, and the PoC remains historical engineering evidence.

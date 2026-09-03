@@ -12,11 +12,12 @@ state="$work/state"
 evidence="$work/evidence"
 wheelhouse="$work/wheelhouse"
 release_dir="$work/release"
+publisher_release_dir="$work/publisher-release"
 
 export ORBITFABRIC_STATE_DIR="$state"
 
 rm -rf "$work"
-mkdir -p "$evidence" "$wheelhouse" "$release_dir"
+mkdir -p "$evidence" "$wheelhouse" "$release_dir" "$publisher_release_dir"
 
 cd "$root"
 rm -rf dist
@@ -26,8 +27,8 @@ test -n "$wheel"
 
 python tools/build_release_bundle.py \
   --wheel "$wheel" \
-  --authority local.adapter.test \
-  --publisher farotech \
+  --authority github.com/FAROTECH \
+  --publisher orbitfabric \
   --name openobsw-opensvf \
   --output-dir "$release_dir"
 
@@ -38,13 +39,56 @@ python - <<PY
 from orbitfabric.adapter_manager import ProjectLockService
 from orbitfabric.conformance.adapter_release import load_release_descriptor
 
-load_release_descriptor("$descriptor")
+release = load_release_descriptor("$descriptor")
+assert release["source_coordinate"] == {
+    "authority": "github.com/FAROTECH",
+    "publisher": "orbitfabric",
+    "name": "openobsw-opensvf",
+}
+assert release["release_version"] == "0.1.0"
 ProjectLockService().load("$lock")
 PY
 
 cp "$descriptor" "$evidence/adapter-release.json"
 cp "$lock" "$evidence/adapter-project-lock.json"
 cp "$release_dir/SHA256SUMS" "$evidence/SHA256SUMS"
+
+python tools/build_release_bundle.py \
+  --wheel "$wheel" \
+  --authority github.com/FAROTECH \
+  --publisher orbitfabric \
+  --name openobsw-opensvf \
+  --release-only \
+  --output-dir "$publisher_release_dir"
+
+test -f "$publisher_release_dir/adapter-release.json"
+test -f "$publisher_release_dir/SHA256SUMS"
+test ! -e "$publisher_release_dir/adapter-project-lock.json"
+
+python - <<PY
+from pathlib import Path
+
+from orbitfabric.conformance.adapter_release import load_release_descriptor
+
+release_dir = Path("$publisher_release_dir")
+release = load_release_descriptor(release_dir / "adapter-release.json")
+assert release["source_coordinate"] == {
+    "authority": "github.com/FAROTECH",
+    "publisher": "orbitfabric",
+    "name": "openobsw-opensvf",
+}
+assert release["release_version"] == "0.1.0"
+
+lines = (release_dir / "SHA256SUMS").read_text(encoding="utf-8").splitlines()
+assert len(lines) == 2
+assert any(line.endswith("  " + Path("$wheel").name) for line in lines)
+assert any(line.endswith("  adapter-release.json") for line in lines)
+PY
+
+mkdir -p "$evidence/publisher-release"
+cp "$publisher_release_dir/adapter-release.json" "$evidence/publisher-release/adapter-release.json"
+cp "$publisher_release_dir/SHA256SUMS" "$evidence/publisher-release/SHA256SUMS"
+cp "$wheel" "$evidence/publisher-release/$(basename "$wheel")"
 
 python -m pip download --dest "$wheelhouse" "$wheel"
 python -m pip download --dest "$wheelhouse" "hatchling>=1.24"
@@ -69,7 +113,7 @@ assert report["adapters"][0]["status"] == "MISSING"
 PY
 
 orbitfabric adapter lock install "$lock" \
-  --source-coordinate "local.adapter.test:farotech/openobsw-opensvf" \
+  --source-coordinate "github.com/FAROTECH:orbitfabric/openobsw-opensvf" \
   --release-descriptor "$descriptor" \
   --artifact "$wheel" \
   --json | tee "$evidence/install-from-lock.json"
@@ -104,7 +148,7 @@ assert report["adapters"][0]["status"] == "MATCH"
 PY
 
 orbitfabric adapter lock install "$lock" \
-  --source-coordinate "local.adapter.test:farotech/openobsw-opensvf" \
+  --source-coordinate "github.com/FAROTECH:orbitfabric/openobsw-opensvf" \
   --release-descriptor "$descriptor" \
   --artifact "$wheel" \
   --json | tee "$evidence/second-install-from-lock.json"

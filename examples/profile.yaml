@@ -3,8 +3,8 @@ profile_version: 0.1-candidate
 
 profile:
   id: openobsw-opensvf-reference
-  version: 0.1.0-dev
-  description: Reference OpenOBSW/OpenSVF projection choices for the adapter productization baseline.
+  version: 0.1.0
+  description: Reference OpenOBSW/OpenSVF projection choices for the stable adapter release.
 
 integration:
   id: orbitfabric-openobsw-opensvf

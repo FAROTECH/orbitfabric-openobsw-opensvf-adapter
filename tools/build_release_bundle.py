@@ -102,9 +102,19 @@ def write_json(path: Path, payload: dict[str, Any]) -> None:
     path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
 
+def write_sha256_summary(path: Path, entries: list[tuple[str, str]]) -> None:
+    path.write_text(
+        "\n".join(f"{digest}  {name}" for digest, name in entries) + "\n",
+        encoding="utf-8",
+    )
+
+
 def parser() -> argparse.ArgumentParser:
     result = argparse.ArgumentParser(
-        description="Build an exact OrbitFabric Adapter Release Descriptor and Project Lock."
+        description=(
+            "Build an exact OrbitFabric Adapter Release Descriptor and, unless "
+            "--release-only is used, a project-specific Adapter Project Lock."
+        )
     )
     result.add_argument("--wheel", type=Path, required=True)
     result.add_argument("--authority", required=True)
@@ -117,6 +127,14 @@ def parser() -> argparse.ArgumentParser:
     result.add_argument("--artifact-id", default="python-wheel")
     result.add_argument("--artifact-type", default="python-wheel")
     result.add_argument("--backend-id", default="python-wheel-managed-env")
+    result.add_argument(
+        "--release-only",
+        action="store_true",
+        help=(
+            "Build publisher-owned release material only: adapter-release.json and "
+            "a SHA256SUMS file for the wheel and Release Descriptor."
+        ),
+    )
     return result
 
 
@@ -132,15 +150,18 @@ def main(argv: list[str] | None = None) -> int:
         raise SystemExit(f"Integration Package Manifest does not exist: {manifest}")
 
     version = args.release_version or project_version(args.pyproject)
-    for label, value in (
+    required_values = [
         ("authority", args.authority),
         ("publisher", args.publisher),
         ("name", args.name),
         ("release version", version),
         ("artifact id", args.artifact_id),
         ("artifact type", args.artifact_type),
-        ("backend id", args.backend_id),
-    ):
+    ]
+    if not args.release_only:
+        required_values.append(("backend id", args.backend_id))
+
+    for label, value in required_values:
         if not isinstance(value, str) or not value.strip():
             raise SystemExit(f"{label} must be non-empty")
 
@@ -160,31 +181,34 @@ def main(argv: list[str] | None = None) -> int:
     write_json(descriptor_path, descriptor)
     descriptor_sha = sha256_file(descriptor_path)
 
-    lock = build_project_lock(
-        descriptor=descriptor,
-        descriptor_sha256=descriptor_sha,
-        artifact_id=args.artifact_id.strip(),
-        backend_id=args.backend_id.strip(),
-    )
-    lock_path = output_dir / "adapter-project-lock.json"
-    write_json(lock_path, lock)
+    sums_entries = [
+        (sha256_file(wheel), wheel.name),
+        (descriptor_sha, descriptor_path.name),
+    ]
 
-    sums_path = output_dir / "SHA256SUMS"
-    sums_path.write_text(
-        "\n".join(
+    lock_path: Path | None = None
+    if not args.release_only:
+        lock = build_project_lock(
+            descriptor=descriptor,
+            descriptor_sha256=descriptor_sha,
+            artifact_id=args.artifact_id.strip(),
+            backend_id=args.backend_id.strip(),
+        )
+        lock_path = output_dir / "adapter-project-lock.json"
+        write_json(lock_path, lock)
+        sums_entries.extend(
             [
-                f"{sha256_file(wheel)}  {wheel.name}",
-                f"{descriptor_sha}  {descriptor_path.name}",
-                f"{sha256_file(lock_path)}  {lock_path.name}",
-                f"{sha256_file(manifest)}  {manifest.name}",
+                (sha256_file(lock_path), lock_path.name),
+                (sha256_file(manifest), manifest.name),
             ]
         )
-        + "\n",
-        encoding="utf-8",
-    )
+
+    sums_path = output_dir / "SHA256SUMS"
+    write_sha256_summary(sums_path, sums_entries)
 
     print(f"Release Descriptor: {descriptor_path}")
-    print(f"Project Lock: {lock_path}")
+    if lock_path is not None:
+        print(f"Project Lock: {lock_path}")
     print(f"SHA-256 summary: {sums_path}")
     return 0
 

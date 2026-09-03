@@ -1,6 +1,6 @@
 # OpenOBSW/OpenSVF Adapter Integration Coverage
 
-Status: initial maintainer coverage declaration for the `0.1.0.dev0` product baseline.
+Status: maintainer coverage declaration for the stable `0.1.0` release candidate.
 
 This matrix describes the OrbitFabric semantic surface that has been assessed against the OpenOBSW/OpenSVF integration role, the subset deliberately claimed by this adapter, and the current implementation disposition.
 
@@ -77,7 +77,7 @@ The current matrix deliberately separates project-time mission-contract projecti
 The main CI matrix proves on Python 3.11 and 3.12:
 
 ```text
-exact Core development baseline installation
+exact Core conformance baseline installation
 Ruff
 adapter consistency
 unit / projection tests
@@ -142,6 +142,16 @@ second install -> NOOP / MATCH
 remove -> empty inventory
 ```
 
+The stable release proof additionally constructs publisher-owned release material:
+
+```text
+wheel
+adapter-release.json
+SHA256SUMS
+```
+
+without treating a Project Lock as canonical publisher release membership.
+
 ## Summary
 
 ```text
@@ -204,4 +214,4 @@ Later versions may widen verification projection one semantic family at a time. 
 
 ## Policy note
 
-This is an OrbitFabric-maintained adapter candidate. The matrix is therefore treated as a maturity input before version and publication decisions are made, even though Integration Coverage is not a generic Core conformance requirement.
+This is an OrbitFabric-maintained stable adapter release candidate. The matrix is therefore treated as a maturity input before publication, even though Integration Coverage is not a generic Core conformance requirement.

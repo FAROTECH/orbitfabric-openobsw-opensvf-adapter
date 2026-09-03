@@ -1,10 +1,10 @@
 # Integration Contracts
 
-Use OrbitFabric Core documentation and Core-owned schemas as the normative reference for generic adapter contracts.
+OrbitFabric Core is the normative reference for generic adapter contracts. This repository declares which Core surfaces the OpenOBSW/OpenSVF adapter consumes and implements the target-specific behavior behind those contracts.
 
-This Template demonstrates how to consume those surfaces, but it does not redefine them.
+## Core-owned surfaces
 
-## Core-owned surfaces used by the Template
+The adapter uses these generic lifecycle and execution surfaces:
 
 ```text
 Core Integration Input Set
@@ -17,7 +17,7 @@ Adapter Project Lock
 Adapter Manager lifecycle
 ```
 
-If a Core-owned field, version or semantic rule changes, update the Template and its declared compatibility. Do not fork the generic contract locally.
+A Core-owned field, version or semantic rule is not redefined locally for downstream convenience.
 
 ## Integration Package Manifest
 
@@ -33,7 +33,7 @@ It declares:
 adapter identity and version
 integration identity
 capabilities
-supported Core input-set versions
+supported Core input-set version
 supported Core surfaces
 Profile compatibility
 execution protocol and argv prefix
@@ -41,39 +41,59 @@ operations and operation-input requirements
 Integration Result compatibility
 ```
 
-The Python managed-environment backend locates exactly one `integration_package.json` owned by the installed distribution. That discovery rule is backend-specific. Manifest contents remain Core-owned.
+The Python managed-environment backend discovers exactly one `integration_package.json` owned by the installed distribution. That discovery rule is backend-specific. Manifest contents remain Core-owned.
 
 ## Supported Core input surfaces
 
-The Dummy adapter declares one Core surface:
+The `0.1.0` manifest declares the Core Integration Input Set version:
 
 ```text
-role: entity_index
-kind: orbitfabric.entity_index
-format version: 0.1
+0.1-candidate
 ```
 
-The `project` operation uses that surface to resolve telemetry entity identity.
+and consumes these declared surfaces:
 
-A real adapter must review this declaration deliberately. Declare the surfaces that the implementation actually consumes, with compatible versions, instead of copying every Core surface into the Manifest.
+```text
+entity_index
+    orbitfabric.entity_index
+    format 0.1
 
-A Scenario used by `verification_projection` is not smuggled into the main Integration Input Set. It is declared as an operation input with role `scenario`.
+lint_report
+    orbitfabric-lint
+    format v1
+
+mission_snapshot
+    orbitfabric.mission_snapshot
+    format 0.1-candidate
+
+relationship_manifest
+    orbitfabric.relationship_manifest
+    format 0.1-candidate
+```
+
+The input-set manifest remains the coherence boundary. The adapter does not reconstruct Mission Model semantics from filenames or parse Mission Model YAML as a private fallback API.
+
+A Scenario used by `verification_projection` is not inserted into the main Integration Input Set. It is an explicit operation input with role:
+
+```text
+scenario
+```
 
 ## Execution protocol
 
-The Manifest declares the Core-defined protocol:
+The Integration Package Manifest declares:
 
 ```text
 orbitfabric.adapter_cli.v1
 ```
 
-The Dummy console entry point is:
+with installed console entry point:
 
 ```text
-orbitfabric-openobsw-opensvf-adapter
+orbitfabric-openobsw-opensvf
 ```
 
-The implementation in `src/orbitfabric_openobsw_opensvf_adapter/cli.py` supports:
+The implementation in `src/orbitfabric_openobsw_opensvf_adapter/cli.py` supports the Core-defined execution shape:
 
 ```text
 run
@@ -84,59 +104,76 @@ run
 --output-dir
 ```
 
-Do not introduce another adapter execution protocol for target-specific convenience. Adapt target logic behind the Core-defined protocol.
+Target-specific behavior is implemented behind this protocol. The adapter does not introduce a second execution protocol.
 
 ## Operations
 
-The Dummy Manifest declares:
+The stable manifest exposes:
 
 ```text
 project
-    no operation inputs
+    operation inputs: none
 
 verification_projection
-    one required role: scenario
+    required operation input: scenario
 ```
 
-Operation-input declaration, CLI binding and Integration Result provenance must remain consistent. Tests should fail if those three views drift.
+`project` consumes the Integration Input Set and Projection Profile to generate OpenOBSW-facing contract/SRDB material plus a Core-conformant Integration Result.
+
+`verification_projection` additionally consumes one Scenario, validates it through OrbitFabric runtime semantics and materializes the supported subset into OpenSVF-native assets.
+
+Operation-input declaration, CLI binding and Integration Result provenance must remain consistent.
 
 ## Integration Result
 
-Every operation writes:
+Every completed operation writes:
 
 ```text
 integration_result.json
 ```
 
-The result is validated through Core-owned conformance. It retains operation status, consumed input provenance, generated artifact identity, mappings and operation-input provenance as applicable.
+The result is validated through Core conformance and retains, as applicable:
+
+```text
+operation status
+consumed Core input provenance
+Projection Profile provenance
+Scenario operation-input provenance
+generated artifact identity and digest
+source-to-target mappings
+target compatibility resolution
+diagnostics
+```
 
 See [Evidence and Traceability](evidence-and-traceability.md).
 
-## Template integration identity
+## Adapter and integration identity
 
-The Dummy example uses:
+This product uses:
 
 ```text
-integration.id = orbitfabric-openobsw-opensvf
 adapter.id     = orbitfabric-openobsw-opensvf
+integration.id = orbitfabric-openobsw-opensvf
+adapter.version = 0.1.0
 ```
 
-Those values are examples only. They do not define the logical Source Coordinate or publisher identity for real adapters.
+The equality of adapter and integration ids is a product choice. Release-source identity remains a separate layer:
 
-See [Adapter Identity](adapter-identity.md) before changing them.
+```text
+logical key       orbitfabric/openobsw-opensvf
+source authority  github.com/FAROTECH
+```
+
+See [Adapter Identity](adapter-identity.md).
 
 ## Projection Profile ownership
 
-The generic Profile envelope is governed by OrbitFabric.
-
-The integration-specific schema in:
+OrbitFabric governs the generic Profile envelope. This adapter owns the OpenOBSW/OpenSVF-specific schema and mapping rules in:
 
 ```text
 src/orbitfabric_openobsw_opensvf_adapter/schemas/profile-0.1.schema.json
 ```
 
-owns only Dummy target choices.
-
-A real adapter replaces that target-specific schema and mapping behavior while preserving the generic envelope and declared compatibility.
+Those target-specific settings include the choices required to project supported telemetry, commands, events, housekeeping and verification expectations without duplicating Core semantic authority.
 
 See [Projection Profile and Bindings](projection-profile-and-bindings.md).

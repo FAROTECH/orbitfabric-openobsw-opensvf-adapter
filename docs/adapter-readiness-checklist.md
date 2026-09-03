@@ -6,7 +6,7 @@ It complements OrbitFabric Core conformance. It does not replace it.
 
 ## 1. Identity
 
-Current product identity:
+Current stable release-candidate identity:
 
 ```text
 repository       orbitfabric-openobsw-opensvf-adapter
@@ -15,18 +15,14 @@ python package   orbitfabric_openobsw_opensvf_adapter
 console command  orbitfabric-openobsw-opensvf
 adapter.id       orbitfabric-openobsw-opensvf
 integration.id   orbitfabric-openobsw-opensvf
-version          0.1.0.dev0
+version          0.1.0
+logical key      orbitfabric/openobsw-opensvf
+source authority github.com/FAROTECH
 ```
 
-Before stable publication, still decide explicitly:
+The logical publisher is `orbitfabric`. The first concrete source authority is `github.com/FAROTECH`.
 
-```text
-final Adapter Source Coordinate
-final publisher identity
-stable release version transition
-```
-
-Do not infer those values from the historical PoC or from the fact that GitHub is used for development hosting.
+GitHub hosting is therefore the first release-source context, not the adapter logical identity. The adapter is classified as OrbitFabric-maintained stable. It is not yet described as registry-classified official because generic official publisher and registry governance are not promoted.
 
 ## 2. Packaging
 
@@ -58,7 +54,7 @@ Core-conformant Integration Result
 
 Core remains normative for generic contract semantics.
 
-The current exact development baseline is:
+The exact Core baseline validated by this release candidate is:
 
 ```text
 4377d6656c62aa1dc19a7ed81d2de872b6b22ccd
@@ -120,7 +116,7 @@ OpenOBSW commit 44ceb71a016f0541ff7a0aa74191e13bafdb59c1
 obsw-srdb 0.1.0 at that checkout
 ```
 
-Before release, confirm the evidence still proves:
+The release candidate must continue to prove:
 
 ```text
 additive contribution load
@@ -143,7 +139,7 @@ OpenSVF commit 667d3eadcb0bbd7814ac324b99946c4ed2f11f23
 observed package metadata 1.0.0
 ```
 
-Before release, confirm the evidence still proves:
+The release candidate must continue to prove:
 
 ```text
 verification materialization generated
@@ -183,7 +179,26 @@ verify
 remove
 ```
 
-Keep release construction separate from provider-specific publication.
+The stable release proof must use:
+
+```text
+authority  github.com/FAROTECH
+publisher  orbitfabric
+name       openobsw-opensvf
+version    0.1.0
+```
+
+The publisher-only release construction must additionally prove that publication material contains:
+
+```text
+wheel
+adapter-release.json
+SHA256SUMS
+```
+
+and does not include a canonical `adapter-project-lock.json`.
+
+The Project Lock is consumer-project exact desired state. It is not publisher-owned immutable release membership.
 
 ## 9. Evidence and traceability
 
@@ -300,33 +315,36 @@ verification_spacecraft.yaml
 
 ## Readiness conclusion
 
-The `0.1.0.dev0` product baseline has completed the technical and editorial readiness review required before merging the productization work.
+The `0.1.0` release candidate has completed the architecture and product decisions required for stable publication readiness.
 
 It has:
 
 ```text
+stable logical identity and first source authority
 Core conformance
 Python 3.11 / 3.12 checks
 OpenOBSW / SRDB target-native compatibility
 OpenSVF target-native compatibility
 installed Adapter Manager lifecycle
 provider-neutral release / Project Lock proof
+publisher-only release construction
 100% analysis coverage for the maintained 21-area inventory
 zero known implementation holes inside declared first-release scope
 product-facing documentation from both sides of the integration
 active-product PoC-language cleanup
 ```
 
-This is sufficient to treat the development baseline as a coherent reusable adapter product.
-
-It is intentionally not yet called the stable public `0.1.0` release. That transition still requires a separate official-release decision for:
+The remaining boundary is publication, not product design:
 
 ```text
-final Adapter Source Coordinate
-final publisher identity
-exact stable release version and bytes
-final release proof against those exact values
-publication mechanism and retained release evidence
+merge the exact green release candidate
+make the repository public
+enable GitHub Immutable Releases
+create exact v0.1.0 release from the merged stable source baseline
+attach the wheel, adapter-release.json and SHA256SUMS
+publish immutably
+verify published digests and release attestation
+retain final Architecture Lab publication evidence
 ```
 
-Merge readiness and stable publication readiness are therefore distinct checkpoints.
+Until that publication sequence is complete, `0.1.0` is a validated stable release candidate rather than an already published release.

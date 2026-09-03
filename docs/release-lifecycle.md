@@ -1,66 +1,49 @@
 # Release Lifecycle
 
-This repository separates release construction from publication.
+This repository separates publisher release construction, consumer project selection and publication transport.
 
-The adapter repository is responsible for constructing exact release identity. A publication provider transports already identified bytes and does not redefine the adapter release.
+## Stable source identity
 
-## Current release status
-
-The package is currently:
+The `0.1.0` source baseline declares:
 
 ```text
-0.1.0.dev0
+version:          0.1.0
+logical key:      orbitfabric/openobsw-opensvf
+source authority: github.com/FAROTECH
+classification:   OrbitFabric-maintained stable adapter
 ```
 
-This development product baseline has completed its technical and editorial merge-readiness review. Coverage analysis, downstream compatibility, installed lifecycle, release proof, documentation and active-product cleanup are all established for the current development identity.
+Its semantic scope is the reviewed first-release scope recorded by the Integration Coverage Matrix. Source acceptance, repository visibility and publication of immutable release assets remain separate states.
 
-The first stable `0.1.0` is still intentionally withheld because the final public publisher identity, Adapter Source Coordinate and exact stable release bytes are not yet frozen.
+The presence of `version = 0.1.0` in source does not by itself establish that a public release has been published.
 
-Merge readiness and stable publication readiness are separate checkpoints.
-
-## What the repository builds
-
-The provider-neutral release path is:
+## Three distinct objects
 
 ```text
-clean checkout
-    -> build wheel
-    -> compute wheel SHA-256
-    -> compute Integration Package Manifest SHA-256
-    -> build Adapter Release Descriptor
-    -> compute Release Descriptor SHA-256
-    -> build Adapter Project Lock
-    -> Core conformance
-    -> Adapter Manager lock check = MISSING
-    -> install exact release
-    -> MATCH
-    -> repeat install
-    -> NOOP / MATCH
-    -> evidence bundle
+Adapter Release Descriptor
+    publisher-owned exact release definition
+
+Adapter Project Lock
+    consumer-project exact selected resolution
+
+GitHub Release
+    first concrete storage, immutability and transport backend
 ```
 
-The repository provides:
+These roles must remain separate.
 
-```text
-tools/build_release_bundle.py
-```
+## Build the stable wheel
 
-which generates:
-
-```text
-adapter-release.json
-adapter-project-lock.json
-SHA256SUMS
-```
-
-These files use Core-owned candidate contracts. The tool is a developer convenience, not an alternative specification.
-
-## Build the wheel
-
-From a clean checkout:
+From the accepted stable source baseline:
 
 ```bash
 python -m build --wheel
+```
+
+Expected artifact name:
+
+```text
+orbitfabric_openobsw_opensvf_adapter-0.1.0-py3-none-any.whl
 ```
 
 The wheel owns the namespaced package:
@@ -71,51 +54,50 @@ orbitfabric_openobsw_opensvf_adapter
 
 including its unique `integration_package.json`, Profile schema and target resources.
 
-## Build exact release identity
+## Publisher-owned release construction
 
-During private productization, the CI release proof uses local development publication identity only to exercise the source-neutral contract path.
-
-A representative command is:
+For publication, use:
 
 ```bash
 python tools/build_release_bundle.py \
-  --wheel dist/orbitfabric_openobsw_opensvf_adapter-0.1.0.dev0-py3-none-any.whl \
-  --authority <development-or-final-authority> \
-  --publisher <publisher> \
-  --name openobsw-opensvf
+  --wheel dist/orbitfabric_openobsw_opensvf_adapter-0.1.0-py3-none-any.whl \
+  --authority github.com/FAROTECH \
+  --publisher orbitfabric \
+  --name openobsw-opensvf \
+  --release-only
 ```
 
-The final authority/publisher values must be selected deliberately before public release. They are not inferred from GitHub hosting or from the historical PoC repository.
-
-The tool reads `project.version` from `pyproject.toml` unless `--release-version` is supplied explicitly.
-
-The current installation backend is:
+This produces:
 
 ```text
-python-wheel-managed-env
+adapter-release.json
+SHA256SUMS
 ```
 
-This is the backend exercised by Adapter Manager for this Python adapter. It is not a universal requirement for every OrbitFabric adapter implementation language.
-
-## Validate before publication
-
-Release construction is accepted only after the same adapter baseline also passes:
+The stable publisher release membership is therefore:
 
 ```text
-Core contract conformance
-adapter unit and negative tests
-OpenOBSW / SRDB native compatibility
-OpenSVF native compatibility
-installed Adapter Manager lifecycle
-provider-neutral release proof
-Integration Coverage review
+v0.1.0 tag
+orbitfabric_openobsw_opensvf_adapter-0.1.0-py3-none-any.whl
+adapter-release.json
+SHA256SUMS
+release notes
+release/provenance attestation evidence
 ```
 
-A release artifact is not considered mature merely because the wheel can be built.
+The release-only checksum file covers the exact wheel and Release Descriptor bytes.
 
-## Project Lock semantics
+The Integration Package Manifest digest is bound inside the Release Descriptor and the manifest bytes are packaged inside the wheel.
 
-The generated Project Lock records exact desired state:
+## Project Lock lifecycle proof
+
+The default tool mode additionally derives:
+
+```text
+adapter-project-lock.json
+```
+
+This is required for exact lifecycle proof:
 
 ```text
 Source Coordinate
@@ -126,7 +108,7 @@ artifact SHA-256
 installation backend id
 ```
 
-The permanent release proof establishes:
+The permanent CI proves:
 
 ```text
 initial state MISSING
@@ -135,49 +117,118 @@ initial state MISSING
     -> second identical request NOOP / MATCH
     -> verify
     -> remove
+    -> empty inventory
 ```
 
-A nominal version match is not sufficient when byte identity differs.
+The lock used by CI is engineering evidence for a consumer selection. It is not canonical publisher release membership.
 
-## Publication is separate
+## Stable Source Coordinate
 
-The adapter does not require a provider-specific publication mechanism to define release identity.
-
-A later publication flow may use GitHub Releases or another provider to resolve and transport the same exact release into Core's source-neutral `ResolvedAdapterRelease` seam.
-
-Provider URLs must not be smuggled into Project Lock identity simply because one transport was selected for publication.
-
-## Public release boundary
-
-The development baseline has already completed review of:
+The first stable release uses:
 
 ```text
-Integration Coverage Matrix
-OpenOBSW exact compatibility evidence
-OpenSVF exact compatibility evidence
-runtime dependency declaration
-README and downstream setup completeness
-installed lifecycle evidence
-release / Project Lock mechanics
-active product cleanup
+authority = github.com/FAROTECH
+publisher = orbitfabric
+name      = openobsw-opensvf
 ```
 
-The remaining stable-release decisions are deliberately narrower:
+Rendered for the current Adapter Manager explicit-source CLI:
 
 ```text
-final Adapter Source Coordinate
-final publisher identity
-0.1.0 version transition
-exact stable wheel and Integration Package bytes
-final Release Descriptor and Project Lock for those bytes
-final CI and downstream-native proof on the stable baseline
-publication transport and retained release evidence
+github.com/FAROTECH:orbitfabric/openobsw-opensvf
 ```
 
-The repository should become public only after those exact release decisions are complete and the published documentation accurately describes the released compatibility envelope.
+The authority identifies the first concrete source context. It does not make `FAROTECH` the logical publisher and does not define GitHub as the universal OrbitFabric registry.
+
+A future source authority may change without changing the logical product key:
+
+```text
+orbitfabric/openobsw-opensvf
+```
+
+## Stable validation gates
+
+The exact `0.1.0` source baseline must pass:
+
+```text
+Python 3.11 / 3.12
+Ruff
+adapter consistency
+unit and negative tests
+wheel/package validation
+MkDocs strict build
+OpenOBSW / SRDB native compatibility
+OpenSVF native compatibility
+installed Adapter Manager lifecycle
+Release Descriptor / Project Lock proof
+release-only publisher artifact proof
+```
+
+Core conformance and downstream-native acceptance remain separate evidence layers.
+
+## GitHub publication boundary
+
+GitHub Releases is the first concrete publication backend for this adapter.
+
+For public `v0.1.0` publication:
+
+```text
+1. use the accepted stable source commit
+2. make the repository public and verify public repository state
+3. enable GitHub immutable releases
+4. create v0.1.0 as a draft release from the exact stable commit
+5. attach wheel, adapter-release.json and SHA256SUMS
+6. verify local asset digests before publication
+7. publish the draft as an immutable release
+8. confirm the release is marked immutable
+9. verify tag -> intended stable commit
+10. verify published asset digests
+11. retain release/provenance attestation evidence
+```
+
+All normative assets must be attached before publication because an immutable release must not be mutated afterwards.
+
+GitHub release URLs are provider metadata. They do not replace the OrbitFabric Release Descriptor.
+
+## Release classification
+
+`0.1.0` is an:
+
+```text
+OrbitFabric-maintained stable adapter
+```
+
+It is intentionally not yet called a registry-classified official OrbitFabric adapter.
+
+The technical release has strong conformance, compatibility, immutability and provenance requirements. Formal official classification remains tied to future promoted publisher/source-authority governance rather than being self-declared by release bytes.
+
+## Source provenance
+
+Released source provenance must identify the exact stable source commit.
+
+Do not use a synthetic pull-request merge ref as normative release provenance.
+
+The final release/tag or publication workflow must explicitly operate from the accepted stable commit or tag.
 
 ## Evidence
 
-The `release-proof` CI job uploads an evidence artifact containing the exact Release Descriptor, Project Lock, SHA-256 summary and Adapter Manager reports used by the control.
+The `release-proof` CI job retains two related evidence sets.
 
-That evidence identifies the release bytes that were tested. It does not create a new OrbitFabric contract and it does not by itself establish downstream runtime execution.
+### Lifecycle evidence
+
+```text
+Adapter Release Descriptor
+Project Lock used by the proof
+SHA-256 summary
+Adapter Manager before/install/check/verify/remove reports
+```
+
+### Publisher-release evidence
+
+```text
+stable wheel
+adapter-release.json
+release-only SHA256SUMS
+```
+
+After public publication, Architecture Lab evidence additionally retains the immutable GitHub release state, exact tag/commit association, published digests and release/provenance attestation result.

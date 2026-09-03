@@ -1,34 +1,36 @@
-# OrbitFabric Adapter Developer Template
+# OrbitFabric OpenOBSW/OpenSVF Adapter
 
-This documentation is for developers building an OrbitFabric adapter.
+This documentation describes the concrete OrbitFabric adapter that projects selected mission contracts and verification intent into OpenOBSW/SRDB and OpenSVF-native integration artifacts.
 
-The Template is executable. The included Dummy Adapter builds, runs, emits Core-conformant Integration Results, installs through Adapter Manager, proves exact Project Lock state and demonstrates an Integration Coverage Matrix.
+OrbitFabric, OpenOBSW and OpenSVF remain independent systems. OrbitFabric Core owns generic mission and integration contracts, this adapter owns target-specific projection, and the downstream projects own their native execution and validation semantics.
 
-OrbitFabric Core remains authoritative for generic integration contracts. The Template explains how to consume those contracts correctly inside a maintainable adapter repository.
+The stable `0.1.0` release candidate is validated against exact Core, OpenOBSW and OpenSVF baselines and is exercised through downstream-native compatibility checks, Adapter Manager installed lifecycle and exact release proof.
 
 ## Recommended path
 
 ```text
 Getting Started
-    -> Repository Anatomy
-    -> Adapter Identity
     -> Architecture and Ownership
+    -> Adapter Identity
     -> Integration Contracts
     -> Projection Profile and Bindings
     -> Testing and Conformance
     -> Evidence and Traceability
     -> Runtime Dependencies
-    -> Release Lifecycle
     -> Integration Coverage
+    -> Release Lifecycle
     -> Adapter Readiness Checklist
 ```
 
-If you are extracting an adapter from an existing experiment, read [Migrating from a PoC](migrating-from-poc.md) after the main developer path.
+If you want to understand how the clean product was extracted from the preceding engineering PoC, read [Migration from the PoC](migrating-from-poc.md).
 
-## One rule to remember
+## Integration boundary
 
 ```text
-Core defines what is valid.
-The Template demonstrates how to build it well.
-The adapter owns target-specific projection and evidence.
+OrbitFabric owns intent and generic contract.
+The adapter owns projection.
+OpenOBSW and OpenSVF own downstream execution and validation.
+Evidence retains provenance across the boundary.
 ```
+
+Start with [Getting Started](getting-started.md) for the complete OrbitFabric-to-downstream handoff.
