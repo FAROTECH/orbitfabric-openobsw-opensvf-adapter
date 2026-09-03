@@ -7,7 +7,7 @@ if [[ "${GITHUB_ACTIONS:-}" != "true" ]]; then
 fi
 
 root="${GITHUB_WORKSPACE:?GITHUB_WORKSPACE is required}"
-work="/tmp/orbitfabric-template-release-proof"
+work="/tmp/orbitfabric-openobsw-opensvf-release-proof"
 state="$work/state"
 evidence="$work/evidence"
 wheelhouse="$work/wheelhouse"
@@ -26,9 +26,9 @@ test -n "$wheel"
 
 python tools/build_release_bundle.py \
   --wheel "$wheel" \
-  --authority template.local \
-  --publisher orbitfabric \
-  --name dummy-adapter \
+  --authority local.adapter.test \
+  --publisher farotech \
+  --name openobsw-opensvf \
   --output-dir "$release_dir"
 
 descriptor="$release_dir/adapter-release.json"
@@ -47,6 +47,7 @@ cp "$lock" "$evidence/adapter-project-lock.json"
 cp "$release_dir/SHA256SUMS" "$evidence/SHA256SUMS"
 
 python -m pip download --dest "$wheelhouse" "$wheel"
+python -m pip download --dest "$wheelhouse" "hatchling>=1.24"
 export PIP_NO_INDEX=1
 export PIP_FIND_LINKS="$wheelhouse"
 
@@ -60,13 +61,15 @@ python - <<'PY'
 import json
 from pathlib import Path
 
-report = json.loads(Path("/tmp/orbitfabric-template-release-proof/evidence/before-check.json").read_text())
+report = json.loads(
+    Path("/tmp/orbitfabric-openobsw-opensvf-release-proof/evidence/before-check.json").read_text()
+)
 assert report["status"] == "NOT_SATISFIED"
 assert report["adapters"][0]["status"] == "MISSING"
 PY
 
 orbitfabric adapter lock install "$lock" \
-  --source-coordinate "template.local:orbitfabric/dummy-adapter" \
+  --source-coordinate "local.adapter.test:farotech/openobsw-opensvf" \
   --release-descriptor "$descriptor" \
   --artifact "$wheel" \
   --json | tee "$evidence/install-from-lock.json"
@@ -76,7 +79,9 @@ import json
 from pathlib import Path
 
 report = json.loads(
-    Path("/tmp/orbitfabric-template-release-proof/evidence/install-from-lock.json").read_text()
+    Path(
+        "/tmp/orbitfabric-openobsw-opensvf-release-proof/evidence/install-from-lock.json"
+    ).read_text()
 )
 assert report["before_status"] == "MISSING"
 assert report["action"] == "INSTALLED"
@@ -91,13 +96,15 @@ python - <<'PY'
 import json
 from pathlib import Path
 
-report = json.loads(Path("/tmp/orbitfabric-template-release-proof/evidence/after-check.json").read_text())
+report = json.loads(
+    Path("/tmp/orbitfabric-openobsw-opensvf-release-proof/evidence/after-check.json").read_text()
+)
 assert report["status"] == "MATCH"
 assert report["adapters"][0]["status"] == "MATCH"
 PY
 
 orbitfabric adapter lock install "$lock" \
-  --source-coordinate "template.local:orbitfabric/dummy-adapter" \
+  --source-coordinate "local.adapter.test:farotech/openobsw-opensvf" \
   --release-descriptor "$descriptor" \
   --artifact "$wheel" \
   --json | tee "$evidence/second-install-from-lock.json"
@@ -106,7 +113,9 @@ import json
 from pathlib import Path
 
 report = json.loads(
-    Path("/tmp/orbitfabric-template-release-proof/evidence/second-install-from-lock.json").read_text()
+    Path(
+        "/tmp/orbitfabric-openobsw-opensvf-release-proof/evidence/second-install-from-lock.json"
+    ).read_text()
 )
 assert report["before_status"] == "MATCH"
 assert report["action"] == "NOOP"
@@ -123,7 +132,9 @@ import json
 from pathlib import Path
 
 inventory = json.loads(
-    Path("/tmp/orbitfabric-template-release-proof/evidence/final-inventory.json").read_text()
+    Path(
+        "/tmp/orbitfabric-openobsw-opensvf-release-proof/evidence/final-inventory.json"
+    ).read_text()
 )
 assert inventory == []
 PY

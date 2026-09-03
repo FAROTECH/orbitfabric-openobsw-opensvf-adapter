@@ -7,8 +7,7 @@ if [[ "${GITHUB_ACTIONS:-}" != "true" ]]; then
 fi
 
 root="${GITHUB_WORKSPACE:?GITHUB_WORKSPACE is required}"
-core="$root/_orbitfabric_core"
-work="/tmp/orbitfabric-template-installed-lifecycle"
+work="/tmp/orbitfabric-openobsw-opensvf-installed-lifecycle"
 state="$work/state"
 evidence="$work/evidence"
 wheelhouse="$work/wheelhouse"
@@ -16,29 +15,34 @@ release_dir="$work/release"
 core_input="$work/core-input"
 project_output="$work/project-output"
 verification_output="$work/verification-output"
+fixture="$root/tests/fixtures/lifecycle"
+profile="$root/examples/profile.yaml"
 
 export ORBITFABRIC_STATE_DIR="$state"
 
 rm -rf "$work"
 mkdir -p "$evidence" "$wheelhouse" "$release_dir"
 
+cd "$root"
+rm -rf dist
 python -m build --wheel
 wheel="$(realpath "$(find "$root/dist" -maxdepth 1 -name '*.whl' -print -quit)")"
 test -n "$wheel"
 
 orbitfabric export integration-input-set \
-  "$core/examples/demo-3u/mission" \
+  "$fixture/mission" \
   --output-dir "$core_input"
 test -f "$core_input/integration_input_manifest.json"
 
 python -m pip download --dest "$wheelhouse" "$wheel"
+python -m pip download --dest "$wheelhouse" "hatchling>=1.24"
 test -n "$(find "$wheelhouse" -maxdepth 1 -type f -print -quit)"
 
 python tools/build_release_bundle.py \
   --wheel "$wheel" \
-  --authority explicit-template-control \
-  --publisher orbitfabric-template \
-  --name dummy-adapter \
+  --authority local.adapter.test \
+  --publisher farotech \
+  --name openobsw-opensvf \
   --output-dir "$release_dir"
 
 descriptor="$release_dir/adapter-release.json"
@@ -99,7 +103,7 @@ mkdir -p "$project_output"
 PYTHONPATH= orbitfabric adapter execute "$INSTANCE_ID" \
   --operation project \
   --input-set-manifest "$core_input/integration_input_manifest.json" \
-  --profile "$root/examples/profile.yaml" \
+  --profile "$profile" \
   --output-dir "$project_output" \
   --json | tee "$evidence/project-execution.json"
 python -m orbitfabric.conformance.integration_contracts result \
@@ -112,22 +116,47 @@ from pathlib import Path
 
 output = Path(os.environ["PROJECT_OUTPUT"])
 result = json.loads((output / "integration_result.json").read_text(encoding="utf-8"))
-projection = json.loads((output / "dummy_projection.json").read_text(encoding="utf-8"))
+header = (output / "flight_software" / "mission_contract.h").read_text(encoding="utf-8")
+contribution = json.loads(
+    (output / "obsw_srdb_contribution" / "contribution_manifest.json").read_text(
+        encoding="utf-8"
+    )
+)
+
 assert result["result"] == "succeeded"
 assert result["operation"]["id"] == "project"
-assert result["mission"]["id"] == "demo-3u"
+assert result["mission"]["id"] == "openobsw-opensvf-lifecycle"
 assert result["inputs"]["operation_inputs"] == []
-assert projection["telemetry"][0]["source_id"] == "eps.battery.voltage"
+assert [item["id"] for item in result["artifacts"]] == [
+    "flight.mission_contract",
+    "ground.obsw_srdb_contribution",
+]
+for symbol in (
+    "OF_TM_OBC_BUS_VOLTAGE_MV",
+    "OF_CMD_PING",
+    "OF_EVENT_VOLTAGE_OUT_OF_BOUNDS",
+    "OF_HK_SET_OBC",
+):
+    assert symbol in header
+assert contribution["kind"] == "orbitfabric.openobsw_opensvf.obsw_srdb_contribution"
+assert contribution["mode"] == "additive"
+assert contribution["complete_srdb"] is False
+reused = contribution["reused_targets"]
+assert len(reused) == 1
+assert reused[0]["binding"] == "cmd.ping"
+assert reused[0]["id"] == "are_you_alive"
 PY
 cp "$project_output/integration_result.json" "$evidence/project-integration-result.json"
-cp "$project_output/dummy_projection.json" "$evidence/dummy-projection.json"
+cp "$project_output/flight_software/mission_contract.h" "$evidence/mission-contract.h"
+cp "$project_output/obsw_srdb_contribution/contribution_manifest.json" \
+  "$evidence/obsw-srdb-contribution-manifest.json"
 
-scenario="$core/examples/demo-3u/scenarios/battery_low_during_payload.yaml"
+scenario="$fixture/scenarios/ping_verification.yaml"
 mkdir -p "$verification_output"
 PYTHONPATH= orbitfabric adapter execute "$INSTANCE_ID" \
   --operation verification_projection \
   --input-set-manifest "$core_input/integration_input_manifest.json" \
-  --profile "$root/examples/profile.yaml" \
+  --profile "$profile" \
   --operation-input "scenario=$scenario" \
   --output-dir "$verification_output" \
   --json | tee "$evidence/verification-execution.json"
@@ -143,18 +172,51 @@ from pathlib import Path
 scenario = Path(os.environ["SCENARIO"])
 output = Path(os.environ["VERIFICATION_OUTPUT"])
 result = json.loads((output / "integration_result.json").read_text(encoding="utf-8"))
-plan = json.loads((output / "dummy_verification_plan.json").read_text(encoding="utf-8"))
-provenance = result["inputs"]["operation_inputs"]
+plan = json.loads(
+    (output / "verification_projection" / "verification_projection_plan.json").read_text(
+        encoding="utf-8"
+    )
+)
+
 assert result["result"] == "succeeded"
 assert result["operation"]["id"] == "verification_projection"
+provenance = result["inputs"]["operation_inputs"]
 assert len(provenance) == 1
 assert provenance[0]["role"] == "scenario"
-assert provenance[0]["id"] == "battery_low_during_payload"
+assert provenance[0]["id"] == "ping_verification"
 assert provenance[0]["sha256"] == hashlib.sha256(scenario.read_bytes()).hexdigest()
-assert plan["scenario"]["id"] == "battery_low_during_payload"
+assert [item["id"] for item in result["artifacts"]] == [
+    "verification.projection_plan",
+    "verification.opensvf_materialization",
+    "verification.opensvf_procedure",
+    "verification.opensvf_campaign",
+    "verification.opensvf_spacecraft",
+]
+assert plan["status"] == "executable_subset"
+assert plan["source"]["scenario_id"] == "ping_verification"
+assert plan["accounting"]["projected_source_actions"] == 1
+assert any(
+    operation["operation"] == "pus_tc"
+    and operation["resolved"]["apid"] == 16
+    and operation["resolved"]["service"] == 17
+    and operation["resolved"]["subtype"] == 1
+    for operation in plan["operations"]
+)
+materialization = output / "verification_projection" / "opensvf"
+for relative in (
+    "materialization_manifest.json",
+    "procedures/verification_projection_procedure.py",
+    "campaigns/verification_projection_campaign.yaml",
+    "opensvf/spacecraft.yaml",
+):
+    assert (materialization / relative).is_file(), relative
 PY
-cp "$verification_output/integration_result.json" "$evidence/verification-integration-result.json"
-cp "$verification_output/dummy_verification_plan.json" "$evidence/dummy-verification-plan.json"
+cp "$verification_output/integration_result.json" \
+  "$evidence/verification-integration-result.json"
+cp "$verification_output/verification_projection/verification_projection_plan.json" \
+  "$evidence/verification-projection-plan.json"
+cp "$verification_output/verification_projection/opensvf/materialization_manifest.json" \
+  "$evidence/opensvf-materialization-manifest.json"
 
 orbitfabric adapter remove "$INSTANCE_ID" --json | tee "$evidence/remove.json"
 orbitfabric adapter list --json | tee "$evidence/final-inventory.json"

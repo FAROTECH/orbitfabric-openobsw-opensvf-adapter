@@ -1,20 +1,18 @@
 # Target Compatibility Tests
 
-This directory is reserved for downstream-native compatibility controls in a concrete adapter.
+Target compatibility is intentionally separate from OrbitFabric Core conformance.
 
-The included Dummy target is synthetic and has no independent downstream implementation, compiler, parser or validator. The Template therefore does not pretend to provide target-native acceptance evidence for it.
+The current OpenOBSW control pins upstream commit `44ceb71a016f0541ff7a0aa74191e13bafdb59c1` and verifies the adapter handoff against the target-owned SRDB implementation.
 
-When creating a real adapter, replace this note with the strongest meaningful target control, for example:
+The control:
 
-```text
-compile generated project
-run target schema validator
-import generated database
-load generated configuration in simulator
-run native parser
-execute target runtime smoke test
-```
+1. exports the lifecycle fixture through OrbitFabric Core;
+2. generates the adapter project artifacts;
+3. loads the additive SRDB contribution with OpenOBSW `SRDBContributionLoader`;
+4. composes it with the canonical OpenOBSW SRDB using `SRDBComposer`;
+5. materializes and round-trips the complete SRDB with `SRDBMaterializer`;
+6. runs the canonical OpenOBSW SRDB code generator for C and XTCE outputs;
+7. compiles the generated `mission_contract.h` as C11;
+8. records target acceptance evidence.
 
-Keep this layer separate from OrbitFabric Core conformance.
-
-A Core-conformant Integration Result proves that the adapter reports its work correctly. A target compatibility test proves that the downstream accepts the projected artifact. A mature adapter normally needs both when the target exposes a validation path.
+This proves target-native acceptance of the currently declared OpenOBSW handoff. It does not replace OrbitFabric Integration Result conformance, and it does not imply compatibility with arbitrary future OpenOBSW revisions.

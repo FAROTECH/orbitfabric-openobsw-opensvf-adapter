@@ -2,11 +2,25 @@
 
 This repository separates release construction from publication.
 
-The adapter repository is responsible for constructing exact release identity. A publication provider only transports those already identified bytes.
+The adapter repository is responsible for constructing exact release identity. A publication provider transports already identified bytes and does not redefine the adapter release.
 
-## What you build
+## Current release status
 
-For a Python adapter, the release path demonstrated by this Template is:
+The package is currently:
+
+```text
+0.1.0.dev0
+```
+
+This development product baseline has completed its technical and editorial merge-readiness review. Coverage analysis, downstream compatibility, installed lifecycle, release proof, documentation and active-product cleanup are all established for the current development identity.
+
+The first stable `0.1.0` is still intentionally withheld because the final public publisher identity, Adapter Source Coordinate and exact stable release bytes are not yet frozen.
+
+Merge readiness and stable publication readiness are separate checkpoints.
+
+## What the repository builds
+
+The provider-neutral release path is:
 
 ```text
 clean checkout
@@ -17,18 +31,21 @@ clean checkout
     -> compute Release Descriptor SHA-256
     -> build Adapter Project Lock
     -> Core conformance
-    -> Adapter Manager install from lock
+    -> Adapter Manager lock check = MISSING
+    -> install exact release
     -> MATCH
+    -> repeat install
+    -> NOOP / MATCH
     -> evidence bundle
 ```
 
-The Template provides:
+The repository provides:
 
 ```text
 tools/build_release_bundle.py
 ```
 
-It generates:
+which generates:
 
 ```text
 adapter-release.json
@@ -36,7 +53,7 @@ adapter-project-lock.json
 SHA256SUMS
 ```
 
-These files use Core-owned candidate contracts. The tool is a developer convenience, not a replacement specification.
+These files use Core-owned candidate contracts. The tool is a developer convenience, not an alternative specification.
 
 ## Build the wheel
 
@@ -46,41 +63,59 @@ From a clean checkout:
 python -m build --wheel
 ```
 
-The wheel must contain exactly one namespaced `integration_package.json` that belongs to the installed Python distribution.
+The wheel owns the namespaced package:
+
+```text
+orbitfabric_openobsw_opensvf_adapter
+```
+
+including its unique `integration_package.json`, Profile schema and target resources.
 
 ## Build exact release identity
 
-For the Dummy Adapter:
+During private productization, the CI release proof uses local development publication identity only to exercise the source-neutral contract path.
+
+A representative command is:
 
 ```bash
 python tools/build_release_bundle.py \
-  --wheel dist/orbitfabric_dummy_adapter-0.1.0.dev0-py3-none-any.whl \
-  --authority template.local \
-  --publisher orbitfabric \
-  --name dummy-adapter
+  --wheel dist/orbitfabric_openobsw_opensvf_adapter-0.1.0.dev0-py3-none-any.whl \
+  --authority <development-or-final-authority> \
+  --publisher <publisher> \
+  --name openobsw-opensvf
 ```
 
-For a real adapter, replace all three identity fields deliberately.
+The final authority/publisher values must be selected deliberately before public release. They are not inferred from GitHub hosting or from the historical PoC repository.
 
 The tool reads `project.version` from `pyproject.toml` unless `--release-version` is supplied explicitly.
 
-The default Python installation backend is:
+The current installation backend is:
 
 ```text
 python-wheel-managed-env
 ```
 
-This is a backend-specific Template convention. It is not a universal adapter contract.
+This is the backend exercised by Adapter Manager for this Python adapter. It is not a universal requirement for every OrbitFabric adapter implementation language.
 
-## Validate before publishing
+## Validate before publication
 
-With the exact OrbitFabric Core baseline installed, validate the generated files through Core-owned readers and conformance surfaces.
+Release construction is accepted only after the same adapter baseline also passes:
 
-The CI release proof does exactly this before installation.
+```text
+Core contract conformance
+adapter unit and negative tests
+OpenOBSW / SRDB native compatibility
+OpenSVF native compatibility
+installed Adapter Manager lifecycle
+provider-neutral release proof
+Integration Coverage review
+```
 
-## Satisfy the Project Lock
+A release artifact is not considered mature merely because the wheel can be built.
 
-The generated Project Lock contains exact identity:
+## Project Lock semantics
+
+The generated Project Lock records exact desired state:
 
 ```text
 Source Coordinate
@@ -91,27 +126,58 @@ artifact SHA-256
 installation backend id
 ```
 
-The Template CI proves:
+The permanent release proof establishes:
 
 ```text
 initial state MISSING
     -> install exact release from lock
     -> MATCH
-    -> second identical request NOOP
+    -> second identical request NOOP / MATCH
+    -> verify
+    -> remove
 ```
 
 A nominal version match is not sufficient when byte identity differs.
 
 ## Publication is separate
 
-The Template does not require GitHub Releases, PyPI or a future OrbitFabric registry.
+The adapter does not require a provider-specific publication mechanism to define release identity.
 
-A provider-specific publication step may later resolve and transport the same exact release into the Core source-neutral `ResolvedAdapterRelease` seam.
+A later publication flow may use GitHub Releases or another provider to resolve and transport the same exact release into Core's source-neutral `ResolvedAdapterRelease` seam.
 
-Do not put provider URLs into Project Lock identity only because one provider happens to be used for publication.
+Provider URLs must not be smuggled into Project Lock identity simply because one transport was selected for publication.
+
+## Public release boundary
+
+The development baseline has already completed review of:
+
+```text
+Integration Coverage Matrix
+OpenOBSW exact compatibility evidence
+OpenSVF exact compatibility evidence
+runtime dependency declaration
+README and downstream setup completeness
+installed lifecycle evidence
+release / Project Lock mechanics
+active product cleanup
+```
+
+The remaining stable-release decisions are deliberately narrower:
+
+```text
+final Adapter Source Coordinate
+final publisher identity
+0.1.0 version transition
+exact stable wheel and Integration Package bytes
+final Release Descriptor and Project Lock for those bytes
+final CI and downstream-native proof on the stable baseline
+publication transport and retained release evidence
+```
+
+The repository should become public only after those exact release decisions are complete and the published documentation accurately describes the released compatibility envelope.
 
 ## Evidence
 
-The `release-proof` CI job retains an evidence artifact containing the exact Release Descriptor, Project Lock, SHA-256 summary and Adapter Manager reports used by the control.
+The `release-proof` CI job uploads an evidence artifact containing the exact Release Descriptor, Project Lock, SHA-256 summary and Adapter Manager reports used by the control.
 
-The evidence demonstrates the release that was tested. It does not create a new OrbitFabric contract.
+That evidence identifies the release bytes that were tested. It does not create a new OrbitFabric contract and it does not by itself establish downstream runtime execution.

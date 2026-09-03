@@ -1,19 +1,84 @@
 kind: orbitfabric.projection_profile
 profile_version: 0.1-candidate
+
 profile:
-  id: dummy-example
-  version: 0.1.0
-  description: Minimal profile used by the executable adapter template.
+  id: openobsw-opensvf-reference
+  version: 0.1.0-dev
+  description: Reference OpenOBSW/OpenSVF projection choices for the adapter productization baseline.
+
 integration:
-  id: orbitfabric-dummy
+  id: orbitfabric-openobsw-opensvf
   schema_version: 0.1-candidate
+
 settings:
-  target_prefix: DUMMY_
+  compatibility:
+    target_baseline: openobsw-0.7.0-obsw-srdb-0.1.0-reference
+  flight_contract:
+    c_prefix: OF_
+  pus:
+    tm_apid: 0x103
+    tc_apid: 0x010
+  obsw_srdb:
+    event_severity_map:
+      info: INFO
+      warning: MEDIUM
+      error: HIGH
+      critical: HIGH
+
 bindings:
-  - id: telemetry.battery_voltage
+  - id: tm.obc_bus_voltage
     intent: project
     sources:
       - domain: telemetry
-        id: eps.battery.voltage
+        id: eps.obc.bus_voltage_mv
     config:
-      target_name: BATTERY_VOLTAGE
+      flight_contract:
+        c_symbol: OF_TM_OBC_BUS_VOLTAGE_MV
+      obsw_srdb:
+        parameter_id: 0x6001
+
+  - id: packet.obc_hk
+    intent: project
+    sources:
+      - domain: packets
+        id: obc_hk
+    config:
+      flight_contract:
+        c_symbol: OF_HK_SET_OBC
+      obsw_srdb:
+        hk_set:
+          sid: 0x05
+          fields:
+            - domain: telemetry
+              id: eps.obc.bus_voltage_mv
+
+  - id: cmd.ping
+    intent: project
+    sources:
+      - domain: commands
+        id: obc.ping
+    config:
+      flight_contract:
+        c_symbol: OF_CMD_PING
+        command_id: 0x1701
+      pus:
+        service: 17
+        subtype: 1
+      expected_responses:
+        - service: 1
+          subtype: 1
+        - service: 17
+          subtype: 2
+        - service: 1
+          subtype: 7
+
+  - id: event.voltage_out_of_bounds
+    intent: project
+    sources:
+      - domain: events
+        id: eps.voltage_out_of_bounds
+    config:
+      flight_contract:
+        c_symbol: OF_EVENT_VOLTAGE_OUT_OF_BOUNDS
+      obsw_srdb:
+        event_id: 0x5001

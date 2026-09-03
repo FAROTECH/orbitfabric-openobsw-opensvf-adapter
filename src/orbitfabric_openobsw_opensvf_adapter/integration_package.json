@@ -1,0 +1,104 @@
+{
+  "kind": "orbitfabric.integration_package",
+  "manifest_version": "0.2-candidate",
+  "integration": {
+    "id": "orbitfabric-openobsw-opensvf"
+  },
+  "adapter": {
+    "id": "orbitfabric-openobsw-opensvf",
+    "version": "0.1.0.dev0"
+  },
+  "core_input_compatibility": {
+    "input_set_versions": [
+      "0.1-candidate"
+    ],
+    "relationship_families": [],
+    "surfaces": [
+      {
+        "role": "entity_index",
+        "kind": "orbitfabric.entity_index",
+        "format_versions": [
+          "0.1"
+        ]
+      },
+      {
+        "role": "lint_report",
+        "kind": "orbitfabric-lint",
+        "format_versions": [
+          "v1"
+        ]
+      },
+      {
+        "role": "mission_snapshot",
+        "kind": "orbitfabric.mission_snapshot",
+        "format_versions": [
+          "0.1-candidate"
+        ]
+      },
+      {
+        "role": "relationship_manifest",
+        "kind": "orbitfabric.relationship_manifest",
+        "format_versions": [
+          "0.1-candidate"
+        ]
+      }
+    ]
+  },
+  "profile_compatibility": {
+    "profile_versions": [
+      "0.1-candidate"
+    ]
+  },
+  "result_compatibility": {
+    "result_versions": [
+      "0.2-candidate"
+    ],
+    "default_result_version": "0.2-candidate"
+  },
+  "capabilities": [
+    "profile_validation",
+    "projection",
+    "artifact_generation",
+    "traceability"
+  ],
+  "operations": [
+    {
+      "id": "project",
+      "capabilities": [
+        "profile_validation",
+        "projection",
+        "artifact_generation",
+        "traceability"
+      ],
+      "input_requirements": []
+    },
+    {
+      "id": "verification_projection",
+      "capabilities": [
+        "profile_validation",
+        "projection",
+        "artifact_generation",
+        "traceability"
+      ],
+      "input_requirements": [
+        {
+          "role": "scenario"
+        }
+      ]
+    }
+  ],
+  "profile_schemas": [
+    {
+      "schema_version": "0.1-candidate",
+      "format": "json-schema-2020-12",
+      "path": "schemas/profile-0.1.schema.json",
+      "sha256": "5fb1cc0fbf22b691ed114cba6e2640dcd00703eb955c1659af78346e4647ca2c"
+    }
+  ],
+  "execution": {
+    "protocol": "orbitfabric.adapter_cli.v1",
+    "argv_prefix": [
+      "orbitfabric-openobsw-opensvf"
+    ]
+  }
+}

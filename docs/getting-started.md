@@ -1,213 +1,331 @@
 # Getting Started
 
-This guide starts from a fresh checkout and ends with a working local Dummy Adapter. It then shows how to initialize developer-owned identity and adapt the Template to a real downstream target.
+This guide covers the current development installation path and the complete handoff from OrbitFabric through the adapter into OpenOBSW/SRDB and OpenSVF-native assets.
 
-## Development baseline
+The repository is still private while the first product baseline is reviewed for coverage and publication readiness, but the operations documented here are implemented and exercised in CI.
 
-The Template CI currently tests against this exact OrbitFabric Core commit:
+## Validated development baselines
 
-```text
-4377d6656c62aa1dc19a7ed81d2de872b6b22ccd
-```
+| System | Baseline used by CI |
+| --- | --- |
+| OrbitFabric Core | `4377d6656c62aa1dc19a7ed81d2de872b6b22ccd` |
+| OpenOBSW | `44ceb71a016f0541ff7a0aa74191e13bafdb59c1` |
+| `obsw-srdb` | `0.1.0` at the validated OpenOBSW checkout |
+| OpenSVF | `667d3eadcb0bbd7814ac324b99946c4ed2f11f23`, installed package metadata `1.0.0` |
 
-The package version reported by that Core commit is still `1.2.0`, but the Adapter Manager surfaces used by this Template were promoted after the public `v1.2.0` release. Template development therefore pins the exact Core commit instead of implying that every `orbitfabric==1.2.0` installation contains the required lifecycle surface.
+The OrbitFabric Core checkout above still reports package version `1.2.0`, but it contains integration lifecycle seams promoted after the public v1.2.0 release. The adapter therefore pins the exact Core commit instead of implying that every `orbitfabric==1.2.0` installation has the same surface.
 
-This is a development and conformance baseline. It is not a generic runtime dependency requirement for every adapter.
+OpenSVF currently has a similar documentation/version observation in the other direction: its `main` checkout declares package version `1.0.0` while its README compatibility table still states `v0.8.0`. The adapter records exact commit evidence rather than resolving that upstream discrepancy on OpenSVF's behalf.
 
-## Local setup
+## 1. Local adapter setup
 
 ```bash
-python -m venv .venv
+python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip
 python -m pip install -e ".[dev]"
-python -m pip install "orbitfabric @ git+https://github.com/FAROTECH/orbitfabric.git@4377d6656c62aa1dc19a7ed81d2de872b6b22ccd"
 ```
 
-Run the safe local checks:
+The adapter package declares the exact Core development dependency it currently requires.
+
+Run the repository checks:
 
 ```bash
 ruff check .
-python tools/check_template_consistency.py
+python tools/check_adapter_consistency.py
 pytest -q
 python -m build --wheel
 mkdocs build --strict
 ```
 
-## Try the Dummy Adapter
+## 2. OrbitFabric-side setup
 
-The checked-in `examples/input-set/` directory is a coherent synthetic fixture. It follows the documented Core Integration Input Set envelope, canonical roles, surface digests and input-set fingerprint algorithm.
+The adapter consumes a coherent Core Integration Input Set and a version-controlled Projection Profile. It does not parse Mission Model YAML as a private semantic API.
 
-It exists to keep the first developer path small and reviewable.
-
-Project operation:
+Create the Core input set:
 
 ```bash
-orbitfabric-dummy-adapter run \
+orbitfabric export integration-input-set <mission-dir> \
+  --output-dir <core-input-dir>
+```
+
+A successful projection-capable input set contains:
+
+```text
+integration_input_manifest.json
+mission_snapshot.json
+entity_index.json
+relationship_manifest.json
+lint_report.json
+model_summary.json
+```
+
+The manifest is the coherence boundary. Passing individual files to the adapter or reconstructing semantic identities from file names is not supported.
+
+## 3. Adapter configuration
+
+Target-specific choices belong to the Projection Profile, not to Core.
+
+The Profile carries integration-owned information such as:
+
+- target numeric allocations;
+- target naming where it differs from Core identity;
+- PUS service/subtype and APID choices;
+- housekeeping SID and field projection choices;
+- event severity mapping toward the target;
+- expected protocol responses used by verification projection;
+- target compatibility selection.
+
+Core-owned values such as telemetry semantics, command arguments, event severity and packet membership are consumed from the Core Integration Input Set rather than duplicated as a second semantic authority.
+
+See [Projection Profile and Bindings](projection-profile-and-bindings.md).
+
+## 4. Run the project operation
+
+```bash
+orbitfabric-openobsw-opensvf run \
   --operation project \
-  --input-set-manifest examples/input-set/integration_input_manifest.json \
-  --profile examples/profile.yaml \
-  --output-dir /tmp/orbitfabric-dummy-project
+  --input-set-manifest <core-input-dir>/integration_input_manifest.json \
+  --profile <projection-profile.yaml> \
+  --output-dir <output-dir>
 ```
 
-Inspect:
+A successful run produces:
 
 ```text
-/tmp/orbitfabric-dummy-project/dummy_projection.json
-/tmp/orbitfabric-dummy-project/integration_result.json
+<output-dir>/
+  integration_result.json
+  flight_software/
+    mission_contract.h
+  obsw_srdb_contribution/
+    contribution_manifest.json
+    parameters.yaml
+    telecommands.yaml
+    hk_sets.yaml
+    events.yaml
 ```
 
-Scenario operation:
+The SRDB output is a contribution, not a replacement database. Its manifest declares:
+
+```text
+mode = additive
+complete_srdb = false
+```
+
+## 5. OpenOBSW / SRDB-side setup
+
+OpenOBSW remains the owner of flight runtime behavior and build integration. The adapter supplies a contract header and an additive SRDB contribution.
+
+### Required
+
+If you want to consume the generated SRDB contribution, use an `obsw-srdb` implementation compatible with the adapter's declared baseline. The current CI baseline is taken from:
+
+```text
+OpenOBSW commit 44ceb71a016f0541ff7a0aa74191e13bafdb59c1
+obsw-srdb 0.1.0
+```
+
+For a local compatibility exercise:
 
 ```bash
-orbitfabric-dummy-adapter run \
+git clone https://github.com/lipofefeyt/openobsw.git
+cd openobsw
+git checkout 44ceb71a016f0541ff7a0aa74191e13bafdb59c1
+python -m pip install -e ./srdb
+```
+
+The native composition model used by CI is:
+
+```python
+from pathlib import Path
+
+from obsw_srdb.composition import SRDBComposer, SRDBContributionLoader, SRDBMaterializer
+from obsw_srdb.loader import SRDBLoader
+
+base = SRDBLoader.load(Path("openobsw/srdb/data"))
+contribution = SRDBContributionLoader.load(Path("<output-dir>/obsw_srdb_contribution"))
+composed = SRDBComposer.compose(base, [contribution])
+SRDBMaterializer.write(composed, Path("<materialized-srdb>"))
+```
+
+This composition step is deliberately downstream-native. The adapter does not privately recreate SRDB composition semantics.
+
+The generated `mission_contract.h` is a contract-only C artifact. The consuming OpenOBSW integration decides where it belongs in the target build and implements the runtime behavior behind the declared symbols.
+
+### Recommended native checks
+
+The repository CI additionally proves that the materialized SRDB can drive the target code generators:
+
+```bash
+python -m obsw_srdb.codegen \
+  --data-dir <materialized-srdb> \
+  --output <srdb-generated.h>
+
+python -m obsw_srdb.codegen \
+  --data-dir <materialized-srdb> \
+  --xtce-output <mission.xtce>
+```
+
+The generated `mission_contract.h` is also compiled as C11 with `-Wall -Wextra -Werror` in the target compatibility control.
+
+### Optional
+
+Building or executing a specific OpenOBSW host, QEMU, Renode or hardware target is not required merely to generate or validate the integration contribution. Runtime evidence is a separate claim and must name the target that was actually exercised.
+
+## 6. Run verification projection
+
+The second operation consumes one explicit OrbitFabric Scenario resource:
+
+```bash
+orbitfabric-openobsw-opensvf run \
   --operation verification_projection \
-  --input-set-manifest examples/input-set/integration_input_manifest.json \
-  --profile examples/profile.yaml \
-  --operation-input scenario examples/scenario.yaml \
-  --output-dir /tmp/orbitfabric-dummy-verification
+  --input-set-manifest <core-input-dir>/integration_input_manifest.json \
+  --profile <projection-profile.yaml> \
+  --operation-input scenario <scenario.yaml> \
+  --output-dir <output-dir>
 ```
 
-Inspect:
+The operation writes a Verification Projection Plan and then materializes the executable subset into OpenSVF-native assets:
 
 ```text
-/tmp/orbitfabric-dummy-verification/dummy_verification_plan.json
-/tmp/orbitfabric-dummy-verification/integration_result.json
+<output-dir>/
+  integration_result.json
+  verification_projection/
+    verification_projection_plan.json
+    opensvf/
+      materialization_manifest.json
+      opensvf/
+        spacecraft.yaml
+      campaigns/
+        verification_projection_campaign.yaml
+      procedures/
+        verification_projection_procedure.py
 ```
 
-Each operation writes a Core-conformant Integration Result plus one synthetic target artifact.
+The generated Procedure uses native `Procedure` / `ProcedureContext` primitives, including `ctx.tc()` and `ctx.expect_tm()` where the Scenario can be projected into the currently supported subset.
 
-## Creation mode: initialize your adapter identity
+## 7. OpenSVF-side setup
 
-Run the initializer only on a fresh repository created from the Template.
+OpenSVF remains the owner of spacecraft validation, campaign loading, Procedure execution, SIL behavior and optional YAMCS integration.
 
-Example:
+### Required for native acceptance validation
 
-```bash
-python tools/initialize_adapter.py \
-  --adapter-name my-target \
-  --python-package orbitfabric_my_target_adapter \
-  --console-script orbitfabric-my-target
-```
-
-Optional overrides let you keep distribution, console and execution identities separate:
-
-```bash
-python tools/initialize_adapter.py \
-  --adapter-name my-target \
-  --python-package my_company_orbitfabric_adapter \
-  --console-script my-of-adapter \
-  --distribution-name my-company-orbitfabric-adapter \
-  --adapter-id my-company-orbitfabric
-```
-
-The initializer updates only developer-owned starting identity and packaging locations. It also resets `coverage/integration-coverage.md` to the unclaimed coverage template so a new adapter cannot inherit Dummy coverage claims accidentally.
-
-It does not decide:
+Use a compatible OpenSVF installation. The current CI pins:
 
 ```text
-official publisher identity
-official Source Coordinate
-release version policy
-target compatibility
-supported Core surface claims
-coverage claims
+commit 667d3eadcb0bbd7814ac324b99946c4ed2f11f23
+package metadata 1.0.0
 ```
 
-Those are maintainer decisions.
-
-The initializer refuses to run again after the Template package identity has already been replaced.
-
-After initialization, reinstall the editable package because its distribution and console entry point have changed:
+A matching local setup is:
 
 ```bash
-python -m pip install -e ".[dev]"
-python tools/check_template_consistency.py
-pytest -q
+git clone https://github.com/lipofefeyt/opensvf.git
+cd opensvf
+git checkout 667d3eadcb0bbd7814ac324b99946c4ed2f11f23
+python -m pip install -e .
 ```
 
-Then review the remaining Dummy teaching semantics and replace them deliberately rather than treating initialization as a complete adapter migration.
-
-## Build exact release identity locally
-
-Build a wheel:
+Run the OpenSVF-native pre-flight validator on the generated spacecraft asset:
 
 ```bash
-python -m build --wheel
+svf validate \
+  <output-dir>/verification_projection/opensvf/opensvf/spacecraft.yaml
 ```
 
-Then construct a local Release Descriptor and Project Lock:
+The CI baseline currently passes with zero warnings.
+
+Then verify that OpenSVF can load the generated campaign and discover the generated Procedure:
+
+```python
+from svf.campaign.campaign_runner import CampaignRunner
+
+runner = CampaignRunner.from_yaml(
+    "<output-dir>/verification_projection/opensvf/campaigns/verification_projection_campaign.yaml"
+)
+assert runner._procedures
+```
+
+This is a native downstream acceptance check. It loads the campaign through OpenSVF's own `CampaignRunner` and imports the generated `Procedure` subclass.
+
+### Recommended
+
+Treat the generated materialization as a reviewable handoff. Keep `materialization_manifest.json` with the campaign/procedure assets so the Verification Projection Plan digest, Scenario provenance and generated-file digests remain inspectable.
+
+### Optional runtime execution
+
+Executing the campaign is a separate step:
 
 ```bash
-python tools/build_release_bundle.py \
-  --wheel dist/orbitfabric_dummy_adapter-0.1.0.dev0-py3-none-any.whl \
-  --authority template.local \
-  --publisher orbitfabric \
-  --name dummy-adapter
+svf campaign \
+  <output-dir>/verification_projection/opensvf/campaigns/verification_projection_campaign.yaml \
+  --report
 ```
 
-This writes:
+A real campaign run requires the OpenOBSW binary and any physics/runtime resources expected by the selected OpenSVF spacecraft configuration. Do not interpret successful static/native acceptance as proof that a particular SIL, emulation or hardware target was executed.
+
+YAMCS is optional. It is relevant only when the selected OpenSVF workflow uses the YAMCS bridge/ground path.
+
+## 8. Adapter Manager lifecycle
+
+The adapter is already exercised as an installed distribution, not only from its source tree.
+
+The CI control proves:
 
 ```text
-generated/release/adapter-release.json
-generated/release/adapter-project-lock.json
-generated/release/SHA256SUMS
+build wheel
+  -> construct development release descriptor
+  -> Adapter Manager install
+  -> inventory
+  -> verify
+  -> project execution
+  -> Integration Result conformance
+  -> verification_projection execution
+  -> OpenSVF materialization
+  -> remove
+  -> empty inventory
 ```
 
-The provider-neutral release proof in CI validates these contract shapes and then exercises exact Project Lock installation.
-
-For an initialized real adapter, choose the release identity values deliberately. The local Template values above are examples only.
-
-## Strong CI controls
-
-The repository CI performs two controls beyond the normal local smoke path.
-
-### Installed lifecycle proof
-
-The installed lifecycle control uses a real Core-produced Integration Input Set, installs the exact wheel through Adapter Manager, removes the source package and installation inputs, then verifies and executes the installed adapter.
-
-The script deliberately deletes `src/` inside the ephemeral CI checkout to prove isolation. It is guarded against local execution and must not be used as a normal developer command.
-
-### Release proof
-
-The release proof builds exact release identity, checks initial Project Lock state, installs the exact release, proves `MATCH`, proves repeated installation is `NOOP`, verifies the adapter and removes it.
-
-The release-proof script is also a CI control. Use `tools/build_release_bundle.py` for local release construction.
-
-## Adapt the Template to a real target
-
-Initialization changes identity. It does not create target semantics.
-
-Use this order:
+The provider-neutral release proof additionally exercises:
 
 ```text
-1. define the adapter purpose
-2. analyze the Target Applicable Surface
-3. declare the initial adapter scope
-4. initialize developer-owned identity
-5. review version and release policy
-6. replace Integration Package Manifest compatibility declarations
-7. replace Projection Profile schema and example
-8. implement target-specific projection
-9. add positive and negative tests
-10. add target-native compatibility tests
-11. retain Integration Result and target evidence
-12. build exact release identity
-13. publish the Integration Coverage Matrix
+Project Lock check = MISSING
+  -> install from exact lock
+  -> MATCH
+  -> second install
+  -> NOOP / MATCH
+  -> verify
+  -> remove
 ```
 
-Read these pages next:
+The final public Source Coordinate and publisher identity are not frozen while the adapter remains private.
 
-- [Repository Anatomy](repository-anatomy.md)
+## 9. End-to-end validation model
+
+A release is not accepted because one side alone passes:
+
+```text
+Core contract conformance
+        +
+Adapter projection tests
+        +
+OpenOBSW / SRDB native compatibility
+        +
+OpenSVF native compatibility
+        +
+installed Adapter Manager lifecycle
+        +
+release / Project Lock proof
+```
+
+Historical PoC evidence also demonstrates representative live OpenOBSW/OpenSVF/YAMCS continuity. That evidence remains historical until a product release deliberately repeats or claims the corresponding runtime path.
+
+## Next reading
+
+- [Architecture and Ownership](architecture-and-ownership.md)
 - [Adapter Identity](adapter-identity.md)
 - [Projection Profile and Bindings](projection-profile-and-bindings.md)
 - [Testing and Conformance](testing-and-conformance.md)
 - [Evidence and Traceability](evidence-and-traceability.md)
 - [Integration Coverage](integration-coverage.md)
 - [Adapter Readiness Checklist](adapter-readiness-checklist.md)
-
-## Before calling an adapter mature
-
-A working projection is only the beginning.
-
-For an OrbitFabric-maintained general-purpose adapter, review the full repository anatomy and the full Target Applicable Surface before deciding maturity or version. A focused community adapter can intentionally declare a smaller scope, but that scope should remain explicit.
