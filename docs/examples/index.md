@@ -1,6 +1,6 @@
 # Examples
 
-The repository includes three runnable product examples built on the public adapter CLI and the same authored reference inputs.
+The repository includes three runnable product examples built on OrbitFabric Core, the installed Adapter Manager lifecycle and the same authored reference inputs.
 
 ```text
 OrbitFabric owns intent and contract.
@@ -10,6 +10,16 @@ Evidence retains provenance.
 ```
 
 The examples are deliberately separate from `tests/fixtures/`. Tests protect regression behavior; examples provide a user-facing path with explicit prerequisites, generated outputs, evidence and non-claims.
+
+## Recommended execution mode
+
+For consumer use, install the adapter through OrbitFabric Adapter Manager and export the resulting instance ID:
+
+```bash
+export ORBITFABRIC_ADAPTER_INSTANCE_ID=<instance-id>
+```
+
+The runners verify that instance and execute projection with `orbitfabric adapter execute`. A direct `orbitfabric-openobsw-opensvf` console-command path remains only as a contributor fallback when no Adapter Manager instance is selected.
 
 ## Shared inputs
 
@@ -32,8 +42,8 @@ Core Integration Input Sets and all downstream artifacts are regenerated when th
 
 | Example | Boundary crossed | Main evidence |
 | --- | --- | --- |
-| [Mission Contract Projection](mission-contract-projection.md) | OrbitFabric Core -> adapter | Integration Result, `mission_contract.h`, additive SRDB contribution |
-| [Scenario Verification Projection](scenario-verification-projection.md) | Scenario intent -> explicit target verification projection | Verification Projection Plan and OpenSVF materialization manifest |
+| [Mission Contract Projection](mission-contract-projection.md) | OrbitFabric Core -> installed adapter | Integration Result, `mission_contract.h`, additive SRDB contribution |
+| [Scenario Verification Projection](scenario-verification-projection.md) | Scenario intent -> installed adapter -> explicit target verification projection | Verification Projection Plan and OpenSVF materialization manifest |
 | [Closed-Loop Ping](closed-loop-ping.md) | Adapter outputs -> native OpenOBSW/OpenSVF runtime | Native OpenSVF CampaignReport JSON |
 
 Start with Example 01. Example 02 explains the verification semantic boundary. Example 03 adds Linux/WSL2 downstream prerequisites and proves the complete ping runtime slice.
