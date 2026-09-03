@@ -19,6 +19,7 @@ accepted main commit
     -> immutable publication
     -> published-asset verification
     -> final external greenfield acceptance
+    -> Architecture Lab evidence retention
 ```
 
 For `v0.1.0`, the authoritative publisher-owned binary/material set is:
@@ -32,12 +33,36 @@ release notes
 
 The Project Lock is consumer-project state and is not publisher release membership.
 
-## Before publication
+## v0.1.0 completed publication
 
-The exact source commit selected for release must pass:
+The first stable release completed the full publication sequence on **2026-09-03**.
+
+Final status:
 
 ```text
-Python 3.11 / 3.12 checks
+P1-P13: PASS
+immutable GitHub Release: PASS
+GitHub release attestation: PASS
+public Adapter Manager install: PASS
+external greenfield acceptance: PASS
+native OpenOBSW/OpenSVF closed loop: PASS
+```
+
+The completed evidence is retained in the [v0.1.0 Publication Readiness Audit](publication-readiness-audit.md) and in Architecture Lab evidence:
+
+```text
+evidence/adapter-management/
+046-openobsw-opensvf-v0.1.0-publication-and-greenfield-acceptance.md
+```
+
+The audit is now a closed release record rather than an active publication gate.
+
+## Before publication
+
+For future releases, the exact source commit selected for release must pass the release-relevant product controls, including:
+
+```text
+Python compatibility checks
 Ruff
 adapter consistency
 unit and negative tests
@@ -49,12 +74,12 @@ installed Adapter Manager lifecycle
 release / Project Lock proof
 publisher release-only proof
 product examples through Adapter Manager
-native closed-loop ping evidence
+native closed-loop evidence where claimed
 ```
 
 Do not publish from a pull-request synthetic merge ref or from an unreviewed working tree.
 
-The current operational gate is the [v0.1.0 Publication Readiness Audit](publication-readiness-audit.md).
+The detailed first-release sequence and reusable publication boundaries remain documented in [Release Lifecycle](release-lifecycle.md).
 
 ## v0.1.0 provenance boundary
 
@@ -71,13 +96,11 @@ accepted main commit
 
 `v0.1.0` does not introduce an adapter-authored signing scheme or an OrbitFabric-specific signature format.
 
-When GitHub Immutable Releases is enabled, GitHub automatically generates a cryptographically verifiable release attestation binding the release tag, commit SHA and published assets. That provider-generated attestation is part of the publication evidence and should be verified after release publication.
-
-Any future adapter-authored signing or additional trust mechanism remains a separate capability with its own implementation and verification evidence.
+GitHub's provider-generated release attestation is part of publication evidence. Any future adapter-authored signing or additional trust mechanism remains a separate capability with its own implementation and verification evidence.
 
 ## Release construction
 
-From the accepted source commit:
+From an accepted source commit:
 
 ```bash
 python -m build --wheel
@@ -92,22 +115,38 @@ python tools/build_release_bundle.py \
 
 This produces the publisher-owned Release Descriptor and checksum summary.
 
+For a future release version, use the corresponding accepted source and artifact version rather than reusing `v0.1.0` publication bytes.
+
 ## Publication and final acceptance
 
-GitHub Releases is the first concrete publication backend for this adapter. Publication is complete only after the exact tag, immutable release state, published asset digests and GitHub-generated release attestation are verified.
+GitHub Releases is the first concrete publication backend for this adapter. Publication is complete only after the exact tag, immutable release state, published asset digests and provider-generated release attestation are verified.
 
-The final acceptance is then repeated from a new consumer workspace using the published assets rather than a locally built adapter bundle:
+Final acceptance must then be repeated from a new consumer workspace using the published assets rather than a locally built adapter bundle:
 
 ```text
 install Core
-    -> obtain published v0.1.0 assets
+    -> obtain published release assets
     -> Adapter Manager install
     -> verify
     -> execute product examples
-    -> native closed-loop acceptance
+    -> native downstream acceptance where claimed
 ```
 
-That final run validates the real external-consumer distribution path.
+For `v0.1.0`, that path has been completed successfully.
+
+## Current consumer acquisition boundary
+
+The current Adapter Manager installation path still expects the user to obtain the Release Descriptor and artifact before installation.
+
+Today:
+
+```text
+GitHub Release
+    -> manual asset acquisition
+    -> Adapter Manager install
+```
+
+A future Adapter Catalog + Release Resolution layer may automate discovery, exact resolution and acquisition. That future layer must consume the existing immutable `v0.1.0` release rather than requiring it to be republished.
 
 ## Publisher references
 
