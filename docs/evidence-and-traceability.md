@@ -31,8 +31,6 @@ The generic fields and semantics are governed by Core. The adapter fills them wi
 
 For `project`, mapping records connect OrbitFabric source entities to downstream identities.
 
-Conceptually:
-
 ```text
 OrbitFabric source entity
     -> Projection Profile binding
@@ -41,7 +39,7 @@ OrbitFabric source entity
     -> Integration Result mapping + resolution records
 ```
 
-The generated artifacts currently include:
+Generated artifacts include:
 
 ```text
 flight_software/mission_contract.h
@@ -99,26 +97,28 @@ The materialization manifest retains the plan digest and generated-file digests 
 
 Generated artifact SHA-256 values are retained in the Integration Result and materialization evidence where applicable.
 
-Release evidence separately retains byte identity for:
+Release/lifecycle evidence retains exact byte identity for:
 
 ```text
 adapter wheel
 Integration Package Manifest
 Adapter Release Descriptor
-Adapter Project Lock
+Adapter Project Lock used by the lifecycle proof
 ```
 
-Release evidence and execution evidence answer different questions. A matching release artifact does not by itself prove that a downstream accepted the generated integration, and downstream acceptance does not replace exact release identity.
+Publisher-owned release membership is deliberately narrower:
+
+```text
+adapter wheel
+adapter-release.json
+SHA256SUMS
+```
+
+The Project Lock belongs to the consuming project and is not published as a canonical release asset.
 
 ## OpenOBSW / SRDB native evidence
 
-The `target-compatibility-openobsw` CI job produces a dedicated evidence bundle under:
-
-```text
-/tmp/orbitfabric-openobsw-target-compatibility/evidence
-```
-
-The control pins OpenOBSW commit:
+The `target-compatibility-openobsw` CI job pins OpenOBSW commit:
 
 ```text
 44ceb71a016f0541ff7a0aa74191e13bafdb59c1
@@ -126,19 +126,13 @@ The control pins OpenOBSW commit:
 
 and proves native additive SRDB composition, materialization, target code generation, XTCE generation and C11 compilation of the generated mission contract.
 
-This evidence is separate from Core conformance because it answers a different question:
+This evidence answers a target-specific question distinct from Core conformance:
 
-> Can the declared OpenOBSW/SRDB baseline consume the target-specific output produced by this adapter?
+> Can the declared OpenOBSW/SRDB baseline consume the output produced by this adapter?
 
 ## OpenSVF native evidence
 
-The `target-compatibility-opensvf` CI job produces a dedicated evidence bundle under:
-
-```text
-/tmp/orbitfabric-opensvf-target-compatibility/evidence
-```
-
-The control pins OpenSVF commit:
+The `target-compatibility-opensvf` CI job pins OpenSVF commit:
 
 ```text
 667d3eadcb0bbd7814ac324b99946c4ed2f11f23
@@ -160,13 +154,7 @@ CampaignRunner.from_yaml(generated_campaign)
 generated Procedure subclass discovery and identity validation
 ```
 
-The current validated run reports:
-
-```text
-[svf validate] OK - spacecraft.yaml (0 warning(s))
-```
-
-The job records this as downstream static/native acceptance. It does not claim that an OpenOBSW binary, FMU, DDS simulation or YAMCS runtime was exercised.
+The validated control reports zero OpenSVF validation warnings. It is downstream static/native acceptance, not a claim that an OpenOBSW binary, FMU, DDS simulation or YAMCS runtime was executed.
 
 ## Installed lifecycle evidence
 
@@ -193,7 +181,7 @@ remove
 empty final inventory
 ```
 
-## Release proof evidence
+## Stable release proof evidence
 
 Produced by:
 
@@ -201,7 +189,14 @@ Produced by:
 .github/scripts/release-proof.sh
 ```
 
-The provider-neutral release proof retains:
+The provider-neutral lifecycle proof uses:
+
+```text
+Source Coordinate  github.com/FAROTECH:orbitfabric/openobsw-opensvf
+release version    0.1.0
+```
+
+and retains:
 
 ```text
 wheel byte identity
@@ -215,13 +210,22 @@ verify result
 remove result
 ```
 
-This proves exact desired state and artifact identity without asserting a public registry or provider authority that has not yet been chosen.
+The same job separately retains publisher-only release material under its evidence bundle:
+
+```text
+publisher-release/
+    orbitfabric_openobsw_opensvf_adapter-0.1.0-py3-none-any.whl
+    adapter-release.json
+    SHA256SUMS
+```
+
+This proves both exact consumer resolution and the intended publisher release boundary without conflating them.
 
 ## Historical runtime evidence
 
 The preceding OpenOBSW/OpenSVF PoC contains stronger runtime experiments, including representative live TM/TC and optional YAMCS continuity.
 
-That evidence remains useful engineering history, but it is not silently promoted into the compatibility claims of this product repository. A future release that claims a live OpenSVF/OpenOBSW/YAMCS runtime path should repeat the relevant runtime control against the release's declared baselines.
+That evidence remains useful engineering history, but it is not silently promoted into the compatibility claims of `0.1.0`. A future release that claims a live OpenSVF/OpenOBSW/YAMCS runtime path should repeat the relevant runtime control against the release's declared baselines.
 
 ## Evidence rule
 
@@ -243,8 +247,11 @@ OpenSVF handoff
 installed distribution
     -> Adapter Manager lifecycle
 
-exact release
+exact consumer resolution
     -> Release Descriptor + Project Lock proof
+
+publisher release
+    -> exact wheel + Release Descriptor + SHA256SUMS
 
 runtime execution claim
     -> explicit runtime smoke or campaign evidence
