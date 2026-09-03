@@ -4,6 +4,26 @@ This repository separates publisher release construction, consumer project selec
 
 The operational publication gate for the first release is [v0.1.0 Publication Readiness Audit](publication-readiness-audit.md).
 
+## Current v0.1.0 state
+
+`v0.1.0` was published on **2026-09-03** as an immutable GitHub Release.
+
+Post-publication verification has confirmed:
+
+```text
+exact v0.1.0 tag
+immutable GitHub Release
+published asset SHA-256 identities
+GitHub-generated release attestation
+Adapter Manager install / inspect / verify from public release assets
+Examples 01 and 02 from the published adapter
+native OpenOBSW/OpenSVF Closed-Loop Ping acceptance
+```
+
+The public greenfield run completed the native OpenSVF campaign with a 100% pass rate. Publication gates P1-P12 are therefore complete. P13 remains the final Architecture Lab evidence-retention step.
+
+The current consumer installation path is still explicit-source: users download the published Release Descriptor and wheel before calling Adapter Manager. Future catalog/release-resolution support may automate discovery and acquisition, but must consume the existing immutable release rather than redefine it.
+
 ## Stable source identity
 
 The `0.1.0` source baseline declares:
@@ -17,7 +37,7 @@ classification:   OrbitFabric-maintained stable adapter
 
 Its semantic scope is the reviewed first-release scope recorded by the Integration Coverage Matrix. Source acceptance and publication of immutable release assets remain separate states.
 
-The repository is already public. The presence of `version = 0.1.0` in source does not by itself establish that a public `v0.1.0` release has been published.
+The repository is public. The source version alone is not release identity: `v0.1.0` is established by the exact tag, immutable GitHub Release and published asset identities.
 
 ## Three distinct objects
 
@@ -194,7 +214,7 @@ Any future adapter-authored signing or additional trust mechanism remains a sepa
 
 GitHub Releases is the first concrete publication backend for this adapter.
 
-For public `v0.1.0` publication:
+The `v0.1.0` publication and acceptance sequence is:
 
 ```text
 1. merge the exact green publication-preparation candidate
@@ -215,6 +235,8 @@ For public `v0.1.0` publication:
 16. repeat the external greenfield consumer acceptance from published assets
 17. retain final Architecture Lab publication evidence
 ```
+
+Steps 1-16 are complete for `v0.1.0`. Step 17 is tracked as P13 in the publication readiness audit.
 
 All normative assets must be attached and verified before immutable publication because the release must not rely on post-publication mutation.
 
@@ -244,20 +266,21 @@ The exact tag-to-commit association, published asset digests and GitHub-generate
 
 ## External greenfield acceptance
 
-Publication is not considered fully accepted until a new consumer workspace proves the published distribution path.
+The `v0.1.0` external greenfield acceptance is complete.
 
-The final acceptance must not rebuild or source-install the adapter.
+The final acceptance did not rebuild or source-install the adapter. It followed the published distribution path:
 
 ```text
 install OrbitFabric Core
-    -> obtain public v0.1.0 release assets
+    -> download public v0.1.0 release assets
+    -> verify SHA256SUMS
     -> Adapter Manager install
     -> inspect / verify
     -> execute product examples
     -> native closed-loop acceptance
 ```
 
-The adapter repository may be cloned only to obtain product example source inputs if necessary. It must not provide the adapter installation bytes in this final exercise.
+The adapter repository source archive was used only to obtain product example inputs and runner scripts. The adapter installation bytes came from the public immutable GitHub Release.
 
 ## Evidence
 
@@ -280,7 +303,7 @@ adapter-release.json
 release-only SHA256SUMS
 ```
 
-After public publication, Architecture Lab evidence additionally retains:
+After final P13 closure, Architecture Lab evidence retains:
 
 ```text
 accepted source commit
