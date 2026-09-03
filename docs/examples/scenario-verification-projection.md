@@ -6,15 +6,21 @@ Example 02 demonstrates the semantic boundary owned by `verification_projection`
 OrbitFabric Scenario
     + Core Integration Input Set
     + Projection Profile
+        -> Adapter Manager installed instance
         -> Verification Projection Plan
         -> OpenSVF Procedure / Campaign / spacecraft materialization
 ```
 
-Run:
+For consumer execution, select an adapter installed through OrbitFabric Adapter Manager:
 
 ```bash
+export ORBITFABRIC_ADAPTER_INSTANCE_ID=<instance-id>
 bash examples/02-scenario-verification-projection/run.sh
 ```
+
+The runner verifies the selected instance and executes `verification_projection` through `orbitfabric adapter execute`. The Scenario is supplied in the manager-facing `scenario=<path>` form and Core normalizes that operation input for the adapter CLI protocol.
+
+When no `ORBITFABRIC_ADAPTER_INSTANCE_ID` is set, a development checkout may use the `orbitfabric-openobsw-opensvf` console command as a contributor fallback.
 
 The reference Scenario contains one `obc.ping` command plus Core host-side expectations. The command is projectable because the Profile contains an explicit no-argument PUS mapping. The generated plan resolves:
 
