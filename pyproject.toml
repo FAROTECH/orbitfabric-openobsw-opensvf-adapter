@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "orbitfabric-openobsw-opensvf-adapter"
-version = "0.1.0.dev0"
+version = "0.1.0"
 description = "OrbitFabric adapter for projecting mission contracts and verification intent into OpenOBSW/OpenSVF integration artifacts."
 readme = "README.md"
 requires-python = ">=3.11"
