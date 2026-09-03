@@ -6,19 +6,23 @@ Example 01 is the shortest runnable path through the product adapter.
 reference Mission Model
     -> Core Integration Input Set
     -> Projection Profile
-    -> adapter project operation
+    -> Adapter Manager installed instance
+    -> project operation
     -> OpenOBSW-facing contract + additive SRDB contribution
 ```
 
-Run from a development checkout:
+For consumer execution, install the adapter through OrbitFabric Adapter Manager and select the installed instance:
 
 ```bash
+export ORBITFABRIC_ADAPTER_INSTANCE_ID=<instance-id>
 bash examples/01-mission-contract-projection/run.sh
 ```
 
-The script uses the OrbitFabric CLI to generate the Core Integration Input Set and the public `orbitfabric-openobsw-opensvf` console command to execute `project`.
+The script uses the OrbitFabric CLI to generate the Core Integration Input Set, verifies the selected adapter instance, then executes `project` through `orbitfabric adapter execute`.
 
-It validates the representative telemetry, housekeeping, command and event mappings carried by `examples/profile.yaml`, including:
+When no `ORBITFABRIC_ADAPTER_INSTANCE_ID` is set, a development checkout may use the public `orbitfabric-openobsw-opensvf` console command as a contributor fallback.
+
+The example validates the representative telemetry, housekeeping, command and event mappings carried by `examples/profile.yaml`, including:
 
 ```text
 eps.obc.bus_voltage_mv -> OF_TM_OBC_BUS_VOLTAGE_MV -> parameter 0x6001
