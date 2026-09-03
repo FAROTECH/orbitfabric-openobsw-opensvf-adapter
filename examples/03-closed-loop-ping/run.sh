@@ -16,6 +16,7 @@ evidence_dir="$work/native-evidence"
 mission="$root/examples/reference/mission"
 profile="$root/examples/profile.yaml"
 scenario="$root/examples/reference/scenarios/ping-verification.yaml"
+adapter_instance="${ORBITFABRIC_ADAPTER_INSTANCE_ID:-}"
 
 if [[ "$(uname -s)" != "Linux" ]]; then
   echo "Example 03 requires Linux or WSL2 for the validated native downstream runtime." >&2
@@ -27,12 +28,28 @@ fi
 openobsw="$(cd "$OPENOBSW_ROOT" && pwd)"
 opensvf="$(cd "$OPENSVF_ROOT" && pwd)"
 
-for command_name in orbitfabric orbitfabric-openobsw-opensvf python git cmake ninja svf; do
+for command_name in orbitfabric python git cmake ninja svf; do
   if ! command -v "$command_name" >/dev/null 2>&1; then
     echo "Missing required command: $command_name" >&2
     exit 2
   fi
 done
+
+if [[ -n "$adapter_instance" ]]; then
+  if ! orbitfabric adapter inspect "$adapter_instance" --json >/dev/null 2>&1; then
+    echo "Adapter Manager instance is not installed: $adapter_instance" >&2
+    exit 2
+  fi
+  if ! orbitfabric adapter verify "$adapter_instance" >/dev/null; then
+    echo "Adapter Manager verification failed: $adapter_instance" >&2
+    exit 2
+  fi
+else
+  if ! command -v orbitfabric-openobsw-opensvf >/dev/null 2>&1; then
+    echo "Set ORBITFABRIC_ADAPTER_INSTANCE_ID to an installed Adapter Manager instance, or install the adapter console command for contributor mode." >&2
+    exit 2
+  fi
+fi
 
 actual_openobsw="$(git -C "$openobsw" rev-parse HEAD)"
 actual_opensvf="$(git -C "$opensvf" rev-parse HEAD)"
@@ -76,18 +93,33 @@ orbitfabric export integration-input-set \
   "$mission" \
   --output-dir "$core_input"
 
-orbitfabric-openobsw-opensvf run \
-  --operation project \
-  --input-set-manifest "$core_input/integration_input_manifest.json" \
-  --profile "$profile" \
-  --output-dir "$project_output"
+if [[ -n "$adapter_instance" ]]; then
+  orbitfabric adapter execute "$adapter_instance" \
+    --operation project \
+    --input-set-manifest "$core_input/integration_input_manifest.json" \
+    --profile "$profile" \
+    --output-dir "$project_output"
 
-orbitfabric-openobsw-opensvf run \
-  --operation verification_projection \
-  --input-set-manifest "$core_input/integration_input_manifest.json" \
-  --profile "$profile" \
-  --operation-input scenario "$scenario" \
-  --output-dir "$verification_output"
+  orbitfabric adapter execute "$adapter_instance" \
+    --operation verification_projection \
+    --input-set-manifest "$core_input/integration_input_manifest.json" \
+    --profile "$profile" \
+    --operation-input "scenario=$scenario" \
+    --output-dir "$verification_output"
+else
+  orbitfabric-openobsw-opensvf run \
+    --operation project \
+    --input-set-manifest "$core_input/integration_input_manifest.json" \
+    --profile "$profile" \
+    --output-dir "$project_output"
+
+  orbitfabric-openobsw-opensvf run \
+    --operation verification_projection \
+    --input-set-manifest "$core_input/integration_input_manifest.json" \
+    --profile "$profile" \
+    --operation-input scenario "$scenario" \
+    --output-dir "$verification_output"
+fi
 
 PROJECT_OUTPUT="$project_output" VERIFICATION_OUTPUT="$verification_output" python - <<'PY'
 from __future__ import annotations
