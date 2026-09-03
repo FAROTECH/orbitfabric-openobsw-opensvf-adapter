@@ -23,6 +23,9 @@ installed lifecycle
 
 release proof
     do exact Release Descriptor and Project Lock bytes identify the tested release?
+
+publisher release proof
+    are the publisher-owned stable release assets exact and free of consumer Project Lock state?
 ```
 
 These layers are intentionally independent. A downstream-native failure is not repaired by weakening Core conformance, and a Core contract failure is not hidden behind a successful target build.
@@ -60,13 +63,13 @@ Integration Result validation
 release bundle construction
 ```
 
-The project operation exercises real OpenOBSW/SRDB mappings rather than a synthetic Dummy target.
+The project operation exercises real OpenOBSW/SRDB mappings rather than a synthetic placeholder target.
 
 ## Negative controls
 
 Unsupported or inconsistent inputs must fail closed.
 
-Current and inherited generic controls include cases such as:
+Current controls include cases such as:
 
 ```text
 tampered Core Integration Input Set fingerprint
@@ -84,7 +87,7 @@ Examples include unsupported telemetry type mappings, occupied target allocation
 
 Core owns the generic contracts. The adapter uses Core-owned validators for generic Integration Package Manifest, Integration Result, Adapter Release Descriptor and Adapter Project Lock behavior instead of copying or privately redefining those schemas.
 
-The current exact Core development baseline is:
+The exact Core conformance baseline is:
 
 ```text
 4377d6656c62aa1dc19a7ed81d2de872b6b22ccd
@@ -147,7 +150,7 @@ The control:
 6. verifies OpenSVF discovers the generated `Procedure` subclass;
 7. verifies the Procedure identity and title retain Scenario provenance.
 
-The current pre-flight control passes with zero OpenSVF validation warnings.
+The pre-flight control passes with zero OpenSVF validation warnings.
 
 This job intentionally does not call `CampaignRunner.run()`. Full campaign execution requires the selected OpenOBSW binary and any runtime/physics dependencies of the chosen OpenSVF configuration, so that is a separate runtime evidence claim.
 
@@ -173,7 +176,14 @@ This is deliberately stronger than an editable install or a shared development e
 
 ## Release proof
 
-The provider-neutral release proof verifies:
+The provider-neutral release proof verifies the stable identity:
+
+```text
+github.com/FAROTECH:orbitfabric/openobsw-opensvf
+release 0.1.0
+```
+
+through:
 
 ```text
 build exact wheel
@@ -188,6 +198,16 @@ build exact wheel
 ```
 
 This proves exact desired state, not only a matching package version string.
+
+The same job also constructs publisher-only material:
+
+```text
+wheel
+adapter-release.json
+SHA256SUMS
+```
+
+and verifies that no canonical `adapter-project-lock.json` is emitted in that mode.
 
 ## Debugging by layer
 
