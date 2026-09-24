@@ -26,14 +26,14 @@ The public greenfield run completed the native OpenSVF campaign with a 100% pass
 
 The current consumer installation path is still explicit-source: users download the published Release Descriptor and wheel before calling Adapter Manager. Future catalog/release-resolution support may automate discovery and acquisition, but must consume the existing immutable release rather than redefine it.
 
-## Stable source identity
+## Historical stable source identity
 
 The `0.1.0` source baseline declares:
 
 ```text
 version:          0.1.0
 logical key:      orbitfabric/openobsw-opensvf
-source authority: github.com/OrbitFabric
+source authority: github.com/FAROTECH
 classification:   OrbitFabric-maintained stable adapter
 ```
 
@@ -67,7 +67,7 @@ python -m build --wheel
 Expected artifact name:
 
 ```text
-orbitfabric_openobsw_opensvf_adapter-0.1.0-py3-none-any.whl
+orbitfabric_openobsw_opensvf_adapter-0.1.1-py3-none-any.whl
 ```
 
 The wheel owns the namespaced package:
@@ -84,7 +84,7 @@ For publication, use:
 
 ```bash
 python tools/build_release_bundle.py \
-  --wheel dist/orbitfabric_openobsw_opensvf_adapter-0.1.0-py3-none-any.whl \
+  --wheel dist/orbitfabric_openobsw_opensvf_adapter-0.1.1-py3-none-any.whl \
   --authority github.com/OrbitFabric \
   --publisher orbitfabric \
   --name openobsw-opensvf \
@@ -102,7 +102,7 @@ The stable publisher release membership is therefore:
 
 ```text
 v0.1.0 tag
-orbitfabric_openobsw_opensvf_adapter-0.1.0-py3-none-any.whl
+orbitfabric_openobsw_opensvf_adapter-0.1.1-py3-none-any.whl
 adapter-release.json
 SHA256SUMS
 release notes
