@@ -1,5 +1,7 @@
 # Adapter Identity
 
+Current worktree: unpublished `0.1.1` post-migration candidate. See [release notes](releases/0.1.1.md). Prior release versions below describe historical baselines; new descriptors use `github.com/OrbitFabric`.
+
 The OpenOBSW/OpenSVF adapter uses several related identities. They are intentionally kept distinct because package identity, execution identity, logical product identity and release-source identity serve different contracts.
 
 ## Repository and package identity
@@ -57,7 +59,7 @@ This identity is intended to survive ordinary changes in repository location or 
 The stable release candidate is:
 
 ```text
-0.1.0
+0.1.1
 ```
 
 The version is aligned between `pyproject.toml`, the Integration Package Manifest and the runtime adapter identity used in Integration Results.
@@ -69,7 +71,7 @@ The earlier PoC baseline and `0.1.0.dev0` productization baseline remain histori
 The first stable release source uses:
 
 ```text
-authority = github.com/FAROTECH
+authority = github.com/OrbitFabric
 publisher = orbitfabric
 name      = openobsw-opensvf
 ```
@@ -77,7 +79,7 @@ name      = openobsw-opensvf
 Rendered for the current explicit-source Adapter Manager CLI:
 
 ```text
-github.com/FAROTECH:orbitfabric/openobsw-opensvf
+github.com/OrbitFabric:orbitfabric/openobsw-opensvf
 ```
 
 The source authority identifies the concrete resolution context for the first release.
@@ -85,7 +87,7 @@ The source authority identifies the concrete resolution context for the first re
 It does not mean:
 
 ```text
-FAROTECH = logical publisher
+orbitfabric = logical publisher
 GitHub repository slug = logical adapter key
 GitHub = universal OrbitFabric registry
 ```
@@ -133,10 +135,10 @@ examples/profile.yaml
     integration.id
 
 release construction
-    authority = github.com/FAROTECH
+    authority = github.com/OrbitFabric
     publisher = orbitfabric
     name = openobsw-opensvf
-    release_version = 0.1.0
+    release_version = 0.1.1
 ```
 
 Run:

@@ -1,8 +1,8 @@
 site_name: OrbitFabric OpenOBSW/OpenSVF Adapter
 site_description: Integration guide, compatibility evidence, coverage and release documentation for the OrbitFabric OpenOBSW/OpenSVF adapter.
-site_url: !ENV [ORBITFABRIC_SITE_URL, 'https://farotech.github.io/orbitfabric-openobsw-opensvf-adapter/']
-repo_url: !ENV [ORBITFABRIC_REPO_URL, 'https://github.com/FAROTECH/orbitfabric-openobsw-opensvf-adapter']
-repo_name: !ENV [ORBITFABRIC_REPO_NAME, 'FAROTECH/orbitfabric-openobsw-opensvf-adapter']
+site_url: !ENV [ORBITFABRIC_SITE_URL, 'https://orbitfabric.github.io/orbitfabric-openobsw-opensvf-adapter/']
+repo_url: !ENV [ORBITFABRIC_REPO_URL, 'https://github.com/OrbitFabric/orbitfabric-openobsw-opensvf-adapter']
+repo_name: !ENV [ORBITFABRIC_REPO_NAME, 'OrbitFabric/orbitfabric-openobsw-opensvf-adapter']
 edit_uri: ""
 
 docs_dir: docs

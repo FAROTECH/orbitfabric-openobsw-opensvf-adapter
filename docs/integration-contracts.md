@@ -161,7 +161,7 @@ The equality of adapter and integration ids is a product choice. Release-source 
 
 ```text
 logical key       orbitfabric/openobsw-opensvf
-source authority  github.com/FAROTECH
+source authority  github.com/OrbitFabric
 ```
 
 See [Adapter Identity](adapter-identity.md).

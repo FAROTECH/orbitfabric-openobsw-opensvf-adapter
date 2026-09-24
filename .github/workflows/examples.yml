@@ -45,14 +45,14 @@ jobs:
         run: |
           python -m build --wheel
           python tools/build_release_bundle.py \
-            --wheel dist/orbitfabric_openobsw_opensvf_adapter-0.1.0-py3-none-any.whl \
-            --authority github.com/FAROTECH \
+            --wheel dist/orbitfabric_openobsw_opensvf_adapter-0.1.1-py3-none-any.whl \
+            --authority github.com/OrbitFabric \
             --publisher orbitfabric \
             --name openobsw-opensvf \
             --release-only
           orbitfabric adapter install \
             generated/release/adapter-release.json \
-            --artifact dist/orbitfabric_openobsw_opensvf_adapter-0.1.0-py3-none-any.whl
+            --artifact dist/orbitfabric_openobsw_opensvf_adapter-0.1.1-py3-none-any.whl
           INSTANCE_ID="$(orbitfabric adapter list --json | python -c 'import json, sys; data = json.load(sys.stdin); assert len(data) == 1; print(data[0]["instance_id"])')"
           orbitfabric adapter verify "$INSTANCE_ID"
           echo "ORBITFABRIC_ADAPTER_INSTANCE_ID=$INSTANCE_ID" >> "$GITHUB_ENV"
@@ -106,14 +106,14 @@ jobs:
         run: |
           python -m build --wheel
           python tools/build_release_bundle.py \
-            --wheel dist/orbitfabric_openobsw_opensvf_adapter-0.1.0-py3-none-any.whl \
-            --authority github.com/FAROTECH \
+            --wheel dist/orbitfabric_openobsw_opensvf_adapter-0.1.1-py3-none-any.whl \
+            --authority github.com/OrbitFabric \
             --publisher orbitfabric \
             --name openobsw-opensvf \
             --release-only
           orbitfabric adapter install \
             generated/release/adapter-release.json \
-            --artifact dist/orbitfabric_openobsw_opensvf_adapter-0.1.0-py3-none-any.whl
+            --artifact dist/orbitfabric_openobsw_opensvf_adapter-0.1.1-py3-none-any.whl
           INSTANCE_ID="$(orbitfabric adapter list --json | python -c 'import json, sys; data = json.load(sys.stdin); assert len(data) == 1; print(data[0]["instance_id"])')"
           orbitfabric adapter verify "$INSTANCE_ID"
           echo "ORBITFABRIC_ADAPTER_INSTANCE_ID=$INSTANCE_ID" >> "$GITHUB_ENV"

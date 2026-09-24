@@ -17,10 +17,10 @@ adapter.id       orbitfabric-openobsw-opensvf
 integration.id   orbitfabric-openobsw-opensvf
 version          0.1.0
 logical key      orbitfabric/openobsw-opensvf
-source authority github.com/FAROTECH
+source authority github.com/OrbitFabric
 ```
 
-The logical publisher is `orbitfabric`. The first concrete source authority is `github.com/FAROTECH`.
+The logical publisher is `orbitfabric`. The first concrete source authority is `github.com/OrbitFabric`.
 
 GitHub hosting is therefore the first release-source context, not the adapter logical identity. The adapter is classified as OrbitFabric-maintained stable. It is not yet described as registry-classified official because generic official publisher and registry governance are not promoted.
 
@@ -182,7 +182,7 @@ remove
 The stable release proof must use:
 
 ```text
-authority  github.com/FAROTECH
+authority  github.com/OrbitFabric
 publisher  orbitfabric
 name       openobsw-opensvf
 version    0.1.0

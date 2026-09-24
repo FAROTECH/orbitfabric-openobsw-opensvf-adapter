@@ -27,7 +27,7 @@ test -n "$wheel"
 
 python tools/build_release_bundle.py \
   --wheel "$wheel" \
-  --authority github.com/FAROTECH \
+  --authority github.com/OrbitFabric \
   --publisher orbitfabric \
   --name openobsw-opensvf \
   --output-dir "$release_dir"
@@ -41,11 +41,11 @@ from orbitfabric.conformance.adapter_release import load_release_descriptor
 
 release = load_release_descriptor("$descriptor")
 assert release["source_coordinate"] == {
-    "authority": "github.com/FAROTECH",
+    "authority": "github.com/OrbitFabric",
     "publisher": "orbitfabric",
     "name": "openobsw-opensvf",
 }
-assert release["release_version"] == "0.1.0"
+assert release["release_version"] == "0.1.1"
 ProjectLockService().load("$lock")
 PY
 
@@ -55,7 +55,7 @@ cp "$release_dir/SHA256SUMS" "$evidence/SHA256SUMS"
 
 python tools/build_release_bundle.py \
   --wheel "$wheel" \
-  --authority github.com/FAROTECH \
+  --authority github.com/OrbitFabric \
   --publisher orbitfabric \
   --name openobsw-opensvf \
   --release-only \
@@ -73,11 +73,11 @@ from orbitfabric.conformance.adapter_release import load_release_descriptor
 release_dir = Path("$publisher_release_dir")
 release = load_release_descriptor(release_dir / "adapter-release.json")
 assert release["source_coordinate"] == {
-    "authority": "github.com/FAROTECH",
+    "authority": "github.com/OrbitFabric",
     "publisher": "orbitfabric",
     "name": "openobsw-opensvf",
 }
-assert release["release_version"] == "0.1.0"
+assert release["release_version"] == "0.1.1"
 
 lines = (release_dir / "SHA256SUMS").read_text(encoding="utf-8").splitlines()
 assert len(lines) == 2
@@ -113,7 +113,7 @@ assert report["adapters"][0]["status"] == "MISSING"
 PY
 
 orbitfabric adapter lock install "$lock" \
-  --source-coordinate "github.com/FAROTECH:orbitfabric/openobsw-opensvf" \
+  --source-coordinate "github.com/OrbitFabric:orbitfabric/openobsw-opensvf" \
   --release-descriptor "$descriptor" \
   --artifact "$wheel" \
   --json | tee "$evidence/install-from-lock.json"
@@ -148,7 +148,7 @@ assert report["adapters"][0]["status"] == "MATCH"
 PY
 
 orbitfabric adapter lock install "$lock" \
-  --source-coordinate "github.com/FAROTECH:orbitfabric/openobsw-opensvf" \
+  --source-coordinate "github.com/OrbitFabric:orbitfabric/openobsw-opensvf" \
   --release-descriptor "$descriptor" \
   --artifact "$wheel" \
   --json | tee "$evidence/second-install-from-lock.json"

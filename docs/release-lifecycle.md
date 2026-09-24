@@ -1,5 +1,7 @@
 # Release Lifecycle
 
+Current worktree: unpublished `0.1.1` post-migration candidate. See [release notes](releases/0.1.1.md). Prior release versions below describe historical baselines; new descriptors use `github.com/OrbitFabric`.
+
 This repository separates publisher release construction, consumer project selection and publication transport.
 
 Reusable publication guidance is maintained here and in the [Maintainer / Publisher Guide](publishing.md).
@@ -31,7 +33,7 @@ The `0.1.0` source baseline declares:
 ```text
 version:          0.1.0
 logical key:      orbitfabric/openobsw-opensvf
-source authority: github.com/FAROTECH
+source authority: github.com/OrbitFabric
 classification:   OrbitFabric-maintained stable adapter
 ```
 
@@ -83,7 +85,7 @@ For publication, use:
 ```bash
 python tools/build_release_bundle.py \
   --wheel dist/orbitfabric_openobsw_opensvf_adapter-0.1.0-py3-none-any.whl \
-  --authority github.com/FAROTECH \
+  --authority github.com/OrbitFabric \
   --publisher orbitfabric \
   --name openobsw-opensvf \
   --release-only
@@ -150,7 +152,7 @@ The lock used by CI is engineering evidence for a consumer selection. It is not 
 The first stable release uses:
 
 ```text
-authority = github.com/FAROTECH
+authority = github.com/OrbitFabric
 publisher = orbitfabric
 name      = openobsw-opensvf
 ```
@@ -158,10 +160,10 @@ name      = openobsw-opensvf
 Rendered for the current Adapter Manager explicit-source CLI:
 
 ```text
-github.com/FAROTECH:orbitfabric/openobsw-opensvf
+github.com/OrbitFabric:orbitfabric/openobsw-opensvf
 ```
 
-The authority identifies the first concrete source context. It does not make `FAROTECH` the logical publisher and does not define GitHub as the universal OrbitFabric registry.
+The authority identifies the first concrete source context. It does not make `OrbitFabric` the logical publisher and does not define GitHub as the universal OrbitFabric registry.
 
 A future source authority may change without changing the logical product key:
 

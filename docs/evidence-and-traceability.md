@@ -192,7 +192,7 @@ Produced by:
 The provider-neutral lifecycle proof uses:
 
 ```text
-Source Coordinate  github.com/FAROTECH:orbitfabric/openobsw-opensvf
+Source Coordinate  github.com/OrbitFabric:orbitfabric/openobsw-opensvf
 release version    0.1.0
 ```
 

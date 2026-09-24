@@ -5,7 +5,7 @@ from typing import Any
 
 INTEGRATION_ID = "orbitfabric-openobsw-opensvf"
 ADAPTER_ID = INTEGRATION_ID
-ADAPTER_VERSION = "0.1.0"
+ADAPTER_VERSION = "0.1.1"
 RESULT_VERSION = "0.2-candidate"
 PROFILE_VERSION = "0.1-candidate"
 PROFILE_SCHEMA_VERSION = "0.1-candidate"

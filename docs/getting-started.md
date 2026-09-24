@@ -1,5 +1,7 @@
 # Getting Started
 
+Current worktree: unpublished `0.1.1` post-migration candidate. See [release notes](releases/0.1.1.md). Prior release versions below describe historical baselines; new descriptors use `github.com/OrbitFabric`.
+
 This guide is for **users of the adapter**.
 
 It covers the consumer path:
@@ -50,7 +52,7 @@ export ORBITFABRIC_STATE_DIR="$PWD/.orbitfabric-state"
 
 ```bash
 python -m pip install \
-  "git+https://github.com/FAROTECH/orbitfabric.git@4377d6656c62aa1dc19a7ed81d2de872b6b22ccd"
+  "git+https://github.com/OrbitFabric/orbitfabric.git@4377d6656c62aa1dc19a7ed81d2de872b6b22ccd"
 ```
 
 Check that Core and Adapter Manager are available:
@@ -72,7 +74,7 @@ adapter-release.json
 SHA256SUMS
 ```
 
-Download those exact files from the [GitHub Release](https://github.com/FAROTECH/orbitfabric-openobsw-opensvf-adapter/releases/tag/v0.1.0). Do not rebuild them locally for normal consumer use.
+Download those exact files from the [GitHub Release](https://github.com/OrbitFabric/orbitfabric-openobsw-opensvf-adapter/releases/tag/v0.1.0). Do not rebuild them locally for normal consumer use.
 
 Keep the three files together in a local release directory, for example:
 

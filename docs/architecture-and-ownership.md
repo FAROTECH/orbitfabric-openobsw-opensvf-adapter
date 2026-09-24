@@ -131,7 +131,7 @@ release source
 For `0.1.0`, the first concrete source authority is:
 
 ```text
-github.com/FAROTECH
+github.com/OrbitFabric
 ```
 
 while the logical adapter key is:

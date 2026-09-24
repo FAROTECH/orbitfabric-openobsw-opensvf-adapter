@@ -9,7 +9,7 @@ from pathlib import Path
 from orbitfabric.adapter_manager import ProjectLockService
 from orbitfabric.conformance.adapter_release import load_release_descriptor
 
-AUTHORITY = "github.com/FAROTECH"
+AUTHORITY = "github.com/OrbitFabric"
 PUBLISHER = "orbitfabric"
 ADAPTER_NAME = "openobsw-opensvf"
 
