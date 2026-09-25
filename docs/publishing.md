@@ -27,7 +27,7 @@ accepted main commit
 For `v0.1.0`, the authoritative publisher-owned binary/material set is:
 
 ```text
-orbitfabric_openobsw_opensvf_adapter-0.1.1-py3-none-any.whl
+orbitfabric_openobsw_opensvf_adapter-0.1.0-py3-none-any.whl
 adapter-release.json
 SHA256SUMS
 release notes
