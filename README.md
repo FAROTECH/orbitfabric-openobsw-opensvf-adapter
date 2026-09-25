@@ -1,6 +1,8 @@
 # OrbitFabric OpenOBSW/OpenSVF Adapter
 
-Integration adapter connecting [OrbitFabric](https://github.com/FAROTECH/orbitfabric) mission contracts with the native integration and validation surfaces provided by [OpenOBSW](https://github.com/lipofefeyt/openobsw) and [OpenSVF](https://github.com/lipofefeyt/opensvf).
+Candidate `0.1.1` is unpublished and awaits review. See [candidate release notes](docs/releases/0.1.1.md). New releases use the canonical `github.com/OrbitFabric` authority.
+
+Integration adapter connecting [OrbitFabric](https://github.com/OrbitFabric/orbitfabric) mission contracts with the native integration and validation surfaces provided by [OpenOBSW](https://github.com/lipofefeyt/openobsw) and [OpenSVF](https://github.com/lipofefeyt/opensvf).
 
 OrbitFabric, OpenOBSW and OpenSVF remain independent systems. OrbitFabric Core owns generic mission and integration contracts, this adapter owns target-specific projection, and the downstream projects own their native runtime and validation semantics.
 
@@ -47,7 +49,7 @@ Start with **[Examples](docs/examples/index.md)**.
 Clone the repository and use the development environment:
 
 ```bash
-git clone https://github.com/FAROTECH/orbitfabric-openobsw-opensvf-adapter.git
+git clone https://github.com/OrbitFabric/orbitfabric-openobsw-opensvf-adapter.git
 cd orbitfabric-openobsw-opensvf-adapter
 
 python3 -m venv .venv

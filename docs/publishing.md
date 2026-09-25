@@ -1,5 +1,7 @@
 # Maintainer / Publisher Guide
 
+Current worktree: unpublished `0.1.1` post-migration candidate. See [release notes](releases/0.1.1.md). Prior release versions below describe historical baselines; new descriptors use `github.com/OrbitFabric`.
+
 This section is for maintainers preparing, proving and publishing an adapter release.
 
 It is intentionally separate from normal user installation. A consumer should install already-published release assets through OrbitFabric Adapter Manager and should never need to build the adapter wheel or Release Descriptor locally.
@@ -25,7 +27,7 @@ accepted main commit
 For `v0.1.0`, the authoritative publisher-owned binary/material set is:
 
 ```text
-orbitfabric_openobsw_opensvf_adapter-0.1.0-py3-none-any.whl
+orbitfabric_openobsw_opensvf_adapter-0.1.1-py3-none-any.whl
 adapter-release.json
 SHA256SUMS
 release notes
@@ -99,8 +101,8 @@ From an accepted source commit:
 python -m build --wheel
 
 python tools/build_release_bundle.py \
-  --wheel dist/orbitfabric_openobsw_opensvf_adapter-0.1.0-py3-none-any.whl \
-  --authority github.com/FAROTECH \
+  --wheel dist/orbitfabric_openobsw_opensvf_adapter-0.1.1-py3-none-any.whl \
+  --authority github.com/OrbitFabric \
   --publisher orbitfabric \
   --name openobsw-opensvf \
   --release-only

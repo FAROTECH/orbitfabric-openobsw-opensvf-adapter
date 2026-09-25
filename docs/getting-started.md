@@ -1,5 +1,24 @@
 # Getting Started
 
+## Current onboarding candidate
+
+After approved publication of Core 1.4.0, GitHub Release Source 0.1.0 and this adapter 0.1.1, and promotion of its exact descriptor to the Catalog:
+
+```bash
+python3 -m venv .venv
+. .venv/bin/activate
+python -m pip install -r https://github.com/OrbitFabric/orbitfabric/releases/download/v1.4.0/orbitfabric-install.txt
+orbitfabric adapter install openobsw-opensvf --version 0.1.1
+orbitfabric adapter list
+orbitfabric adapter verify <instance-id>
+```
+
+These candidate releases are not yet published. The new installed identity is `github.com/OrbitFabric:orbitfabric/openobsw-opensvf@0.1.1`. No clone, manual adapter download or Project Lock is required. Use `--catalog-revision <commit-sha>` to pin the Catalog, or `--catalog ./catalog.json` for a local snapshot.
+
+## Historical manual installation reference
+
+The prior-release instructions below preserve the historical baseline. They are not the current canonical onboarding demonstration. Historical FAROTECH Source Coordinates remain immutable.
+
 This guide is for **users of the adapter**.
 
 It covers the consumer path:
@@ -50,7 +69,7 @@ export ORBITFABRIC_STATE_DIR="$PWD/.orbitfabric-state"
 
 ```bash
 python -m pip install \
-  "git+https://github.com/FAROTECH/orbitfabric.git@4377d6656c62aa1dc19a7ed81d2de872b6b22ccd"
+  "git+https://github.com/OrbitFabric/orbitfabric.git@4377d6656c62aa1dc19a7ed81d2de872b6b22ccd"
 ```
 
 Check that Core and Adapter Manager are available:
@@ -72,7 +91,7 @@ adapter-release.json
 SHA256SUMS
 ```
 
-Download those exact files from the [GitHub Release](https://github.com/FAROTECH/orbitfabric-openobsw-opensvf-adapter/releases/tag/v0.1.0). Do not rebuild them locally for normal consumer use.
+Download those exact files from the [GitHub Release](https://github.com/OrbitFabric/orbitfabric-openobsw-opensvf-adapter/releases/tag/v0.1.0). Do not rebuild them locally for normal consumer use.
 
 Keep the three files together in a local release directory, for example:
 

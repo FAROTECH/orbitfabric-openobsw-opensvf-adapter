@@ -179,7 +179,7 @@ This is deliberately stronger than an editable install or a shared development e
 The provider-neutral release proof verifies the stable identity:
 
 ```text
-github.com/FAROTECH:orbitfabric/openobsw-opensvf
+github.com/OrbitFabric:orbitfabric/openobsw-opensvf
 release 0.1.0
 ```
 
